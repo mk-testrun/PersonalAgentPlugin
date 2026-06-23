@@ -1,0 +1,42 @@
+{
+  "block": [
+    {
+      "name": "IBAN",
+      "regex": "\\b[A-Z]{2}\\d{2}[A-Z0-9]{11,30}\\b",
+      "flags": "g",
+      "replace": null
+    },
+    {
+      "name": "SteuerID",
+      "regex": "\\b\\d{11}\\b",
+      "flags": "g",
+      "replace": null
+    }
+  ],
+  "anonymize": [
+    {
+      "name": "Email",
+      "regex": "[a-zA-Z0-9._%+\\-]+@[a-zA-Z0-9.\\-]+\\.[a-zA-Z]{2,}",
+      "flags": "gi",
+      "replace": "<Email_{hash:6}>"
+    },
+    {
+      "name": "ADO-UPN",
+      "regex": "[a-z]+\\.[a-z]+@[a-z0-9.\\-]+\\.[a-z]{2,}",
+      "flags": "gi",
+      "replace": "<PERSON_{hash:6}>"
+    },
+    {
+      "name": "FullName",
+      "regex": "(?:Herr|Frau|Hr\\.|Fr\\.)\\s+[A-ZÄÖÜ][a-zäöüß]+\\s+[A-ZÄÖÜ][a-zäöüß]+",
+      "flags": "gu",
+      "replace": "<PERSON_{hash:6}>"
+    },
+    {
+      "name": "PhoneDE",
+      "regex": "(?:\\+49|0)[\\s\\-]?\\(?\\d{2,5}\\)?[\\s\\-]?\\d{3,}[\\s\\-]?\\d{0,}",
+      "flags": "g",
+      "replace": "<Phone_{hash:6}>"
+    }
+  ]
+}

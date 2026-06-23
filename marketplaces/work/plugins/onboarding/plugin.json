@@ -1,0 +1,24 @@
+{
+  "name": "onboarding",
+  "description": "Neue Entwickler einführen: env-doctor, codebase-tour, first-task, Confluence-Erklärung.",
+  "version": "1.0.0",
+  "author": "mkrueer",
+  "license": "MIT",
+  "keywords": ["onboarding", "setup", "tour", "confluence", "first-task"],
+  "agents": ["agents/onboarder.agent.md"],
+  "commands": [
+    "commands/onboard.md",
+    "commands/setup-check.md",
+    "commands/tour.md",
+    "commands/first-task.md",
+    "commands/explain-project.md"
+  ],
+  "skills": [
+    "skills/env-doctor/SKILL.md",
+    "skills/repo-orientation/SKILL.md",
+    "skills/codebase-tour/SKILL.md",
+    "skills/first-task-pick/SKILL.md",
+    "skills/onboarding-checklist/SKILL.md",
+    "skills/confluence-explain/SKILL.md"
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "name": "review",
+  "description": "Multi-Domain-Reviewer: OWASP ASVS L2, WCAG 2.2, BFSG, SQL, Deps, Performance, Pipelines.",
+  "version": "1.0.0",
+  "author": "mkrueer",
+  "license": "MIT",
+  "keywords": ["review", "owasp", "wcag", "security", "accessibility", "performance"],
+  "agents": ["agents/reviewer.agent.md"],
+  "commands": [
+    "commands/review.md",
+    "commands/review-pr.md",
+    "commands/review-full.md"
+  ],
+  "skills": [
+    "skills/review-aggregate/SKILL.md",
+    "skills/code-review/SKILL.md",
+    "skills/security-review/SKILL.md",
+    "skills/security-audit/SKILL.md",
+    "skills/owasp-scan/SKILL.md",
+    "skills/dotnet-design-review/SKILL.md",
+    "skills/performance-review/SKILL.md",
+    "skills/sql-review/SKILL.md",
+    "skills/dependency-vuln/SKILL.md",
+    "skills/lts-check/SKILL.md",
+    "skills/license-check/SKILL.md",
+    "skills/secrets-scan/SKILL.md",
+    "skills/pipeline-review/SKILL.md",
+    "skills/env-lint/SKILL.md",
+    "skills/accessibility-wcag/SKILL.md",
+    "skills/accessibility-bfsg/SKILL.md",
+    "skills/api-contract-review/SKILL.md",
+    "skills/architecture-review/SKILL.md"
+  ]
+}

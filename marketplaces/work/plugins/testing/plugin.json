@@ -1,0 +1,23 @@
+{
+  "name": "testing",
+  "description": "Test-Ausführung, Coverage-Gates, E2E-Playwright (localhost only), Pipeline-Integration.",
+  "version": "1.0.0",
+  "author": "mkrueer",
+  "license": "MIT",
+  "keywords": ["testing", "coverage", "playwright", "e2e", "xunit", "bunit"],
+  "agents": ["agents/tester.agent.md"],
+  "commands": [
+    "commands/test.md",
+    "commands/coverage.md",
+    "commands/e2e.md"
+  ],
+  "skills": [
+    "skills/dotnet-test-run/SKILL.md",
+    "skills/test-conventions/SKILL.md",
+    "skills/code-coverage/SKILL.md",
+    "skills/tests-review/SKILL.md",
+    "skills/responsive-view/SKILL.md",
+    "skills/e2e-playwright/SKILL.md",
+    "skills/e2e-pipeline-wire/SKILL.md"
+  ]
+}

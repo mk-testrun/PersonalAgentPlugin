@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "confluence": {
+      "command": "npx",
+      "args": ["-y", "@aaronsb/confluence-mcp"],
+      "env": {
+        "CONFLUENCE_URL": "${env:CONFLUENCE_URL}",
+        "CONFLUENCE_USER": "${env:CONFLUENCE_USER}",
+        "CONFLUENCE_TOKEN": "${secret:CONFLUENCE_TOKEN}",
+        "CONFLUENCE_SPACE_ALLOWLIST": "${env:CONFLUENCE_SPACES}"
+      }
+    }
+  }
+}

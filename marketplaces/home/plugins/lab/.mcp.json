@@ -1,0 +1,30 @@
+{
+  "mcpServers": {
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp"],
+      "env": {
+        "PLAYWRIGHT_HEADLESS": "true"
+      }
+    },
+    "playwright-cli": {
+      "command": "playwright",
+      "args": ["mcp"]
+    },
+    "chrome-devtools": {
+      "command": "npx",
+      "args": ["-y", "chrome-devtools-mcp"]
+    },
+    "homeassistant": {
+      "command": "hass-mcp",
+      "env": {
+        "HASS_URL": "${env:HASS_URL}",
+        "HASS_TOKEN": "${env:HASS_TOKEN}"
+      }
+    },
+    "kingfisher": {
+      "command": "kingfisher",
+      "args": ["mcp-mode"]
+    }
+  }
+}

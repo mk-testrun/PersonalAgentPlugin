@@ -1,0 +1,5 @@
+{
+  "dailyEasterEgg": false,
+  "slidesMascot": false,
+  "neverIn": ["security", "review", "findings", "energy", "secret"]
+}

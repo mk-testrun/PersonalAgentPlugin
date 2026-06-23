@@ -1,0 +1,9 @@
+{
+  "hooks": [
+    {
+      "event": "postToolUse",
+      "script": "hooks/scripts/dotnet-vuln.sh",
+      "scriptWindows": "hooks/scripts/dotnet-vuln.ps1"
+    }
+  ]
+}

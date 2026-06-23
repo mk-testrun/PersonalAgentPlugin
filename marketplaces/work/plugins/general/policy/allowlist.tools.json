@@ -1,0 +1,37 @@
+{
+  "shell": {
+    "allow": [
+      "dotnet*",
+      "git*",
+      "az pipelines*",
+      "az repos*",
+      "npm test",
+      "npm run*",
+      "reportgenerator*",
+      "gitleaks*"
+    ],
+    "deny": [
+      "rm -rf*",
+      "curl http://*",
+      "wget http://*",
+      "Invoke-WebRequest http://*"
+    ]
+  },
+  "filesystem": {
+    "deny": [
+      ".env*",
+      "secrets/**",
+      "*.pfx",
+      "*.pem"
+    ]
+  },
+  "mcp": {
+    "allow": [
+      "ado.*",
+      "filesystem.*",
+      "git-local.*",
+      "chrome-devtools.*",
+      "password-gen.*"
+    ]
+  }
+}

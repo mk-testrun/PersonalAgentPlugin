@@ -1,0 +1,29 @@
+{
+  "hooks": [
+    {
+      "event": "sessionStart",
+      "script": "hooks/scripts/audit-init.sh",
+      "scriptWindows": "hooks/scripts/audit-init.ps1"
+    },
+    {
+      "event": "userPromptSubmitted",
+      "script": "hooks/scripts/audit-prompt.sh",
+      "scriptWindows": "hooks/scripts/audit-prompt.ps1"
+    },
+    {
+      "event": "preToolUse",
+      "script": "hooks/scripts/pre-tool-guardian.sh",
+      "scriptWindows": "hooks/scripts/pre-tool-guardian.ps1"
+    },
+    {
+      "event": "postToolUse",
+      "script": "hooks/scripts/audit-tool.sh",
+      "scriptWindows": "hooks/scripts/audit-tool.ps1"
+    },
+    {
+      "event": "sessionEnd",
+      "script": "hooks/scripts/audit-rotate.sh",
+      "scriptWindows": "hooks/scripts/audit-rotate.ps1"
+    }
+  ]
+}

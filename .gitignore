@@ -1,0 +1,37 @@
+# Dependencies
+node_modules/
+dist/
+build/
+
+# .NET
+bin/
+obj/
+*.user
+
+# MCP state
+.copilot/state/pseudonym.map.json
+.copilot/state/alarms.json
+.copilot/state/mood.jsonl
+
+# Secrets
+.env
+.env.*
+!.env.example
+*.pfx
+*.pem
+secrets/
+
+# Audit logs
+.copilot/state/audit.jsonl
+
+# Artifacts (generated, not tracked)
+.copilot/state/artifacts/
+.copilot/state/audio/
+.copilot/state/reports/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# npm
+package-lock.json

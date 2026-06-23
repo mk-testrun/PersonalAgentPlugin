@@ -1,0 +1,24 @@
+{
+  "name": "reviewer",
+  "description": "Entspannter Home-Reviewer: WCAG, BFSG, Security, Performance, Playwright auch Internet.",
+  "version": "1.0.0",
+  "author": "mkrueer",
+  "license": "MIT",
+  "keywords": ["review", "wcag", "security", "accessibility", "performance", "playwright"],
+  "agents": ["agents/reviewer.agent.md"],
+  "commands": ["commands/review.md"],
+  "skills": [
+    "skills/review-aggregate/SKILL.md",
+    "skills/code-review/SKILL.md",
+    "skills/security-review/SKILL.md",
+    "skills/performance-review/SKILL.md",
+    "skills/accessibility-wcag/SKILL.md",
+    "skills/accessibility-bfsg/SKILL.md",
+    "skills/lts-check/SKILL.md",
+    "skills/responsive-view/SKILL.md",
+    "skills/dependency-vuln/SKILL.md",
+    "skills/env-lint/SKILL.md",
+    "skills/ai-readiness/SKILL.md",
+    "skills/accessibility-report/SKILL.md"
+  ]
+}

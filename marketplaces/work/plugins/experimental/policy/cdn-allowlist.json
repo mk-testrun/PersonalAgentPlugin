@@ -1,0 +1,12 @@
+{
+  "allowed": [
+    "https://cdn.jsdelivr.net/npm/chart.js",
+    "https://cdn.jsdelivr.net/npm/gridjs",
+    "https://cdn.jsdelivr.net/npm/mermaid",
+    "https://cdn.jsdelivr.net/npm/reveal.js",
+    "https://unpkg.com/chart.js",
+    "https://unpkg.com/mermaid",
+    "https://unpkg.com/reveal.js",
+    "https://cdnjs.cloudflare.com/ajax/libs/Chart.js"
+  ]
+}
