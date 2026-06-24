@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+jobs:
+  validate:
+    name: Validate Plugins
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Validate Work Marketplace
+        run: node tools/validate-plugins.mjs marketplaces/work
+      - name: Validate Home Marketplace
+        run: node tools/validate-plugins.mjs marketplaces/home
+
+  mcp:
+    name: Build & Test MCP Servers
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install Workspaces
+        run: npm ci || npm install
+      - name: Syntax Check anonymizer-proxy
+        working-directory: mcp-servers/anonymizer-proxy
+        run: |
+          node --check src/masker.mjs
+          node --check src/server.mjs
+      - name: Test anonymizer-proxy roundtrip
+        working-directory: mcp-servers/anonymizer-proxy
+        run: node test/roundtrip.mjs
+      - name: Build password-gen
+        working-directory: mcp-servers/password-gen
+        run: npm run build
+      - name: Test password-gen entropy
+        working-directory: mcp-servers/password-gen
+        run: node test/entropy.test.mjs
+      - name: Build alarm-mcp
+        working-directory: mcp-servers/alarm-mcp
+        run: npm run build
+      - name: Test alarm-mcp scheduler
+        working-directory: mcp-servers/alarm-mcp
+        run: node test/scheduler.test.mjs
+      - name: Build dotnet-mcpserver-starter
+        working-directory: mcp-servers/dotnet-mcpserver-starter
+        run: |
+          if command -v dotnet &>/dev/null; then
+            dotnet build
+          else
+            echo "No .NET SDK found — skipping dotnet build (optional step)"
+          fi
+        continue-on-error: true

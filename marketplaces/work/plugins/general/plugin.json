@@ -1,0 +1,25 @@
+{
+  "name": "general",
+  "description": "ADO-Fundament: Work-Items, PRs, Commits, Changelog, Git-Flow, PII-Proxy, Hooks, Policy.",
+  "version": "1.0.0",
+  "author": "mkrueer",
+  "license": "MIT",
+  "keywords": ["ado", "git", "commits", "pii", "hooks", "work-items"],
+  "agents": ["agents/devops.agent.md"],
+  "commands": [
+    "commands/moin.md",
+    "commands/tagesabschluss.md",
+    "commands/wochenabschluss.md",
+    "commands/standup.md",
+    "commands/commit.md",
+    "commands/changelog.md"
+  ],
+  "skills": [
+    "skills/ado-workitems/SKILL.md",
+    "skills/ado-pull-requests/SKILL.md",
+    "skills/commit-generate/SKILL.md",
+    "skills/changelog-generate/SKILL.md",
+    "skills/git-flow-helper/SKILL.md",
+    "skills/pipeline-conventions/SKILL.md"
+  ]
+}

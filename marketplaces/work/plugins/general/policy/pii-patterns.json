@@ -1,0 +1,5 @@
+{
+  "_ref": "Used by anonymizer-proxy — see mcp-servers/anonymizer-proxy/pii-patterns.json for the canonical version.",
+  "block": ["IBAN", "SteuerID"],
+  "anonymize": ["Email", "ADO-UPN", "FullName", "PhoneDE"]
+}

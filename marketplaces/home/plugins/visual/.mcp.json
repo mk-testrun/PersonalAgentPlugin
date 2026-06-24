@@ -1,0 +1,23 @@
+{
+  "mcpServers": {
+    "mermaid": {
+      "command": "npx",
+      "args": ["-y", "@narasimhaponnada/mermaid-mcp-server"]
+    },
+    "chart": {
+      "command": "npx",
+      "args": ["-y", "@antv/mcp-server-chart"]
+    },
+    "excalidraw": {
+      "command": "npx",
+      "args": ["-y", "excalidraw-mcp"]
+    },
+    "imagegen": {
+      "command": "npx",
+      "args": ["-y", "imagegen-mcp"],
+      "env": {
+        "OPENAI_API_KEY": "${secret:OPENAI_KEY}"
+      }
+    }
+  }
+}

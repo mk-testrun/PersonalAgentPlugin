@@ -1,0 +1,16 @@
+{
+  "name": "orchestration",
+  "description": "Opt-in-Workflows: /feature, /bugfix, /review-flow, /ship, /plan — mit Dry-run und [CONFIRM]-Punkten.",
+  "version": "1.0.0",
+  "author": "mkrueer",
+  "license": "MIT",
+  "keywords": ["orchestration", "workflow", "feature", "bugfix", "ship", "plan"],
+  "agents": ["agents/orchestrator.agent.md"],
+  "commands": [
+    "commands/plan.md",
+    "commands/feature.md",
+    "commands/bugfix.md",
+    "commands/review-flow.md",
+    "commands/ship.md"
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "shell": {
+    "allow": ["*"],
+    "deny": [
+      "rm -rf /*",
+      ":(){ :|:& };:"
+    ]
+  },
+  "filesystem": {
+    "deny": [".env*", "secrets/**", "*.pfx", "*.pem"]
+  }
+}

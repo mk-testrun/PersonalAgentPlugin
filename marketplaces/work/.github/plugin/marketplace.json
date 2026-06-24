@@ -1,0 +1,80 @@
+{
+  "name": "mkrueer-copilot-marketplace",
+  "description": "Work-Marketplace für ADO/Blazor/.NET-Entwicklung mit PII-Schutz, OWASP-Review und E2E-Testing.",
+  "version": "1.0.0",
+  "metadata": {
+    "pluginRoot": "./plugins"
+  },
+  "plugins": [
+    {
+      "name": "general",
+      "source": "plugins/general",
+      "description": "ADO-Fundament, PII-Proxy, Hooks, Conventional Commits, Git-Flow.",
+      "version": "1.0.0",
+      "keywords": ["ado", "git", "commits", "pii", "hooks"]
+    },
+    {
+      "name": "onboarding",
+      "source": "plugins/onboarding",
+      "description": "Neue Entwickler einführen: env-doctor, codebase-tour, first-task.",
+      "version": "1.0.0",
+      "keywords": ["onboarding", "setup", "tour", "confluence"]
+    },
+    {
+      "name": "blazor",
+      "source": "plugins/blazor",
+      "description": "Blazor/.NET-Conventions, EF-Core-Skills (9), Roslyn/sharplens.",
+      "version": "1.0.0",
+      "keywords": ["blazor", "dotnet", "efcore", "roslyn", "csharp"]
+    },
+    {
+      "name": "testing",
+      "source": "plugins/testing",
+      "description": "dotnet test, Coverage, E2E-Playwright (localhost only).",
+      "version": "1.0.0",
+      "keywords": ["testing", "coverage", "playwright", "e2e", "xunit"]
+    },
+    {
+      "name": "review",
+      "source": "plugins/review",
+      "description": "Multi-Domain-Reviewer: OWASP ASVS L2, WCAG 2.2, BFSG, SQL, Deps.",
+      "version": "1.0.0",
+      "keywords": ["review", "owasp", "wcag", "security", "accessibility"]
+    },
+    {
+      "name": "orchestration",
+      "source": "plugins/orchestration",
+      "description": "Opt-in-Workflows: /feature, /bugfix, /review-flow, /ship, /plan.",
+      "version": "1.0.0",
+      "keywords": ["orchestration", "workflow", "feature", "bugfix", "ship"]
+    },
+    {
+      "name": "doku",
+      "source": "plugins/doku",
+      "description": "Confluence-Dokumentation: Draft, Format, ADR, README, a11y-Report.",
+      "version": "1.0.0",
+      "keywords": ["confluence", "documentation", "adr", "readme"]
+    },
+    {
+      "name": "meta",
+      "source": "plugins/meta",
+      "description": "Tooling über Tooling: Skill/Plugin-Author, Validator, AI-Readiness.",
+      "version": "1.0.0",
+      "keywords": ["meta", "tooling", "skill-author", "plugin-author"]
+    },
+    {
+      "name": "experimental",
+      "source": "plugins/experimental",
+      "description": "Output-Studio: Diagramme, Dashboards, Slides, TTS (CDN-gesichert).",
+      "version": "1.0.0",
+      "keywords": ["diagrams", "charts", "slides", "dashboard", "visual"]
+    },
+    {
+      "name": "fun",
+      "source": "plugins/fun",
+      "description": "Ralph-Wiggum — opt-in, nur auf expliziten Trigger, nie in Reviews.",
+      "version": "1.0.0",
+      "keywords": ["fun", "easter-egg", "ralph"]
+    }
+  ]
+}

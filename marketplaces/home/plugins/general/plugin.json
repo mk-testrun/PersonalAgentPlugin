@@ -1,0 +1,28 @@
+{
+  "name": "general",
+  "description": "GitHub Issues/PRs, Profile (MCP-Sets wechseln), Multi-Lang-Conventions, warn-Hooks.",
+  "version": "1.0.0",
+  "author": "mkrueer",
+  "license": "MIT",
+  "keywords": ["github", "profile", "git", "conventions", "hooks", "python", "go"],
+  "agents": ["agents/devops-home.agent.md"],
+  "commands": [
+    "commands/moin.md",
+    "commands/tagesabschluss.md",
+    "commands/wochenabschluss.md",
+    "commands/profile.md",
+    "commands/commit.md",
+    "commands/changelog.md"
+  ],
+  "skills": [
+    "skills/github-issues/SKILL.md",
+    "skills/github-prs/SKILL.md",
+    "skills/commit-generate/SKILL.md",
+    "skills/changelog-generate/SKILL.md",
+    "skills/git-flow-helper/SKILL.md",
+    "skills/dotnet-conventions/SKILL.md",
+    "skills/python-conventions/SKILL.md",
+    "skills/web-conventions/SKILL.md",
+    "skills/homelab-conventions/SKILL.md"
+  ]
+}

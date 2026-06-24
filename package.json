@@ -1,0 +1,7 @@
+{
+  "name": "mkrueer-copilot",
+  "private": true,
+  "workspaces": [
+    "mcp-servers/*"
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "mcpServers": {
+    "sharplens": {
+      "command": "npx",
+      "args": ["-y", "sharplens-mcp"],
+      "env": {
+        "DOTNET_SOLUTION_PATH": "${env:DOTNET_SOLUTION_PATH}"
+      }
+    },
+    "dotnet-mcp-builder": {
+      "command": "dnx",
+      "args": ["dotnet-mcp-builder"]
+    },
+    "nuget": {
+      "command": "dnx",
+      "args": ["nuget-mcp"]
+    },
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp"],
+      "env": {
+        "CONTEXT7_API_KEY": "${secret:CONTEXT7_KEY}"
+      }
+    }
+  }
+}

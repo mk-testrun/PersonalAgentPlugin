@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+    "supertonic": {
+      "command": "supertonic3-mcp",
+      "env": {
+        "ST_API_KEY": "${secret:SUPERTONIC_KEY}",
+        "ST_DEFAULT_VOICE": "warm-de",
+        "ST_OUTPUT_DIR": "${env:USERPROFILE}/.copilot/state/audio"
+      }
+    },
+    "alarm-mcp": {
+      "command": "alarm-mcp"
+    },
+    "time": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-time"]
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "mcpServers": {
+    "mermaid": {
+      "command": "npx",
+      "args": ["-y", "@narasimhaponnada/mermaid-mcp-server"]
+    },
+    "chart": {
+      "command": "npx",
+      "args": ["-y", "@antv/mcp-server-chart"]
+    },
+    "supertonic": {
+      "command": "supertonic3-mcp",
+      "env": {
+        "ST_API_KEY": "${secret:SUPERTONIC_KEY}",
+        "ST_DEFAULT_VOICE": "warm-de",
+        "ST_OUTPUT_DIR": "${workspaceFolder}/.copilot/state/audio"
+      }
+    }
+  }
+}

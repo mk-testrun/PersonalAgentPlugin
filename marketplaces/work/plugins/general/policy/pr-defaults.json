@@ -1,0 +1,8 @@
+{
+  "defaultReviewers": ["${env:ADO_LEAD_ID}"],
+  "mergeStrategy": "squash",
+  "autoComplete": false,
+  "deleteSourceBranch": true,
+  "workItemLinking": "required",
+  "requiredChecks": ["gitleaks", "build"]
+}

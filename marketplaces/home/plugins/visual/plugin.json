@@ -1,0 +1,29 @@
+{
+  "name": "visual",
+  "description": "Visual-first: Mermaid, Chart.js, Excalidraw, Cloud-Bild-Gen, SVG, Timeline, Mindmap.",
+  "version": "1.0.0",
+  "author": "mkrueer",
+  "license": "MIT",
+  "keywords": ["visual", "charts", "excalidraw", "diagrams", "image-gen", "mermaid"],
+  "agents": ["agents/visualizer.agent.md"],
+  "commands": [
+    "commands/visualize.md",
+    "commands/slides.md",
+    "commands/explain.md"
+  ],
+  "skills": [
+    "skills/mermaid-diagram/SKILL.md",
+    "skills/chartjs-data/SKILL.md",
+    "skills/html-dashboard/SKILL.md",
+    "skills/frontend-slides/SKILL.md",
+    "skills/visual-explainer/SKILL.md",
+    "skills/web-artifacts-builder/SKILL.md",
+    "skills/excalidraw-sketch/SKILL.md",
+    "skills/image-generate/SKILL.md",
+    "skills/timeline/SKILL.md",
+    "skills/mind-map/SKILL.md",
+    "skills/svg-illustration/SKILL.md",
+    "skills/table-as-grid/SKILL.md",
+    "skills/kanban-render/SKILL.md"
+  ]
+}

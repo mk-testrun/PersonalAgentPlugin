@@ -1,0 +1,9 @@
+{
+  "hooks": [
+    {
+      "event": "postToolUse",
+      "script": "hooks/scripts/notify-with-sound.sh",
+      "scriptWindows": "hooks/scripts/notify-with-sound.ps1"
+    }
+  ]
+}

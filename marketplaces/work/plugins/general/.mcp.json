@@ -1,0 +1,32 @@
+{
+  "mcpServers": {
+    "ado": {
+      "command": "anonymizer-proxy",
+      "env": {
+        "DOWNSTREAM_CMD": "npx",
+        "DOWNSTREAM_ARGS": "[\"-y\",\"@azure-devops/mcp\",\"${env:ADO_ORG}\"]",
+        "AZURE_DEVOPS_PAT": "${secret:ADO_PAT}",
+        "AZURE_DEVOPS_PROJECT": "${env:ADO_PROJECT}",
+        "ANON_SALT": "${secret:ANON_SALT}"
+      }
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "${workspaceFolder}"]
+    },
+    "git-local": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-git"]
+    },
+    "chrome-devtools": {
+      "command": "npx",
+      "args": ["-y", "chrome-devtools-mcp"],
+      "env": {
+        "CDT_TARGETS": "http://localhost:*,https://localhost:*"
+      }
+    },
+    "password-gen": {
+      "command": "password-gen-mcp"
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "profiles": {
+    "coding": {
+      "description": "Entwicklungs-Modus: dotnet-mcp-builder, context7",
+      "mcpServers": ["dotnet-mcp-builder", "context7", "filesystem", "git"]
+    },
+    "writing": {
+      "description": "Schreib-Modus: fetch, brave-search",
+      "mcpServers": ["fetch", "brave-search", "filesystem"]
+    },
+    "media": {
+      "description": "Medien-Modus: supertonic, imagegen",
+      "mcpServers": ["supertonic", "imagegen", "filesystem"]
+    },
+    "audio": {
+      "description": "Audio-Modus: supertonic, alarm-mcp, time",
+      "mcpServers": ["supertonic", "alarm-mcp", "time"]
+    },
+    "lab": {
+      "description": "Lab-Modus: playwright, chrome-devtools, homeassistant",
+      "mcpServers": ["playwright", "chrome-devtools", "homeassistant"]
+    }
+  },
+  "default": "coding"
+}
