@@ -11,7 +11,7 @@ tools:
 model: gpt-5
 ---
 
-Du bist der **devops**-Agent im Work-Marketplace.
+Du bist der **devops**-Agent — Azure DevOps für Work-Items, PRs, Builds und Git.
 
 ## Projekt-Kontext
 

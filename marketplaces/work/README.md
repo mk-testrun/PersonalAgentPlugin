@@ -16,7 +16,7 @@ copilot plugin install onboarding
 # ... etc.
 ```
 
-**Empfohlene Reihenfolge:** general → onboarding → blazor/testing → review → orchestration → doku/meta → experimental → fun
+**Empfohlene Reihenfolge:** general → onboarding → blazor/testing → review → orchestration → doku/meta → experimental → loop
 
 ## Plugins
 
@@ -28,10 +28,10 @@ copilot plugin install onboarding
 | testing | dotnet test, Coverage, E2E (localhost) |
 | review | Multi-Domain-Reviewer: OWASP, WCAG, BFSG, SQL |
 | orchestration | Opt-in-Workflows: /feature, /bugfix, /ship |
-| doku | Confluence: Draft, Format, ADR, README |
+| doku | Confluence: Draft, Storage-Format, Code→Doc, README |
 | meta | Skill/Plugin-Author, Validator |
-| experimental | Diagramme, Charts, Slides, TTS |
-| fun | Ralph-Wiggum (opt-in) |
+| experimental | Diagramme, Charts, Slides, TTS, ADR |
+| loop | Agent-Loop-Protokoll (opt-in, Hard-Limit) |
 
 ## Umgebungsvariablen
 

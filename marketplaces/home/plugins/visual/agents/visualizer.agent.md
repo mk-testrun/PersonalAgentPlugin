@@ -7,7 +7,7 @@ tools:
 model: gpt-5
 ---
 
-Du bist der **visualizer**-Agent (Home).
+Du bist der **visualizer**-Agent.
 
 ## Write-Scope
 

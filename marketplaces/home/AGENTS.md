@@ -11,10 +11,21 @@
 | lab | lab | Playwright-Skripte nach `state/artifacts/`; Home-Assistant mit [CONFIRM] |
 | orchestrator | orchestration | Keine Direkt-Writes ohne [CONFIRM]; delegiert |
 | prompt-builder | meta | Plugin/Skill-Dateien; Marketplace-Config mit [CONFIRM] |
+| loop | loop | Iteriert mit Hard-Limit; delegiert Verifikation; warn-Modus |
 
-## §2.1 Konventionen (identisch wie Work)
+## §2.1 Command vs. Skill vs. Agent
 
-Skill · Command · Agent — siehe Work AGENTS.md für vollständige Beschreibung.
+### Skill
+- Wiederverwendbare Fähigkeit (`skills/<name>/SKILL.md`), Frontmatter `name` + `description` („Nutze wenn …").
+- Optional: `applyTo` (Glob), `mcp_tools`. Body: klare Steps/Checks.
+
+### Command
+- Benutzer-wählbarer Slash-Einstieg (`commands/<name>.md`), Frontmatter `description` + Body (Prompt).
+- Entweder Workflow (verkettet Skills) oder dünner Wrapper auf einen Skill — keine Doppel-Indirektion.
+
+### Agent
+- Persona (`agents/<name>.agent.md`), Frontmatter `name`, `description`, `tools`, `model`.
+- Body: Mission · Tool-/Write-Scope · Verweise auf zuständige Skills/Agenten · Verboten.
 
 ## Home-spezifische Unterschiede
 
@@ -33,8 +44,8 @@ Skill · Command · Agent — siehe Work AGENTS.md für vollständige Beschreibu
 Jeder Visual-Skill implementiert Rich (VS Code) + Fallback (CLI) selbst.
 Cloud-Bild-Gen erlaubt im Home-Kontext.
 
-### §2.8 Workflows
-Identisch zu Work, aber:
-- GitHub statt ADO
-- Kein Workitem-Zwang
-- Kein `/ship`
+### §2.8 Workflows (Orchestrator)
+1. **Dry-run zuerst** — kompletter Plan inkl. [CONFIRM]/[GATE]-Punkte.
+2. **Run-Log** nach `state/artifacts/run-<workflow>-<ts>.md`.
+3. **[CONFIRM]** = Stopp vor jedem Schreiben · **[GATE]** = harter Stopp bei critical/high.
+4. GitHub statt ADO · kein Workitem-Zwang · kein `/ship`.

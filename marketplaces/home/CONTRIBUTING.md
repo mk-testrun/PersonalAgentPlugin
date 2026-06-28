@@ -7,7 +7,7 @@
 3. In `plugin.json` eintragen
 4. `node tools/validate-plugins.mjs marketplaces/home` → 0 Fehler
 
-## Sicherheits-Checkliste (relaxter als Work)
+## Sicherheits-Checkliste
 
 - [ ] Keine Secrets in Dateien (nur `${secret:NAME}`)
 - [ ] secret-scan bleibt scharf (auch im warn-Modus)

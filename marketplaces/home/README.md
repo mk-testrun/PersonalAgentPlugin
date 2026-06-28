@@ -8,7 +8,7 @@ GitHub-Copilot-CLI-Marketplace für private Projekte — visual-first, experimen
 copilot plugin marketplace add ./marketplaces/home
 ```
 
-**Reihenfolge:** general → visual/audio → morning → reviewer → lab → orchestration → meta → fun
+**Reihenfolge:** general → visual/audio → morning → reviewer → lab → orchestration → meta → loop
 
 ## Plugins
 
@@ -22,7 +22,7 @@ copilot plugin marketplace add ./marketplaces/home
 | lab | Playwright codegen, neue MCPs, Home Assistant |
 | orchestration | GitHub-Workflows: /feature, /bugfix (kein /ship) |
 | meta | Skill/Plugin-Author, Validator |
-| fun | Ralph-Wiggum mit Easter-Eggs (opt-in) |
+| loop | Agent-Loop-Protokoll (opt-in, Hard-Limit, warn-Modus) |
 
 ## Umgebungsvariablen
 
