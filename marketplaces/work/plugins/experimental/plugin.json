@@ -13,9 +13,11 @@
     "commands/speak.md",
     "commands/diagram.md",
     "commands/dashboard.md",
-    "commands/view.md"
+    "commands/view.md",
+    "commands/adr.md"
   ],
   "skills": [
+    "skills/adr-write/SKILL.md",
     "skills/mermaid-diagram/SKILL.md",
     "skills/architecture-diagram/SKILL.md",
     "skills/er-diagram/SKILL.md",
