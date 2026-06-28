@@ -15,6 +15,13 @@
         "ST_DEFAULT_VOICE": "warm-de",
         "ST_OUTPUT_DIR": "${workspaceFolder}/.copilot/state/audio"
       }
+    },
+    "artifact-viewer": {
+      "command": "artifact-viewer",
+      "env": {
+        "VIEWER_RICH": "auto",
+        "VIEWER_OUT": "${workspaceFolder}/.copilot/state/artifacts"
+      }
     }
   }
 }

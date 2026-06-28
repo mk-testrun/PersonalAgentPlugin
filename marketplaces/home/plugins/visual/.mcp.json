@@ -18,6 +18,13 @@
       "env": {
         "OPENAI_API_KEY": "${secret:OPENAI_KEY}"
       }
+    },
+    "artifact-viewer": {
+      "command": "artifact-viewer",
+      "env": {
+        "VIEWER_RICH": "auto",
+        "VIEWER_OUT": "${env:USERPROFILE}/.copilot/state/artifacts"
+      }
     }
   }
 }

@@ -1,21 +1,31 @@
 {
   "name": "meta",
-  "description": "Tooling über Tooling: Skill/Plugin-Author, Validator, AI-Readiness.",
-  "version": "1.0.0",
+  "description": "Tooling über Tooling: Skill/Plugin/Agent/Command/MCP/MCP-App/Marketplace-Author, Validator, AI-Readiness.",
+  "version": "1.1.0",
   "author": "mkrueer",
   "license": "MIT",
-  "keywords": ["meta", "tooling", "skill-author", "validate"],
+  "keywords": ["meta", "tooling", "skill-author", "validate", "mcp-author", "agent-author"],
   "agents": ["agents/prompt-builder.agent.md"],
   "commands": [
     "commands/new-skill.md",
     "commands/new-plugin.md",
-    "commands/validate.md"
+    "commands/validate.md",
+    "commands/new-agent.md",
+    "commands/new-command.md",
+    "commands/new-mcp.md",
+    "commands/new-mcp-app.md",
+    "commands/new-marketplace.md"
   ],
   "skills": [
     "skills/skill-author/SKILL.md",
     "skills/plugin-author/SKILL.md",
     "skills/marketplace-validate/SKILL.md",
     "skills/agents-md-generate/SKILL.md",
-    "skills/ai-readiness/SKILL.md"
+    "skills/ai-readiness/SKILL.md",
+    "skills/agent-author/SKILL.md",
+    "skills/command-author/SKILL.md",
+    "skills/mcp-author/SKILL.md",
+    "skills/mcp-app-author/SKILL.md",
+    "skills/marketplace-author/SKILL.md"
   ]
 }

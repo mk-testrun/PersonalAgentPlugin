@@ -1,10 +1,10 @@
 {
   "name": "experimental",
-  "description": "Output-Studio: Mermaid, C4, ER, Sequence, Charts, Dashboards, Slides, TTS. CDN-gesichert.",
-  "version": "1.0.0",
+  "description": "Output-Studio: Mermaid, C4, ER, Sequence, Charts, Dashboards, Slides, TTS, Universal-Viewer. CDN-gesichert.",
+  "version": "1.1.0",
   "author": "mkrueer",
   "license": "MIT",
-  "keywords": ["diagrams", "charts", "slides", "dashboard", "visual", "tts"],
+  "keywords": ["diagrams", "charts", "slides", "dashboard", "visual", "tts", "artifact-viewer"],
   "agents": ["agents/visualizer.agent.md"],
   "commands": [
     "commands/visualize.md",
@@ -12,7 +12,8 @@
     "commands/explain.md",
     "commands/speak.md",
     "commands/diagram.md",
-    "commands/dashboard.md"
+    "commands/dashboard.md",
+    "commands/view.md"
   ],
   "skills": [
     "skills/mermaid-diagram/SKILL.md",
@@ -30,6 +31,7 @@
     "skills/presentation-from-adr/SKILL.md",
     "skills/visual-explainer/SKILL.md",
     "skills/web-artifacts-builder/SKILL.md",
-    "skills/speak-summary/SKILL.md"
+    "skills/speak-summary/SKILL.md",
+    "skills/render-artifact/SKILL.md"
   ]
 }

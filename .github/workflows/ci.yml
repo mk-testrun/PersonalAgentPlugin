@@ -50,6 +50,12 @@ jobs:
       - name: Test alarm-mcp scheduler
         working-directory: mcp-servers/alarm-mcp
         run: node test/scheduler.test.mjs
+      - name: Build artifact-viewer
+        working-directory: mcp-servers/artifact-viewer
+        run: npm run build
+      - name: Test artifact-viewer fallback
+        working-directory: mcp-servers/artifact-viewer
+        run: node test/fallback.test.mjs
       - name: Build dotnet-mcpserver-starter
         working-directory: mcp-servers/dotnet-mcpserver-starter
         run: |

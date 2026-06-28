@@ -1,0 +1,8 @@
+{
+  "severity": ["critical", "high", "medium", "low", "info"],
+  "priority": ["P0", "P1", "P2", "P3"],
+  "type": ["bug", "feature", "tech-debt", "documentation", "security", "performance"],
+  "status": ["triage", "ready", "in-progress", "blocked", "done"],
+  "storyPoints": [1, 2, 3, 5, 8, 13, 21],
+  "note": "Wird von story-author und triage-Skill verwendet. Schätzung in SP oder Stunden."
+}
