@@ -1,6 +1,6 @@
 # alarm-mcp
 
-Alarm-, Timer- und Reminder-MCP-Server mit Plattform-Sound und optionaler Desktop-Benachrichtigung.
+Alarm-, Timer- und Reminder-MCP-Server mit Plattform-Sound.
 
 ## Tools
 
@@ -8,8 +8,33 @@ Alarm-, Timer- und Reminder-MCP-Server mit Plattform-Sound und optionaler Deskto
 |---|---|
 | `set_alarm` | Alarm zu bestimmter Zeit (ISO 8601 oder HH:MM) |
 | `set_timer` | Countdown-Timer in Sekunden |
-| `list_alarms` | Alle aktiven Alarme/Timer anzeigen |
-| `cancel_alarm` | Alarm nach ID stornieren |
+| `list_alarms` | Aktive (pending) Alarme/Timer anzeigen |
+| `cancel_alarm` | Pending-Alarm nach ID stornieren (vor dem Feuern) |
+
+## Verhalten / Lebenszyklus
+
+Ein Alarm hat genau einen aktiven Zustand: **pending**. Beim Auslösen wird der
+Plattform-Sound **zweimal** abgespielt (ein einzelner Ton wird leicht überhört),
+danach wechselt der Alarm auf **fired** und gilt als erledigt — er taucht nicht
+mehr in `list_alarms` auf und muss nicht manuell aufgeräumt werden.
+
+```
+pending ──(Zeit erreicht)──▶ fired   (2× Sound, danach inaktiv)
+   │
+   └──(cancel_alarm)────────▶ cancelled
+```
+
+### Grenzen (wichtig)
+
+Der Server kann den laufenden Agenten **nicht** von sich aus unterbrechen — ein
+stdio-MCP hat keinen Push-Kanal. Beim Feuern ertönt der Sound auf dem Host; der
+Agent erfährt davon nur, wenn er anschließend `list_alarms` abfragt. Für
+„weiterarbeiten und beim Auslösen reagieren" muss der Workflow also aktiv pollen.
+
+### Persistenz & Neustart
+
+Alarme werden in `ALARM_STORE` gespeichert. Beim Start lädt der Server den Store
+und **plant pending-Alarme neu ein**. Past-due Alarme feuern beim Laden sofort.
 
 ## Build & Start
 
