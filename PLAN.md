@@ -130,7 +130,7 @@ Status-Legende: ⬜ Offen · 🔄 In Bearbeitung · ✅ Erledigt · ❌ Fehler
 
 ---
 
-## Ergebnis
+## Ergebnis (v1)
 
 **Gesamtstatus: ✅ FERTIG**
 
@@ -140,3 +140,83 @@ Alle Akzeptanzkriterien erfüllt:
 - §7 Format-Härtung durchgeführt
 - Keine Secrets im Repo
 - READMEs mit Install + Produktiv-Test
+
+---
+
+## Addendum v2 ✅
+
+### N1 · artifact-viewer MCP-Server ✅
+
+- ✅ `package.json` (deps: qrcode, mammoth, marked)
+- ✅ `tsconfig.json`
+- ✅ `src/fallback.ts` (isRich, saveArtifact, toContent)
+- ✅ `src/renderers/markdown.ts`
+- ✅ `src/renderers/html.ts`
+- ✅ `src/renderers/mermaid.ts`
+- ✅ `src/renderers/qr.ts` (Unicode-Block Fallback)
+- ✅ `src/renderers/image.ts`
+- ✅ `src/renderers/pdf.ts`
+- ✅ `src/renderers/docx.ts` (mammoth, fehlerresistent)
+- ✅ `src/renderers/threed.ts` (model-viewer CDN)
+- ✅ `src/renderers/media.ts` (audio + video)
+- ✅ `src/index.ts` (11 MCP-Tools)
+- ✅ `test/fallback.test.mjs` → **49/49** Tests grün
+- ✅ `README.md`
+- ✅ Work `experimental` + Home `visual` .mcp.json ergänzt
+- ✅ CI-Workflow ergänzt (Build + Test)
+
+### N2 · Git-Guardrails §2.10 ✅
+
+- ✅ `work/general/policy/git-guardrails.json` (block-Modus)
+- ✅ `home/general/policy/git-guardrails.json` (warn-Modus)
+- ✅ Work `pre-tool-guardian.sh` erweitert (block)
+- ✅ Home `pre-tool-guardian-warn.sh` erweitert (warn; main/master block)
+- ✅ ADR 0004 angelegt (Credit: mattpocock/skills)
+- ✅ ARCHITECTURE.md §2.10 ergänzt
+
+### N3 · meta-Authoring-Suite ✅
+
+Work + Home (identisch):
+- ✅ `skills/agent-author/SKILL.md`
+- ✅ `skills/command-author/SKILL.md`
+- ✅ `skills/mcp-author/SKILL.md`
+- ✅ `skills/mcp-app-author/SKILL.md`
+- ✅ `skills/marketplace-author/SKILL.md`
+- ✅ `commands/new-agent.md`
+- ✅ `commands/new-command.md`
+- ✅ `commands/new-mcp.md`
+- ✅ `commands/new-mcp-app.md`
+- ✅ `commands/new-marketplace.md`
+- ✅ plugin.json aktualisiert (v1.1.0)
+
+### N4 · Story/Grill/TDD/Triage ✅
+
+Work general:
+- ✅ `skills/story-author/SKILL.md`
+- ✅ `skills/grill-me/SKILL.md`
+- ✅ `skills/tdd-loop/SKILL.md`
+- ✅ `skills/triage/SKILL.md`
+- ✅ `commands/story.md`, `grill.md`, `tdd.md`, `triage.md`
+- ✅ `policy/labels.json`
+
+Home general:
+- ✅ `skills/story-author/SKILL.md`
+- ✅ `skills/grill-me/SKILL.md`
+- ✅ `skills/tdd-loop/SKILL.md`
+- ✅ `commands/story.md`, `grill.md`, `tdd.md`
+- ✅ `policy/labels.json`
+
+### N5 · Universal-Anzeige (render-artifact + /view) ✅
+
+- ✅ Work `experimental/skills/render-artifact/SKILL.md`
+- ✅ Work `experimental/commands/view.md`
+- ✅ Home `visual/skills/render-artifact/SKILL.md`
+- ✅ Home `visual/commands/view.md`
+- ✅ Beide .mcp.json mit artifact-viewer ergänzt
+
+### N6 · Validierung ✅
+
+- ✅ `validate-plugins.mjs marketplaces/work` → 0 Fehler
+- ✅ `validate-plugins.mjs marketplaces/home` → 0 Fehler
+- ✅ artifact-viewer fallback.test.mjs → 49/49 grün
+- ✅ Commit + Push auf `claude/copilot-marketplace-monorepo-irc3zh`

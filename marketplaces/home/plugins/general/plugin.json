@@ -1,10 +1,10 @@
 {
   "name": "general",
-  "description": "GitHub Issues/PRs, Profile (MCP-Sets wechseln), Multi-Lang-Conventions, warn-Hooks.",
-  "version": "1.0.0",
+  "description": "GitHub Issues/PRs, Profile (MCP-Sets wechseln), Multi-Lang-Conventions, warn-Hooks, Git-Guardrails, Story/Grill/TDD.",
+  "version": "1.1.0",
   "author": "mkrueer",
   "license": "MIT",
-  "keywords": ["github", "profile", "git", "conventions", "hooks", "python", "go"],
+  "keywords": ["github", "profile", "git", "conventions", "hooks", "python", "go", "tdd", "story"],
   "agents": ["agents/devops-home.agent.md"],
   "commands": [
     "commands/moin.md",
@@ -12,7 +12,10 @@
     "commands/wochenabschluss.md",
     "commands/profile.md",
     "commands/commit.md",
-    "commands/changelog.md"
+    "commands/changelog.md",
+    "commands/story.md",
+    "commands/grill.md",
+    "commands/tdd.md"
   ],
   "skills": [
     "skills/github-issues/SKILL.md",
@@ -23,6 +26,9 @@
     "skills/dotnet-conventions/SKILL.md",
     "skills/python-conventions/SKILL.md",
     "skills/web-conventions/SKILL.md",
-    "skills/homelab-conventions/SKILL.md"
+    "skills/homelab-conventions/SKILL.md",
+    "skills/story-author/SKILL.md",
+    "skills/grill-me/SKILL.md",
+    "skills/tdd-loop/SKILL.md"
   ]
 }

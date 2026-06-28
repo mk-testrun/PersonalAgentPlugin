@@ -1,0 +1,23 @@
+{
+  "_credit": "Adapted from mattpocock/skills · git-guardrails-claude-code",
+  "_mode": "warn (except force-push main/master → block)",
+  "blockAlways": [
+    "git push --force.*main",
+    "git push --force.*master",
+    "git push -f.*main",
+    "git push -f.*master"
+  ],
+  "warn": [
+    "git push --force",
+    "git push -f",
+    "git reset --hard",
+    "git clean -fd",
+    "git clean -fdx",
+    "git branch -D",
+    "git checkout -f",
+    "git switch -f",
+    "git filter-branch",
+    "git filter-repo"
+  ],
+  "note": "Home-Modus: Guardrails warnen statt blockieren — Ausnahme: Force-Push auf main/master bleibt block."
+}

@@ -1,0 +1,21 @@
+{
+  "_credit": "Adapted from mattpocock/skills · git-guardrails-claude-code",
+  "_mode": "block",
+  "block": [
+    "git push --force",
+    "git push -f ",
+    "git push -f\n",
+    "git reset --hard",
+    "git clean -fd",
+    "git clean -fdx",
+    "git branch -D",
+    "git checkout -f",
+    "git switch -f",
+    "git update-ref -d",
+    "git reflog delete",
+    "git filter-branch",
+    "git filter-repo"
+  ],
+  "blockBranches": ["main", "master", "develop", "release/"],
+  "note": "git rebase auf shared branches (main/master/develop) ebenfalls blockiert."
+}

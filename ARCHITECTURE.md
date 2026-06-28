@@ -7,7 +7,7 @@
 
 ## 0. Zielbild
 
-Zwei GitHub-Copilot-CLI-Marketplaces (Work + Home) mit vier geteilten Custom-MCP-Servern.
+Zwei GitHub-Copilot-CLI-Marketplaces (Work + Home) mit fünf geteilten Custom-MCP-Servern.
 
 **Zwei-Welten-Prinzip:** Work und Home teilen **keine** Skills, Agenten, Commands oder Konfiguration.
 Das **einzige** Geteilte sind die Custom-MCP-Server unter `mcp-servers/`.
@@ -22,6 +22,7 @@ mkrueer-copilot/
 │   ├── anonymizer-proxy/     # PII-Proxy für Work/ADO
 │   ├── password-gen/         # Kryptografischer Passwort-Generator
 │   ├── alarm-mcp/            # Alarm/Timer (Home)
+│   ├── artifact-viewer/      # Universal-Renderer (rich/fallback, §3.5)
 │   └── dotnet-mcpserver-starter/  # .NET-Template
 ├── marketplaces/
 │   ├── work/                 # 10 Plugins
@@ -88,31 +89,64 @@ Events: `sessionStart`, `userPromptSubmitted`, `preToolUse`, `postToolUse`, `ses
 
 `preToolUse` gibt JSON aus: `{"permissionDecision":"allow"|"deny","permissionDecisionReason":"…"}`
 
-- **Work:** secret-scan block + tool-guardian block + vuln-scan warn
-- **Home:** secret-scan block + tool-guardian **warn** (allow + Reason)
+- **Work:** secret-scan block + tool-guardian block + git-guardrails block
+- **Home:** secret-scan block + force-push main/master block + tool-guardian **warn** + git-guardrails **warn**
+
+### 2.10 Git-Guardrails
+
+Adaptiert von `mattpocock/skills · git-guardrails-claude-code` (ADR 0004).
+Policy: `policy/git-guardrails.json` im jeweiligen `general`-Plugin.
+
+Gesperrte Operationen: `git push --force/-f`, `git reset --hard`, `git clean -fd[x]`, `git branch -D`, `git checkout/switch -f`, `git update-ref -d`, `git reflog delete`, `git filter-branch/filter-repo`, `git rebase` auf shared branches.
+
+| Modus | Guardrail-Treffer | Ausnahme |
+|---|---|---|
+| Work | `deny` | `--force-with-lease` erlaubt |
+| Home | `allow` + Warnung | force-push auf main/master → `deny` |
 
 ---
 
-## 3. Custom-MCP-Server
+## 3. Custom-MCP-Server (5 Server)
 
 | Server | Typ | Zweck |
 |---|---|---|
 | anonymizer-proxy | Node ESM | PII-Proxy für ADO (Work) |
 | password-gen | TypeScript | Kryptografischer Passwort-Generator |
 | alarm-mcp | TypeScript | Alarme/Timer (Home) |
+| artifact-viewer | TypeScript | Universal-Renderer (rich + fallback, §3.5) |
 | dotnet-mcpserver-starter | .NET 8 | Template für eigene .NET-MCPs |
+
+### §3.5 artifact-viewer
+
+Universal-Renderer: **Rich** (MCP-UI-Resource im VS Code Webview) + **garantierter Fallback** (inline Text + `file://`-Link).
+
+Tools: `render_markdown`, `render_html`, `render_mermaid`, `render_diagram`, `render_qr`, `render_image`, `render_pdf`, `render_docx`, `render_3d`, `play_audio`, `play_video`.
+
+ENV: `VIEWER_RICH=auto|on|off` · Artefakte → `${VIEWER_OUT:-.copilot/state/artifacts}`.
+Deps: `qrcode`, `mammoth`, `marked`. Keine externen Netzaufrufe durch den Server.
+Wiring: Work `experimental` + Home `visual` → `{"command":"artifact-viewer","env":{"VIEWER_RICH":"auto"}}`.
 
 ---
 
 ## 4. Work-Marketplace (10 Plugins)
 
 Stack: Azure DevOps, Blazor/.NET, sharplens (Roslyn), EF-Core, xUnit, Playwright (localhost)
-Sicherheit: Tool-Guardian **block**, PII über anonymizer-proxy, CDN-Allowlist
+Sicherheit: Tool-Guardian **block**, Git-Guardrails **block**, PII über anonymizer-proxy, CDN-Allowlist
+
+**Addendum v2-Erweiterungen:**
+- `general`: +story-author, +grill-me, +tdd-loop, +triage Skills; +/story /grill /tdd /triage Commands; Git-Guardrails; labels.json
+- `meta`: +agent-author, +command-author, +mcp-author, +mcp-app-author, +marketplace-author; +/new-agent /new-command /new-mcp /new-mcp-app /new-marketplace
+- `experimental`: +render-artifact Skill; +/view Command; artifact-viewer in .mcp.json
 
 ## 5. Home-Marketplace (9 Plugins)
 
 Stack: GitHub, Python/C#/Go/TypeScript, Excalidraw, Cloud-Bild-Gen, Home Assistant
-Sicherheit: Tool-Guardian **warn** (secret-scan bleibt block), Playwright darf Internet
+Sicherheit: Tool-Guardian **warn**, Git-Guardrails **warn** (force-push main/master bleibt **block**), secret-scan **block**, Playwright darf Internet
+
+**Addendum v2-Erweiterungen:**
+- `general`: +story-author, +grill-me, +tdd-loop; +/story /grill /tdd Commands; Git-Guardrails; labels.json
+- `meta`: identisch zu Work-meta (5 neue Skills + 5 neue Commands)
+- `visual`: +render-artifact Skill; +/view Command; artifact-viewer in .mcp.json
 
 ---
 
