@@ -18,6 +18,7 @@
     "skills/tests-review/SKILL.md",
     "skills/responsive-view/SKILL.md",
     "skills/e2e-playwright/SKILL.md",
+    "skills/e2e-codegen/SKILL.md",
     "skills/e2e-pipeline-wire/SKILL.md"
   ]
 }
