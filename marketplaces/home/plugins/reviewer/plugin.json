@@ -1,6 +1,6 @@
 {
   "name": "reviewer",
-  "description": "Entspannter Home-Reviewer: WCAG, BFSG, Security, Performance, Playwright auch Internet.",
+  "description": "Home-Reviewer: WCAG, BFSG, Security, Performance, Deps, AI-Readiness; Playwright auch Internet.",
   "version": "1.0.0",
   "author": "mkrueer",
   "license": "MIT",
@@ -18,7 +18,6 @@
     "skills/responsive-view/SKILL.md",
     "skills/dependency-vuln/SKILL.md",
     "skills/env-lint/SKILL.md",
-    "skills/ai-readiness/SKILL.md",
-    "skills/accessibility-report/SKILL.md"
+    "skills/ai-readiness/SKILL.md"
   ]
 }
