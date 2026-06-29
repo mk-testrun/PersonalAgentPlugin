@@ -29,6 +29,13 @@ const { getText, readTextFile } = await import(dist);
   console.log('✓ Test 2: missing input throws clearly');
 }
 
+// Test 2b: empty-string content is valid input and wins over source
+{
+  assert.equal(getText({ content: '' }), '');
+  assert.equal(getText({ content: '', source: '/no/such/file' }), '');
+  console.log('✓ Test 2b: empty content is honored');
+}
+
 // Test 3: read existing file via source
 {
   const dir = mkdtempSync(join(tmpdir(), 'av-'));
