@@ -1,0 +1,28 @@
+{
+  "name": "morning",
+  "description": "Angereichertes Tagesstart-Briefing, Energy-Tracking, Week-Highlight-Reel.",
+  "version": "1.0.0",
+  "author": {
+    "name": "mkrueer"
+  },
+  "repository": "https://github.com/mk-testrun/PersonalAgentPlugin",
+  "license": "MIT",
+  "keywords": [
+    "morning",
+    "briefing",
+    "energy",
+    "dashboard",
+    "notion"
+  ],
+  "agents": [
+    "./agents/morning.agent.md"
+  ],
+  "commands": [
+    "./commands/morning.md"
+  ],
+  "skills": [
+    "./skills/morning-briefing/",
+    "./skills/energy-tracking/",
+    "./skills/week-highlight-reel/"
+  ]
+}

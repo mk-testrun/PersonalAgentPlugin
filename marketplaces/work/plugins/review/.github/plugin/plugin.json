@@ -1,0 +1,44 @@
+{
+  "name": "review",
+  "description": "Multi-Domain-Reviewer: OWASP ASVS L2, WCAG 2.2, BFSG, SQL, Deps, Performance, Pipelines.",
+  "version": "1.0.0",
+  "author": {
+    "name": "mkrueer"
+  },
+  "repository": "https://github.com/mk-testrun/PersonalAgentPlugin",
+  "license": "MIT",
+  "keywords": [
+    "review",
+    "owasp",
+    "wcag",
+    "security",
+    "accessibility",
+    "performance"
+  ],
+  "agents": [
+    "./agents/reviewer.agent.md"
+  ],
+  "commands": [
+    "./commands/review.md",
+    "./commands/review-pr.md",
+    "./commands/review-full.md"
+  ],
+  "skills": [
+    "./skills/review-aggregate/",
+    "./skills/code-review/",
+    "./skills/security-review/",
+    "./skills/owasp-scan/",
+    "./skills/performance-review/",
+    "./skills/sql-review/",
+    "./skills/dependency-vuln/",
+    "./skills/lts-check/",
+    "./skills/license-check/",
+    "./skills/secrets-scan/",
+    "./skills/pipeline-review/",
+    "./skills/env-lint/",
+    "./skills/accessibility-wcag/",
+    "./skills/accessibility-bfsg/",
+    "./skills/api-contract-review/",
+    "./skills/architecture-review/"
+  ]
+}

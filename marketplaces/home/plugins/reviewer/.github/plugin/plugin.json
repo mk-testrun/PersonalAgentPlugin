@@ -1,0 +1,37 @@
+{
+  "name": "reviewer",
+  "description": "Home-Reviewer: WCAG, BFSG, Security, Performance, Deps, AI-Readiness; Playwright auch Internet.",
+  "version": "1.0.0",
+  "author": {
+    "name": "mkrueer"
+  },
+  "repository": "https://github.com/mk-testrun/PersonalAgentPlugin",
+  "license": "MIT",
+  "keywords": [
+    "review",
+    "wcag",
+    "security",
+    "accessibility",
+    "performance",
+    "playwright"
+  ],
+  "agents": [
+    "./agents/reviewer.agent.md"
+  ],
+  "commands": [
+    "./commands/review.md"
+  ],
+  "skills": [
+    "./skills/review-aggregate/",
+    "./skills/code-review/",
+    "./skills/security-review/",
+    "./skills/performance-review/",
+    "./skills/accessibility-wcag/",
+    "./skills/accessibility-bfsg/",
+    "./skills/lts-check/",
+    "./skills/responsive-view/",
+    "./skills/dependency-vuln/",
+    "./skills/env-lint/",
+    "./skills/ai-readiness/"
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "name": "visual",
+  "description": "Visual-first: Mermaid, Chart.js, Excalidraw, Cloud-Bild-Gen, SVG, Timeline, Mindmap, Universal-Viewer.",
+  "version": "1.1.0",
+  "author": {
+    "name": "mkrueer"
+  },
+  "repository": "https://github.com/mk-testrun/PersonalAgentPlugin",
+  "license": "MIT",
+  "keywords": [
+    "visual",
+    "charts",
+    "excalidraw",
+    "diagrams",
+    "image-gen",
+    "mermaid",
+    "artifact-viewer"
+  ],
+  "agents": [
+    "./agents/visualizer.agent.md"
+  ],
+  "commands": [
+    "./commands/visualize.md",
+    "./commands/slides.md",
+    "./commands/explain.md",
+    "./commands/view.md"
+  ],
+  "skills": [
+    "./skills/mermaid-diagram/",
+    "./skills/chartjs-data/",
+    "./skills/html-dashboard/",
+    "./skills/frontend-slides/",
+    "./skills/visual-explainer/",
+    "./skills/web-artifacts-builder/",
+    "./skills/excalidraw-sketch/",
+    "./skills/image-generate/",
+    "./skills/timeline/",
+    "./skills/mind-map/",
+    "./skills/svg-illustration/",
+    "./skills/table-as-grid/",
+    "./skills/kanban-render/",
+    "./skills/render-artifact/"
+  ]
+}

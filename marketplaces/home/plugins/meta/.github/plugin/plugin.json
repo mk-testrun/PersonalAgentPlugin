@@ -1,0 +1,43 @@
+{
+  "name": "meta",
+  "description": "Tooling über Tooling: Skill/Plugin/Agent/Command/MCP/MCP-App/Marketplace-Author, Validator, AI-Readiness.",
+  "version": "1.1.0",
+  "author": {
+    "name": "mkrueer"
+  },
+  "repository": "https://github.com/mk-testrun/PersonalAgentPlugin",
+  "license": "MIT",
+  "keywords": [
+    "meta",
+    "tooling",
+    "skill-author",
+    "validate",
+    "mcp-author",
+    "agent-author"
+  ],
+  "agents": [
+    "./agents/prompt-builder.agent.md"
+  ],
+  "commands": [
+    "./commands/new-skill.md",
+    "./commands/new-plugin.md",
+    "./commands/validate.md",
+    "./commands/new-agent.md",
+    "./commands/new-command.md",
+    "./commands/new-mcp.md",
+    "./commands/new-mcp-app.md",
+    "./commands/new-marketplace.md"
+  ],
+  "skills": [
+    "./skills/skill-author/",
+    "./skills/plugin-author/",
+    "./skills/marketplace-validate/",
+    "./skills/agents-md-generate/",
+    "./skills/ai-readiness/",
+    "./skills/agent-author/",
+    "./skills/command-author/",
+    "./skills/mcp-author/",
+    "./skills/mcp-app-author/",
+    "./skills/marketplace-author/"
+  ]
+}

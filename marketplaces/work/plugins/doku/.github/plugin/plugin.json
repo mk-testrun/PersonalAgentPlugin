@@ -1,0 +1,26 @@
+{
+  "name": "doku",
+  "description": "Confluence-Dokumentation: Draft, Storage-Format, Code→Doc, README, Diagramm-Embed.",
+  "version": "1.0.0",
+  "author": {
+    "name": "mkrueer"
+  },
+  "repository": "https://github.com/mk-testrun/PersonalAgentPlugin",
+  "license": "MIT",
+  "keywords": [
+    "confluence",
+    "documentation",
+    "readme",
+    "storage-format"
+  ],
+  "agents": [
+    "./agents/documenter.agent.md"
+  ],
+  "skills": [
+    "./skills/confluence-draft/",
+    "./skills/confluence-format/",
+    "./skills/doc-from-code/",
+    "./skills/diagram-embed/",
+    "./skills/readme-generate/"
+  ]
+}
