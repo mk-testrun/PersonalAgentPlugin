@@ -1,9 +1,8 @@
 ---
-description: Kompletter Onboarding-Durchlauf — von env-doctor bis first-task.
+description: Geführter Onboarding-Einstieg — erkennt Host & Rolle und bietet ein Bereichs-Menü.
 ---
-Führe den vollständigen Onboarding-Ablauf durch:
-1. env-doctor ausführen und alle Probleme lösen
-2. repo-orientation: Stack, Build, Tests erklären
-3. codebase-tour: Composition-Root, Datenfluss, Kernflows
-4. onboarding-checklist anzeigen und abhaken
-5. Optional: first-task-pick ausführen (mit [CONFIRM])
+Nutze onboard-initiator:
+1. Host erkennen (host-detect) + Rolle/Tiefe kompakt erfragen → state/onboarding.json.
+2. Bereichs-Menü zeigen (Tool/Host · Marketplace · Projekt) und den gewählten Track delegieren
+   (tool-onboarding / marketplace-onboarding / project-onboarding).
+3. Fortschritt via onboarding-checklist tracken. Nicht überladen — nur den gewählten Bereich.
