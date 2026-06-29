@@ -1,0 +1,32 @@
+[
+  {
+    "skill": "code-coverage",
+    "query": "Measure coverage and tell me if we pass the gate.",
+    "expected_behavior": [
+      "Runs dotnet test with XPlat Code Coverage to produce a Cobertura report",
+      "Runs scripts/coverage-gate.mjs to decide the gate deterministically (not by eyeballing)",
+      "Reports overall and domain branch coverage vs the 70%/80% thresholds",
+      "Raises [GATE] when a scope is below its threshold"
+    ]
+  },
+  {
+    "skill": "code-coverage",
+    "query": "Check this coverage report against the gate.",
+    "files": ["fixtures/cobertura-sample.xml"],
+    "expected_behavior": [
+      "Runs coverage-gate.mjs on the report",
+      "Computes overall 73% (>=70 pass) and domain 85% (>=80 pass) → PASS",
+      "Lists per-package rates"
+    ]
+  },
+  {
+    "skill": "code-coverage",
+    "query": "Our domain layer dropped — does it still pass?",
+    "files": ["fixtures/cobertura-fail.xml"],
+    "expected_behavior": [
+      "Detects domain branch coverage 65% < 80% and fails the gate (exit 1)",
+      "Names the under-covered domain package to target first",
+      "Recommends not merging until the gate passes"
+    ]
+  }
+]
