@@ -16,14 +16,14 @@
     {
       "name": "onboarding",
       "source": "plugins/onboarding",
-      "description": "Neue Entwickler einführen: env-doctor, codebase-tour, first-task.",
+      "description": "Geführtes Onboarding: Initiator (Host+Rolle) → Tracks Tool/Host, Marketplace, Projekt.",
       "version": "1.0.0",
       "keywords": ["onboarding", "setup", "tour", "confluence"]
     },
     {
       "name": "blazor",
       "source": "plugins/blazor",
-      "description": "Blazor/.NET-Conventions, EF-Core-Skills (9), Roslyn/sharplens.",
+      "description": "Blazor/.NET-Conventions, EF-Core-Skills (7), Roslyn/sharplens.",
       "version": "1.0.0",
       "keywords": ["blazor", "dotnet", "efcore", "roslyn", "csharp"]
     },

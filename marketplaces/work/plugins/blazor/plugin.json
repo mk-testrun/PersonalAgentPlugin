@@ -1,7 +1,7 @@
 {
   "name": "blazor",
-  "description": "Blazor/.NET-Conventions, EF-Core (9 Skills), Roslyn via sharplens, SQL-Conventions.",
-  "version": "1.0.0",
+  "description": "Blazor/.NET-Conventions, EF-Core (7 Skills), Roslyn via sharplens, SQL-Conventions.",
+  "version": "1.1.0",
   "author": "mkrueer",
   "license": "MIT",
   "keywords": ["blazor", "dotnet", "efcore", "roslyn", "csharp", "sql"],
@@ -16,9 +16,7 @@
     "skills/efcore-migration-revert-plan/SKILL.md",
     "skills/efcore-entity-design-review/SKILL.md",
     "skills/efcore-query-explain/SKILL.md",
-    "skills/efcore-n-plus-one-detect/SKILL.md",
     "skills/efcore-index-suggest/SKILL.md",
-    "skills/efcore-shadow-prop-audit/SKILL.md",
     "skills/efcore-compiled-query-suggest/SKILL.md"
   ]
 }

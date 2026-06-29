@@ -23,8 +23,8 @@ copilot plugin install onboarding
 | Plugin | Beschreibung |
 |---|---|
 | general | ADO-Fundament, PII-Proxy, Hooks, Commits, Git-Flow |
-| onboarding | Neue Entwickler einführen |
-| blazor | Blazor/.NET + EF-Core (9 Skills) + sharplens |
+| onboarding | Geführtes Onboarding: Initiator + Tracks (Tool/Marketplace/Projekt) |
+| blazor | Blazor/.NET + EF-Core (7 Skills) + sharplens |
 | testing | dotnet test, Coverage, E2E (localhost) |
 | review | Multi-Domain-Reviewer: OWASP, WCAG, BFSG, SQL |
 | orchestration | Opt-in-Workflows: /feature, /bugfix, /ship |
