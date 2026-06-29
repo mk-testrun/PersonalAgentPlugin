@@ -1,37 +1,54 @@
 ---
 name: e2e-codegen
-description: Nutze um persistente Playwright-Spec-Dateien aus einem Flow zu generieren, die committet werden und danach token-frei in CI laufen.
-mcp_tools:
-  - playwright
+description: >-
+  Generates persistent, committed Playwright spec files (e2e/*.spec.ts) from a described or recorded
+  user flow, so the tests run in CI token-free (plain `playwright test`, no LLM at runtime). Use when
+  asked to write/generate end-to-end tests, turn a flow into a durable test, or add Playwright specs
+  to a project. Emphasizes stable role/testid selectors, fixtures, version pinning, and localhost-only
+  targets. Distinct from e2e-playwright (runs tests) and e2e-pipeline-wire (CI stage).
 ---
 
-## Zweck
+# E2E Codegen
 
-Erzeugt **dauerhafte** Test-Dateien (`e2e/*.spec.ts`), keine Wegwerf-Ausführung.
-Einmal generiert und committet, laufen sie in CI **ohne LLM/Token** — reines `playwright test`.
+Produces **durable** Playwright test files that are committed and then run in CI **without any model**
+— the opposite of one-shot exploration. Once generated and green, they are plain `playwright test`.
 
-**Abgrenzung:** `e2e-playwright` = Tests ausführen · `e2e-pipeline-wire` = CI-Stage erzeugen ·
-`e2e-codegen` = die Tests selbst generieren.
+## When to Use This Skill
 
-## Vorgehen
+- "Write E2E tests for this flow / page / feature"
+- Turning a `playwright codegen` recording into a maintainable, committed spec
+- Adding regression coverage that runs token-free in CI
 
-1. **Flow erfassen** — Schritte als Klartext oder via `playwright codegen http://localhost:*` aufzeichnen.
-2. **Spec generieren** — sauberes TypeScript nach `e2e/<feature>.spec.ts`:
-   - **Stabile Selektoren:** `getByRole`/`getByLabel`/`data-testid` — **kein** brüchiges CSS/XPath/nth-child.
-   - **Assertions** auf sichtbares Verhalten (`toBeVisible`, `toHaveURL`, `toHaveText`).
-   - **Fixtures/`beforeEach`** für Setup; keine harten `waitForTimeout` → auto-waiting/`expect`-Polling.
-   - **Parametrisierung** (`test.describe` + Daten) statt Copy-Paste.
-3. **Pinning** — Playwright-Version in `package.json` exakt pinnen; `playwright.config.ts` mit `baseURL` (localhost) und Reporter.
-4. **Selbsttest** — generierte Spec **einmal** lokal grün laufen lassen (über e2e-playwright), dann committen.
-5. **CI-Hinweis** — Verdrahtung über `e2e-pipeline-wire`; CI braucht danach kein Modell mehr.
+Not here: running existing tests → `e2e-playwright`; wiring the CI stage → `e2e-pipeline-wire`.
 
-## Qualitäts-Checkliste der generierten Tests
+## Workflow
 
-- Deterministisch (keine Zeit-/Zufalls-/Reihenfolgeabhängigkeit, keine `sleep`).
-- Isoliert (eigener State pro Test, Teardown sauber).
-- Aussagekräftige Testnamen (`feature_action_expectedResult`).
-- Nur `localhost:*` als Target (Tool-Guardian).
+### Step 1 — Capture the flow
+From a description or `playwright codegen http://localhost:*`. Identify the user-visible steps and the
+success assertions (URL, visible text, element state).
+
+### Step 2 — Generate the spec
+Write `e2e/<feature>.spec.ts` following
+**[references/selectors-and-structure.md](references/selectors-and-structure.md)** —
+stable selectors (`getByRole`/`getByLabel`/`data-testid`), fixtures, auto-waiting (no `waitForTimeout`),
+parametrization via `test.describe`.
+
+### Step 3 — Pin & configure
+Pin the Playwright version in `package.json`; ensure `playwright.config.ts` sets `baseURL`
+(localhost) and a reporter. See **[references/ci-integration.md](references/ci-integration.md)**.
+
+### Step 4 — Self-test once
+Run the generated spec once locally (via `e2e-playwright`) until green, then it's commit-ready.
+
+### Step 5 — Hand off to CI
+Wire via `e2e-pipeline-wire`. After this, CI needs no model — just `playwright test`.
+
+## Quality Bar (generated tests)
+
+Deterministic (no time/order/randomness, no `sleep`) · isolated (own state + teardown) · meaningful
+names (`feature_action_expectedResult`) · localhost-only target (Tool-Guardian).
 
 ## Output
 
-Committfähige `e2e/*.spec.ts` + ggf. `playwright.config.ts`. Pfade ausgeben; kein Auto-Commit ohne [CONFIRM].
+Commit-ready `e2e/*.spec.ts` (+ `playwright.config.ts` if missing). Print paths; no auto-commit
+without [CONFIRM].

@@ -1,46 +1,55 @@
 ---
 name: loop
-description: Nutze für einen kontrollierten Agent-Loop — iterativ an einem Ziel arbeiten bis Erfolgskriterium erfüllt, mit hartem Iterationslimit und State zwischen den Runden. Nur auf expliziten /loop-Trigger.
+description: >-
+  Runs a controlled agent loop — iterating Plan→Act→Verify→Decide toward an objective until a
+  measurable success criterion is met or a hard iteration limit is hit, with state persisted between
+  rounds. Use only on an explicit /loop trigger when a task needs repeated attempts (e.g. "keep fixing
+  until tests pass", "iterate until the gate is green"). Enforces a hard limit, stop-conditions, and a
+  final report. Never auto-starts.
 ---
 
-Ein Agent-Loop führt **dasselbe Vorgehen wiederholt** aus, bis ein klar
-definiertes Ziel erreicht ist — statt einer einzelnen Antwort. Disziplin ist
-alles: ohne Erfolgskriterium und Hard-Limit wird daraus eine teure Endlosschleife.
+# Agent Loop
 
-## Pflicht-Setup (vor Iteration 1)
+Repeats one disciplined cycle toward a goal instead of producing a single answer. Discipline is the
+whole point: without a success criterion and a hard limit it becomes an expensive infinite loop.
 
-1. **Ziel** — eine Aufgabe, in einem Satz.
-2. **Erfolgskriterium** — objektiv & prüfbar (z.B. „`dotnet test` grün", „0 high-Findings",
-   „Build + Lint sauber"). Kein vages „sieht gut aus".
-3. **Hard-Limit** — `max_iterations` (Default **5**, hart). Wird es erreicht → **stop**, kein Override.
-4. **Loop-ID + State-Datei** — `state/loop/<id>.json` anlegen (Ziel, Kriterium, Limit, Iterationszähler, Verlauf).
+## When to Use This Skill
 
-## Iterations-Protokoll (je Runde)
+- Explicit `/loop <goal>` only — never automatically
+- Tasks that genuinely need iteration: "fix until `dotnet test` is green", "drive the gate to pass"
+- Bounded autonomous refinement with a checkable end state
 
-| Phase | Tätigkeit |
+## Mandatory Setup (before iteration 1)
+
+1. **Goal** — one sentence.
+2. **Success criterion** — objective & checkable (tests green, 0 high findings, build+lint clean).
+3. **Hard limit** — `max_iterations` (default 5, hard). Reaching it = **stop**.
+4. **Loop id + state file** — `state/loop/<id>.json` (see
+   **[references/protocol.md](references/protocol.md)** for the schema and the full state machine).
+
+## Per-Iteration Cycle
+
+| Phase | Action |
 |---|---|
-| **Plan** | Kleinste sinnvolle nächste Änderung benennen (eine Sache, kein Sammel-Refactor). |
-| **Aktion** | Genau diese Änderung umsetzen — vor jeder mutierenden Aktion **[CONFIRM]**. |
-| **Verifikation** | Erfolgskriterium messen (Tests/Build/Review ausführen). Ergebnis ist Fakt, keine Annahme. |
-| **Entscheidung** | Kriterium erfüllt → **stop (Erfolg)**. Sonst: Erkenntnis in State schreiben, Zähler+1, nächste Runde. |
+| **Plan** | Smallest sensible next change (one thing). |
+| **Act** | Make exactly that change — mutating actions require **[CONFIRM]**. |
+| **Verify** | Measure the success criterion (run tests/build/review). Result is fact, not assumption. |
+| **Decide** | Met → **stop (success)**. Else record learning, increment, next round. |
 
-Nach jeder Runde State persistieren: was versucht, was gemessen, warum weiter.
+Persist state after every round.
 
-## Stop-Conditions (jede beendet den Loop)
+## Stop-Conditions (any ends the loop)
 
-- ✅ **Erfolg** — Erfolgskriterium erfüllt.
-- 🛑 **Limit** — `max_iterations` erreicht → Stillstand-Bericht, kein Weitermachen.
-- ❌ **Fehler/Blockade** — nicht selbst behebbares Hindernis (fehlende Credentials, kaputte Umgebung).
-- 🔁 **Kein Fortschritt** — zwei Runden ohne messbare Verbesserung am Kriterium → stop, nicht endlos variieren.
-- ⏹️ **Abbruch** — Nutzer bricht ab.
+✅ success · 🛑 limit reached · ❌ unrecoverable blocker · 🔁 two rounds with no measurable progress ·
+⏹️ user abort. Details and the report format are in **[references/protocol.md](references/protocol.md)**.
 
-## Abschlussbericht (immer)
+## Output
 
-Grund des Stopps · erreichter Stand vs. Kriterium · Iterationen verbraucht ·
-nächste empfohlene Schritte bei Nichterfolg. State-Datei bleibt zur Nachverfolgung liegen.
+A final report: stop reason · state vs criterion · iterations used · recommended next steps if not
+solved. The state file remains for traceability.
 
-## Regeln
+## Rules
 
-- Nur auf expliziten `/loop`-Trigger — **nie** automatisch.
-- Vorhandene Skills/Agenten **nutzen statt neu bauen** (z.B. testing/dotnet-test-run, review-Skills zur Verifikation).
-- Niemals das Hard-Limit überschreiten. Niemals das Erfolgskriterium nachträglich aufweichen, um „fertig" zu erscheinen.
+- Explicit trigger only. Reuse existing skills/agents for the work (e.g. `testing/dotnet-test-run`,
+  `review` skills for verification) instead of reimplementing.
+- Never exceed the hard limit. Never weaken the success criterion to appear "done".

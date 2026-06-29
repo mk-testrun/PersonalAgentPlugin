@@ -1,35 +1,49 @@
 ---
 name: efcore-query-explain
-description: Nutze um einen EF-Core-LINQ-Query auf SQL-Übersetzung, N+1-Risiken und Client-Evaluation zu analysieren.
+description: >-
+  Analyzes an EF Core LINQ query for its SQL translation and performance traps — client evaluation,
+  N+1 from lazy loading, cartesian explosion from multiple collection Includes, over-fetching, and
+  missing AsNoTracking. Use when asked why an EF Core query is slow, what SQL it generates, whether it
+  causes N+1, or to optimize a LINQ/DbContext query. Read-only analysis; produces concrete before/after
+  rewrites. Index suggestions → efcore-index-suggest; compiled queries → efcore-compiled-query-suggest.
 ---
 
-## Scope
+# EF Core Query Explain
 
-LINQ→SQL-Verhalten eines konkreten Queries verstehen und Performance-Fallen finden.
-Index-Empfehlungen → efcore-index-suggest; Compiled-Queries → efcore-compiled-query-suggest.
+Understand what a LINQ query actually does against the database and find the performance traps before
+they hit production. Read-only: it explains and rewrites, it never changes the schema.
 
-## Kontext
+## When to Use This Skill
 
-- DbContext: `${env:EF_DBCONTEXT:-AppDbContext}` · Provider: `${env:DB_PROVIDER:-SqlServer}`
-- Connection nur via `dotnet user-secrets` (nie im Klartext).
+- "Why is this query slow?" / "What SQL does this generate?"
+- Suspected N+1, cartesian explosion, or client-side evaluation
+- Optimizing a specific LINQ/`DbContext` query before adding indexes
 
-## Schritte
+## How It Works
 
-1. **SQL sichtbar machen** — `query.ToQueryString()` ausgeben (oder `LogTo`/`EnableSensitiveDataLogging` nur lokal).
-2. **Übersetzbarkeit** — prüfen, ob der ganze Query serverseitig läuft; gebrochene Übersetzung → Client-Eval.
-3. **N+1 erkennen** — Navigation-Zugriff in Schleifen / `foreach` ohne `Include`/Projektion → eine Query pro Zeile.
-4. **Include-Explosion** — mehrere Collection-`Include` erzeugen kartesisches Produkt → `AsSplitQuery()` erwägen.
-5. **Materialisierung** — `ToList()`/`AsEnumerable()` zu früh (Filter danach im Speicher) markieren.
+1. Make the SQL visible (`ToQueryString()` / `LogTo`).
+2. Check the whole query translates server-side (no client eval).
+3. Trace navigations to spot N+1 and Include explosions.
+4. Propose a concrete before/after rewrite.
 
-## Checkliste (→ Befunde)
+## Workflow
 
-1. **EFQ-CLIENTEVAL** — Ausdruck nicht übersetzbar, läuft im Client (EF Core wirft bzw. lädt alles). *(high)*
-2. **EFQ-NPLUS1** — Lazy-Loading / Navigation-Zugriff in Schleife statt `Include`/Projektion. *(high)*
-3. **EFQ-CARTESIAN** — Mehrere Collection-Includes ohne `AsSplitQuery` → Zeilen-Explosion. *(medium)*
-4. **EFQ-OVERFETCH** — Ganze Entity geladen, obwohl nur Felder gebraucht → `Select`-Projektion auf DTO. *(medium)*
-5. **EFQ-TRACK** — Read-only-Query ohne `AsNoTracking()`. *(medium)*
-6. **EFQ-LATEMATERIALIZE** — Filter/Sort nach `ToList()` im Speicher statt in SQL. *(medium)*
+### Step 1 — Surface the SQL
+`query.ToQueryString()` (or `LogTo`/`EnableSensitiveDataLogging` locally only).
+
+### Step 2 — Translation & traps
+Walk **[references/translation-pitfalls.md](references/translation-pitfalls.md)**: client evaluation,
+cartesian explosion (`AsSplitQuery`), over-fetching (projection), missing `AsNoTracking`, late
+materialization.
+
+### Step 3 — N+1
+Apply **[references/n-plus-one-patterns.md](references/n-plus-one-patterns.md)** to find navigation
+access inside loops and the Include/projection fix.
+
+### Step 4 — Rewrite
+Give a minimal before/after snippet + the resulting SQL shape.
 
 ## Output
 
-Befunde + erzeugtes SQL + konkretes Vorher/Nachher-Snippet. Keine Schema-/DB-Änderung (read-only).
+Findings (ruleId `EFQ-*`, `area: performance`) + generated SQL + concrete before/after rewrite.
+Read-only — no migration or DB change. For indexes: `efcore-index-suggest`.

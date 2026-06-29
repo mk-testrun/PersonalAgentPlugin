@@ -1,0 +1,30 @@
+[
+  {
+    "skill": "loop",
+    "query": "/loop keep fixing until the unit tests pass",
+    "expected_behavior": [
+      "Defines goal, an objective success criterion (dotnet test exits 0), and a hard max_iterations",
+      "Creates state/loop/<id>.json and updates it each round",
+      "Runs Plan→Act→Verify→Decide, measuring tests each round (delegates to testing/dotnet-test-run)",
+      "Stops on success or hard limit with a final report"
+    ]
+  },
+  {
+    "skill": "loop",
+    "query": "/loop reduce the review findings to zero high severity (max 3 rounds)",
+    "expected_behavior": [
+      "Sets max_iterations to 3 and the criterion to 0 high findings",
+      "Stops after 3 rounds even if not met, with a standstill report",
+      "Never weakens the criterion to appear done"
+    ]
+  },
+  {
+    "skill": "loop",
+    "query": "/loop fix the flaky deploy script",
+    "expected_behavior": [
+      "Stops with a 'no-progress' or 'blocker' report if two rounds show no measurable improvement",
+      "Requires [CONFIRM] before each mutating action",
+      "Does not exceed the hard iteration limit"
+    ]
+  }
+]

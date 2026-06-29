@@ -1,0 +1,30 @@
+[
+  {
+    "skill": "e2e-codegen",
+    "query": "Write an end-to-end test for the login flow so it runs in CI.",
+    "expected_behavior": [
+      "Generates a committed e2e/*.spec.ts using getByRole/getByLabel selectors (no CSS/xpath/nth-child)",
+      "Uses auto-waiting assertions (toBeVisible/toHaveURL), no waitForTimeout",
+      "Pins the Playwright version and sets baseURL to localhost",
+      "States the test runs token-free in CI via plain `playwright test`"
+    ]
+  },
+  {
+    "skill": "e2e-codegen",
+    "query": "Turn this playwright codegen recording into a maintainable test.",
+    "expected_behavior": [
+      "Replaces brittle recorded selectors with role/label/testid selectors",
+      "Adds a descriptive test name (feature_action_expectedResult) and isolates state in beforeEach",
+      "Self-tests once locally before declaring it commit-ready"
+    ]
+  },
+  {
+    "skill": "e2e-codegen",
+    "query": "Add E2E coverage for three checkout variations.",
+    "expected_behavior": [
+      "Parametrizes the cases with test.describe + a loop instead of copy-pasting",
+      "Keeps each case deterministic and isolated",
+      "Targets only localhost"
+    ]
+  }
+]
