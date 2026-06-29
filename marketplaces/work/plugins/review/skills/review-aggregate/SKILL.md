@@ -22,8 +22,13 @@ independently runnable; this one consolidates their output.
 
 ## Workflow
 
-### Step 1 — Collect
+### Step 1 — Collect & validate
 Gather the `findings[]` arrays from every review skill that ran (schema: `docs/findings-schema.md`).
+Self-check the merged input before aggregating:
+```bash
+node tools/validate-findings.mjs <findings.json>
+```
+Fix any schema problems it reports, then continue.
 
 ### Step 2 — Aggregate (run the script — deterministic, low freedom)
 Don't merge by hand. Run the bundled utility:
