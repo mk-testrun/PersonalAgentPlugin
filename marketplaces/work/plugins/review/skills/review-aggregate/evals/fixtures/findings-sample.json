@@ -1,0 +1,6 @@
+[
+  {"severity":"high","area":"security","ruleId":"SEC-COOKIE","file":"src/Auth.cs","line":20,"message":"Auth cookie missing HttpOnly","suggestion":"Set HttpOnly","source":"security-review"},
+  {"severity":"critical","area":"security","ruleId":"SEC-SQL","file":"src/Data/OrderRepo.cs","line":42,"message":"SQL injection via FromSqlRaw","suggestion":"Use FromSqlInterpolated","source":"security-review"},
+  {"severity":"medium","area":"sql","ruleId":"SQL-INDEX","file":"src/Data/OrderRepo.cs","line":55,"message":"Missing index on CustomerId","suggestion":"Add index","source":"sql-review"},
+  {"severity":"high","area":"security","ruleId":"SEC-SQL","file":"src/Data/OrderRepo.cs","line":42,"message":"SQLi (dup, lower sev)","suggestion":"Parameterize","source":"owasp-scan"}
+]

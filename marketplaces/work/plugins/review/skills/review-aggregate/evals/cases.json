@@ -26,5 +26,15 @@
       "Renders the report header as PASS",
       "Still lists the low/info findings in the per-area sections"
     ]
+  },
+  {
+    "skill": "review-aggregate",
+    "query": "Aggregate this findings file deterministically.",
+    "files": ["fixtures/findings-sample.json"],
+    "expected_behavior": [
+      "Runs scripts/aggregate.mjs on the fixture instead of merging by hand",
+      "Output has gate=true, the duplicate SEC-SQL merged to critical with both sources, sorted critical→high→medium",
+      "Produces the same result on repeated runs (deterministic)"
+    ]
   }
 ]
