@@ -1,0 +1,30 @@
+[
+  {
+    "skill": "marketplace-onboarding",
+    "query": "What can this marketplace do and which plugins do I need to build and test a Blazor feature?",
+    "expected_behavior": [
+      "Explains the marketplace structure briefly, adapted to the user's role",
+      "Runs copilot plugin list to show installed vs available",
+      "Recommends only the needed plugins (blazor + testing + review) from the catalog, not all",
+      "Offers to install missing ones with [CONFIRM] and verifies afterwards"
+    ]
+  },
+  {
+    "skill": "marketplace-onboarding",
+    "query": "Install the review plugin for me.",
+    "expected_behavior": [
+      "Asks for [CONFIRM] before running copilot plugin install review",
+      "After install, re-lists and confirms the plugin's skills/commands are visible",
+      "Diagnoses if the plugin does not appear (marketplace added? manifest lists it?)"
+    ]
+  },
+  {
+    "skill": "marketplace-onboarding",
+    "query": "I'm not a developer — what is all this and what would help me?",
+    "expected_behavior": [
+      "Explains plugins by their benefit in plain language, no jargon",
+      "Does not overload with the full list — asks what the user wants to achieve first",
+      "Only writes progress to state/onboarding.json"
+    ]
+  }
+]

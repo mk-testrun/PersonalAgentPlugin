@@ -1,26 +1,48 @@
 ---
 name: security-review
-description: Nutze für statische Web-Sicherheitshärtung — Headers, AuthN/AuthZ, Cookies, Input-Validierung, Output-Encoding, Secrets. Sprachneutral.
+description: >-
+  Reviews code like a security researcher — tracing untrusted input to dangerous sinks — across
+  JavaScript/TypeScript, Python, Go, and other stacks. Use when asked to review or audit code for
+  security, harden a project, or check for injection, XSS, SSRF, broken access control, weak crypto,
+  hardcoded secrets, or insecure config — or phrasings like "is this secure?", "security review",
+  "find vulnerabilities". Language-neutral; produces findings[] with severity + concrete fixes and a
+  [GATE] on critical/high.
 ---
 
-## Scope
+# Security Review (Home)
 
-Code-/Konfig-basierte Security-Härtung (statisch), framework-neutral. Reine Secret-Funde → secrets-scan-Konzept; Dependency-CVEs → dependency-vuln.
+Static security hardening for private projects, language-neutral. It follows untrusted data from its
+source to dangerous sinks, reasons about access intent, and proposes a concrete fix per finding.
 
-## Checkliste
+## When to Use This Skill
 
-1. **SEC-HEADERS** — CSP, HSTS, `X-Content-Type-Options`, `X-Frame-Options`/`frame-ancestors`, `Referrer-Policy`. *(high)*
-2. **SEC-AUTHN** — Auth an jedem nicht-öffentlichen Endpoint; kein auskommentiertes/umgangenes Auth. *(critical)*
-3. **SEC-AUTHZ** — Serverseitige Rollen-/Ownership-Prüfung; keine IDOR. *(critical)*
-4. **SEC-COOKIE** — Auth-Cookies `Secure`, `HttpOnly`, `SameSite`. *(high)*
-5. **SEC-INPUT** — Serverseitige Whitelist-Validierung; Client-Checks nicht vertrauen. *(high)*
-6. **SEC-ENCODE** — Kontextkorrektes Output-Encoding; kein `innerHTML`/`dangerouslySetInnerHTML` aus Nutzerdaten. *(critical)*
-7. **SEC-INJECT** — Keine String-gebauten Queries/Commands; parametrisiert. *(critical)*
-8. **SEC-CRYPTO** — Kein MD5/SHA1 für Passwörter (bcrypt/argon2/PBKDF2); kein Eigen-Krypto; TLS erzwungen. *(critical)*
-9. **SEC-SECRETS** — Keine Keys/Tokens/Connection-Strings im Code/Config; nur über Env/Secret-Store. *(critical)*
-10. **SEC-DEPS** — Keine offensichtlich unsicheren Defaults (CORS `*` mit Credentials, offene Debug-Endpoints). *(high)*
-11. **SEC-LOGGING** — Keine Secrets/PII im Log; keine Stacktraces an den Client. *(medium)*
+- Reviewing/auditing code or a diff for security weaknesses
+- Checking injection (SQL/command), XSS, SSRF, CSRF, deserialization
+- Verifying authentication/authorization and object ownership (IDOR)
+- Finding hardcoded secrets or insecure configuration
+- "is this secure?", "harden this", "find vulnerabilities"
+
+## Workflow
+
+### Step 1 — Scope & stack
+Identify the stack (Node/Python/Go/…) and the in-scope files (changed lines for a diff).
+
+### Step 2 — Category pass
+Walk **[references/vuln-categories.md](references/vuln-categories.md)** (ruleId + what to look for +
+per-language signals + severity) over the in-scope code.
+
+### Step 3 — Secrets & config
+Scan for hardcoded credentials/keys and insecure config via
+**[references/secret-patterns.md](references/secret-patterns.md)**. Report values **redacted**.
+
+### Step 4 — Verify & rate
+Confirm each candidate is reachable from untrusted input with no mitigating control; rate per
+`docs/findings-schema.md`.
+
+### Step 5 — Report
+Emit `findings[]` (`area: security`, `SEC-*`/`OWASP-A0*`), each with severity, file:line, message,
+suggestion. Set **[GATE]** on any critical/high.
 
 ## Output
 
-findings[] nach `docs/findings-schema.md`, `area: security`, ruleId aus `SEC-*`. Bei `critical`/`high`: **[GATE]**.
+`findings[]` + a short executive summary. On critical/high → **[GATE]** (default "do not merge").
