@@ -4,6 +4,17 @@ Ziel: **jeden** Skill auf `docs/skill-authoring-guide.md` heben — substanziell
 `references/` bei Tiefe, `scripts/`/`templates/`/`examples.md` wo wertvoll, Evals bei Flaggschiffen.
 Gate je Skill: `validate-plugins.mjs` + (falls Evals) `run-evals.mjs` grün **und** DoD-Checkliste erfüllt.
 
+## ✅ Terminal-Zustand erreicht (Loop-Stop)
+- **146 Skills: alle ◐** (konkret, gegliedert, handlungsleitend) — keine leeren Bodies, keine 5-Zeilen-Stubs.
+- **8 Flaggschiffe ★** (volle Pakete mit `references/` + `evals/`): work `security-review`,
+  `review-aggregate`, `confluence-format`, `e2e-codegen`, `efcore-query-explain`, `loop`;
+  home `security-review`.
+- Spec-konforme Manifeste · spec-treuer Validator · Eval-Runner in CI · Authoring-Guide.
+- Beide Marketplaces: `validate-plugins` + `run-evals` grün.
+
+**Offen (optional, auf Wunsch):** weitere ◐-Skills zu ★ promoten (references/evals) — der Standard
+ist erreicht; weitere ★-Promotion ist Kür, kein Gate.
+
 Legende: ☐ offen · ◐ solide (konkret, gegliedert) · ★ Flaggschiff (Paket mit references/+evals)
 
 ## Reifegrad-Definition
