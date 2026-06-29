@@ -1,32 +1,46 @@
 ---
 name: review-aggregate
-description: Nutze um findings[] mehrerer Review-Skills zu einem Gesamtbericht zu verdichten — dedupliziert, sortiert, mit Gate und HTML-Filter-UI.
+description: >-
+  Combines the findings[] of the individually-run review skills into ONE deduplicated, severity-sorted
+  report with an executive summary, per-area sections, a merge gate, and an interactive HTML filter UI.
+  Use after running one or more review skills, when asked for "the full review", "aggregate the
+  findings", "overall security/quality report", or via /review-full. Finds nothing itself — it
+  consolidates. Sets [GATE] when any critical/high finding is present.
 ---
 
-## Scope
+# Review Aggregate
 
-Der **Verbund**-Skill: sammelt die `findings[]` der einzeln aufgerufenen Review-Skills
-und erzeugt **einen** Gesamtbericht. Findet selbst keine neuen Befunde — er aggregiert.
-Jeder Einzel-Skill bleibt eigenständig aufrufbar.
+The **verbund** skill: it collects the `findings[]` produced by the individually-run review skills
+and renders a single, polished report. It does not scan code itself — each domain skill stays
+independently runnable; this one consolidates their output.
 
-## Vorgehen
+## When to Use This Skill
 
-1. **Sammeln** — findings[] aller gelaufenen Review-Skills einlesen (Schema: `docs/findings-schema.md`).
-2. **Deduplizieren** — nach `ruleId + file + line`; bei Duplikaten höchste Severity behalten, Quellen-Skills mergen.
-3. **Sortieren** — Severity: critical → high → medium → low → info; sekundär nach `area`, dann `file`.
-4. **Top-N** — Executive Summary mit den Top 10 (Default) nach Severity.
-5. **Gate** — Gate-Flag **true**, sobald ≥1 `critical`/`high` existiert → **[GATE]** (Standardantwort „nein").
-6. **Rendern** — Markdown **und** interaktives HTML.
+- After running ≥1 review skill, to produce one combined report (`/review-full`, "review all")
+- When asked for an executive summary / overall gate decision across domains
+- To render the interactive HTML report with severity/area/text filters
 
-## Berichtsaufbau
+## Workflow
 
-- **Executive Summary** — Gesamtzahl je Severity, Gate-Status, Top-N-Befunde.
-- **Per-Area-Sektionen** — security / accessibility / performance / sql / deps / design / pipeline / env.
-- **Detailtabelle** — severity · area · ruleId · file:line · message · suggestion.
+### Step 1 — Collect
+Gather the `findings[]` arrays from every review skill that ran (schema: `docs/findings-schema.md`).
+
+### Step 2 — Aggregate
+Apply the rules in **[references/aggregation-rules.md](references/aggregation-rules.md)**:
+dedupe by `ruleId+file+line` (keep highest severity, merge source skills), sort by severity then
+area then file, compute the gate flag, pick the Top-N summary.
+
+### Step 3 — Render
+Produce both outputs per **[references/report-rendering.md](references/report-rendering.md)**:
+Markdown (`state/reports/review-<date>.md`) and interactive HTML
+(`state/reports/review-<date>.html`) with Severity / Area / free-text filters.
+
+### Step 4 — Gate
+If the gate flag is set (≥1 critical/high), emit **[GATE]** with a one-line blocking summary;
+default recommendation "do not merge".
 
 ## Output
 
-- Markdown: `state/reports/review-<date>.md`
-- HTML: `state/reports/review-<date>.html` — Filter-UI (Severity / Area / Freitext-Suche).
-
-Aggregiertes findings[] + Gate-Flag zurückgeben. Bei gesetztem Gate: **[GATE]**.
+The aggregated `findings[]` + gate flag, plus the MD and HTML report paths. Executive summary first,
+then per-area sections (security · accessibility · performance · sql · deps · design · pipeline · env),
+then the full detail table.

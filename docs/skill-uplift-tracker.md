@@ -40,9 +40,10 @@ Legende: ☐ offen · ◐ solide (konkret, gegliedert) · ★ Flaggschiff (Paket
 
 ## Wellen-Plan
 1. **Welle 1 (erledigt):** Fundament + `review/security-review ★` als Referenz-Exemplar.
-2. **Welle 2:** Flaggschiffe je Domäne zu ★ (review-aggregate, confluence-format, e2e-codegen,
-   efcore-query-explain, loop, onboarding-tracks, home/reviewer/security-review).
-3. **Welle 3+:** restliche Skills auf ◐-Niveau heben (Description-Schärfung, references wo Tiefe),
+2. **Welle 2 (erledigt):** `review/review-aggregate ★` + `doku/confluence-format ★` (references + evals).
+3. **Welle 3:** `testing/e2e-codegen ★`, `blazor/efcore-query-explain ★`, `loop/loop ★`.
+4. **Welle 4:** `onboarding`-Tracks ★ + `home/reviewer/security-review ★`.
+5. **Welle 5+:** restliche Skills auf ◐-Niveau heben (Description-Schärfung, references wo Tiefe),
    Plugin für Plugin; je Welle validate + run-evals grün, thematischer Commit.
 
 > Jede Welle endet grün (Validator + Evals) und wird committet. Kein Skill gilt als fertig,

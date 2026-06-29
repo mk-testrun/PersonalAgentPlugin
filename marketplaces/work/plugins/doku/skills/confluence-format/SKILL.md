@@ -1,77 +1,49 @@
 ---
 name: confluence-format
-description: Nutze wenn Confluence-Storage-Format idiomatisch erzeugt/formatiert werden soll — mit echten Makro-Beispielen.
+description: >-
+  Produces idiomatic Confluence Storage Format (XHTML with ac:/ri: macros) — panels, code blocks,
+  TOC, status lozenges, expands, tables — and maps Markdown to it correctly. Use when drafting or
+  formatting Confluence pages, converting Markdown to Confluence, or choosing how to visualize
+  content (panels, status, diagrams) in a wiki page. Feeds confluence-draft; it never publishes
+  itself — publishing is always [CONFIRM] and within CONFLUENCE_SPACES.
 ---
 
-Confluence speichert Seiten im **Storage Format** (XHTML mit `ac:`/`ri:`-Makros),
-nicht in Markdown. Dieser Skill liefert die korrekten Bausteine; er **schreibt nie
-selbst** — er speist `confluence-draft` (Publish nur mit [CONFIRM]).
+# Confluence Format
 
-## Markdown → Confluence-Konventionen
+Confluence stores pages as **Storage Format** (XHTML with `ac:`/`ri:` macros), not Markdown. This
+skill produces correct storage-format building blocks and maps Markdown onto them. It only prepares
+content; `confluence-draft` handles draft/publish (publish requires **[CONFIRM]**).
 
-| Markdown | Confluence-Storage |
-|---|---|
-| `# H1 … ###### H6` | `<h1>…<h6>` (Seitentitel ist separat, **nicht** als H1 wiederholen) |
-| ` ```lang …``` ` | `code`-Makro mit `<ac:parameter ac:name="language">` |
-| Blockquote / Hinweis | Panel-Makro (`info`/`note`/`warning`/`tip`) statt `>` |
-| Tabelle | echte `<table><tbody><tr><th>/<td>` |
-| `- [ ]` Task | `<ac:task-list>` mit `<ac:task>` |
-| Bild | `<ac:image><ri:attachment ri:filename="…"/></ac:image>` (Datei zuerst als Attachment hochladen) |
+## When to Use This Skill
 
-## Panels (Hinweise hervorheben)
+- Drafting or reformatting a Confluence page
+- Converting Markdown (README, notes) into Confluence storage format
+- Deciding how to present something in a wiki page (panel vs table vs status vs diagram)
 
-```xml
-<ac:structured-macro ac:name="info">
-  <ac:rich-text-body><p>Kurzer Hinweis für Leser.</p></ac:rich-text-body>
-</ac:structured-macro>
-```
-`ac:name` ∈ `info` (blau) · `note` (grau) · `tip`/`success` (grün) · `warning` (rot).
+## How It Works
 
-## Code-Block (Sprache immer angeben)
+1. Pick the right block for the intent (hint, code, comparison, status, collapsible detail).
+2. Emit valid storage-format XHTML using the macro references below.
+3. Hand the result to `confluence-draft`; never publish here.
 
-```xml
-<ac:structured-macro ac:name="code">
-  <ac:parameter ac:name="language">csharp</ac:parameter>
-  <ac:parameter ac:name="title">Program.cs</ac:parameter>
-  <ac:plain-text-body><![CDATA[
-public static void Main() => Console.WriteLine("Hi");
-  ]]></ac:plain-text-body>
-</ac:structured-macro>
-```
+## References
 
-## Inhaltsverzeichnis, Expand, Status
-
-```xml
-<ac:structured-macro ac:name="toc"/>
-
-<ac:structured-macro ac:name="expand">
-  <ac:parameter ac:name="title">Details ausklappen</ac:parameter>
-  <ac:rich-text-body><p>…</p></ac:rich-text-body>
-</ac:structured-macro>
-
-<ac:structured-macro ac:name="status">
-  <ac:parameter ac:name="colour">Green</ac:parameter>
-  <ac:parameter ac:name="title">ACCEPTED</ac:parameter>
-</ac:structured-macro>
-```
-Status-Farben: `Grey` (Proposed) · `Green` (Accepted) · `Red` (Deprecated) · `Yellow` (In Review).
-
-## Visualisierungs-Möglichkeiten in Confluence
-
-- **Status-Lozenges** — Zustände inline (siehe oben), ideal für ADR-/Ticket-Status.
-- **Panels** — Aufmerksamkeit lenken ohne Fließtext zu sprengen.
-- **Tabellen + `table-layout`** — Vergleiche, Entscheidungsmatrizen.
-- **`expand`** — lange Logs/Details einklappen, Seite scanbar halten.
-- **Diagramme** — Mermaid-/Draw.io-Makro **oder** Bild als Attachment (`diagram-embed`).
-- **Page-Tree / `children`-Makro** — Navigation in Doku-Spaces.
+- **Macros & blocks** (panels, code, TOC, expand, status, tables) →
+  **[references/storage-format-macros.md](references/storage-format-macros.md)**
+- **Markdown → Confluence mapping** (headings, code fences, blockquotes, tasks, images) →
+  **[references/markdown-mapping.md](references/markdown-mapping.md)**
+- **Visualization options** (panels, status lozenges, diagrams via attachment/macro, page tree) →
+  **[references/visualizations.md](references/visualizations.md)**
 
 ## Best Practices
 
-1. Seitentitel nie als H1 im Body wiederholen; mit `<h2>` gliedern.
-2. Jeder Code-Block mit `language`-Parameter — sonst kein Highlighting.
-3. Lange/optionale Inhalte in `expand`; oben `toc` für Scanbarkeit.
-4. Hinweise als Panel, nicht als fett markierter Absatz.
-5. Bilder/Diagramme immer erst als Attachment, dann `ri:attachment` referenzieren.
-6. Konsistente Status-Lozenges für alle Entscheidungs-/Review-Zustände.
+1. Don't repeat the page title as an H1 in the body; structure with `<h2>`.
+2. Every code block declares its `language` parameter.
+3. Hints as panels, not bold paragraphs; long/optional content in `expand`; `toc` on top for scanability.
+4. Images/diagrams: upload as attachment first, then reference via `ri:attachment`.
+5. Consistent status lozenges for all decision/review states.
 
-→ Ausgabe geht an `confluence-draft`; Publish ausschließlich mit **[CONFIRM]** und innerhalb `${env:CONFLUENCE_SPACES}`.
+## Output
+
+Valid Confluence storage-format XHTML (a fragment or full page body), ready for `confluence-draft`.
+No publish; stay within `${env:CONFLUENCE_SPACES}`; PII anonymized via proxy.
