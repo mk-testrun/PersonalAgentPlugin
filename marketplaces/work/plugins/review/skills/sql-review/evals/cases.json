@@ -1,0 +1,30 @@
+[
+  {
+    "skill": "sql-review",
+    "query": "Review this data-access code and migration before I merge.",
+    "expected_behavior": [
+      "Walks the patterns in references/sql-patterns.md over the in-scope SQL/EF code",
+      "Flags string-built SQL as SQL-INJECT (critical) with a FromSqlInterpolated/parameterized fix",
+      "Checks the migration for reversibility and destructive steps (SQL-MIGRATE)",
+      "Emits findings[] area:sql with before/after fixes; [GATE] on critical/high"
+    ]
+  },
+  {
+    "skill": "sql-review",
+    "query": "Is this query going to be slow?",
+    "expected_behavior": [
+      "Detects N+1 (navigation in a loop) → SQL-NPLUS1 with Include/projection fix",
+      "Flags non-sargable filters (function on indexed column) → SQL-INDEX",
+      "Suggests projection instead of loading whole entities (SQL-SELECTSTAR)"
+    ]
+  },
+  {
+    "skill": "sql-review",
+    "query": "Check this migration drops a column — is that safe?",
+    "expected_behavior": [
+      "Flags the destructive DROP as SQL-MIGRATE (high) and asks for a backfill/backup plan",
+      "Checks the Down method exists for reversibility",
+      "Recommends an idempotent script and links blazor/efcore-migration-revert-plan"
+    ]
+  }
+]

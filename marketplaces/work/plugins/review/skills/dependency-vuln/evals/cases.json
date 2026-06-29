@@ -1,0 +1,31 @@
+[
+  {
+    "skill": "dependency-vuln",
+    "query": "Check my .NET project's dependencies for vulnerabilities.",
+    "expected_behavior": [
+      "Runs dotnet list package --vulnerable --include-transitive --format json",
+      "Runs scripts/audit-to-findings.mjs to convert the audit to findings[] deterministically",
+      "Flags direct and transitive CVEs with DEP-* ruleIds and severity from the advisory",
+      "Raises [GATE] on critical/high"
+    ]
+  },
+  {
+    "skill": "dependency-vuln",
+    "query": "Convert this audit file to findings.",
+    "files": ["fixtures/dotnet-audit.json"],
+    "expected_behavior": [
+      "Runs audit-to-findings.mjs on the fixture",
+      "Produces a critical transitive finding (System.Net.Http) and a high direct finding (Newtonsoft.Json)",
+      "Output is schema-valid per tools/validate-findings.mjs"
+    ]
+  },
+  {
+    "skill": "dependency-vuln",
+    "query": "We have a vulnerable transitive package with no direct reference.",
+    "expected_behavior": [
+      "Marks it DEP-TRANSITIVE and recommends bumping/overriding the nearest direct package",
+      "If no fix exists, marks DEP-NOFIX (high) and documents a mitigation",
+      "Defers EOL/version status to lts-check and licensing to license-check"
+    ]
+  }
+]

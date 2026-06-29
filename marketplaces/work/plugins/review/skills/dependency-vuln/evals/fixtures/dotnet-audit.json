@@ -1,0 +1,6 @@
+{ "version": 1, "projects": [ { "path": "src/Acme.Web/Acme.Web.csproj",
+  "frameworks": [ { "framework": "net8.0",
+    "topLevelPackages": [ { "id": "Newtonsoft.Json", "resolvedVersion": "11.0.1",
+      "vulnerabilities": [ { "severity": "High", "advisoryurl": "https://github.com/advisories/GHSA-xxxx" } ] } ],
+    "transitivePackages": [ { "id": "System.Net.Http", "resolvedVersion": "4.3.0",
+      "vulnerabilities": [ { "severity": "Critical", "advisoryurl": "https://github.com/advisories/GHSA-yyyy" } ] } ] } ] } ] }

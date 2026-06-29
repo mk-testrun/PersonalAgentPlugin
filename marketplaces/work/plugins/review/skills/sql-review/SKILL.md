@@ -1,25 +1,38 @@
 ---
 name: sql-review
-description: Nutze für SQL- und EF-Core-Migrations-Prüfung — Injection, Parametrisierung, N+1, Indizes, Transaktionen, Migrations-Safety.
+description: >-
+  Reviews SQL statements, EF-Core queries, and migrations for injection, parametrization, N+1, missing
+  indexes, transaction boundaries, and migration safety. Use when reviewing SQL/migrations or a
+  DbContext, when asked about query safety/performance at the data layer, or to check a migration before
+  applying it. Produces findings[] (area:sql) with concrete before/after fixes; [GATE] on critical/high.
 applyTo: ["**/*.sql", "**/Migrations/**", "**/*DbContext*.cs"]
 ---
 
-## Scope
+# SQL & EF-Core Review
 
-SQL-Statements, EF-Core-Queries und Migrations. Allgemeine .NET-Performance → performance-review.
+Data-layer correctness, safety, and performance. General .NET performance → `performance-review`;
+query translation of one query → `blazor/efcore-query-explain`.
 
-## Checkliste
+## When to Use This Skill
 
-1. **SQL-INJECT** — Keine String-Konkatenation in Queries; parametrisiert oder LINQ; kein `FromSqlRaw` mit Nutzerinput. *(critical)*
-2. **SQL-PARAM** — Alle variablen Werte als Parameter; kein dynamisches SQL ohne Whitelist. *(critical)*
-3. **SQL-NPLUS1** — Keine Query-in-Schleife; `Include`/Join/Projektion statt Lazy-Loading. *(high)*
-4. **SQL-INDEX** — Filter-/Join-/Sort-Spalten indiziert; keine Funktion auf indizierter Spalte (`WHERE LOWER(x)`); keine impliziten Casts. *(medium)*
-5. **SQL-SELECTSTAR** — Kein `SELECT *`/Voll-Entity wenn nur Felder gebraucht; Projektion auf DTO. *(medium)*
-6. **SQL-TXN** — Transaktionsgrenzen korrekt; Isolation-Level bewusst; keine langen Transaktionen über Userinteraktion. *(high)*
-7. **SQL-MIGRATE** — Migration reversibel (`Down`); keine destruktiven Schritte (Drop/NOT NULL ohne Default) ohne Plan; idempotent. *(high)*
-8. **SQL-NULL** — NULL-Semantik beachtet (`= NULL` vs `IS NULL`); Three-Valued-Logic in Filtern. *(medium)*
-9. **SQL-PAGING** — Große Resultsets paginiert (`Skip/Take` mit stabilem Sort); kein unbeschränktes `ToList()`. *(medium)*
+- Reviewing SQL files, EF-Core migrations, or a `DbContext`
+- "Is this query safe/fast?" at the data layer
+- Checking a migration for destructive/irreversible steps before applying
+
+## Workflow
+
+### Step 1 — Scope
+Identify the SQL/migration/DbContext in scope (for a diff, the changed statements + reachable callees).
+
+### Step 2 — Pattern pass
+Walk **[references/sql-patterns.md](references/sql-patterns.md)** (ruleId · what to look for · bad→good
+example · severity): injection, parametrization, N+1, index, select-*, transactions, migration safety,
+NULL semantics, paging.
+
+### Step 3 — Report
+Each finding gets a concrete before/after fix.
 
 ## Output
 
-findings[] nach `docs/findings-schema.md`, `area: sql`, ruleId aus `SQL-*`. Bei `critical`/`high`: **[GATE]**.
+`findings[]` (`area: sql`, ruleId `SQL-*`). Injection/parametrization → critical; N+1/transaction/
+migration-safety → high; index/projection/paging/null → medium. On critical/high → **[GATE]**.

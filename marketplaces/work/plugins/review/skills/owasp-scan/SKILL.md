@@ -1,34 +1,42 @@
 ---
 name: owasp-scan
-description: Nutze für einen OWASP-Top-10-Scan der laufenden App (ZAP headless, nur localhost).
+description: >-
+  Runs an OWASP Top 10 (2021) dynamic scan of the running app with OWASP ZAP headless (baseline) on
+  localhost, then maps and triages the alerts to the Top 10 categories with concrete fixes. Use when
+  asked for an OWASP scan, a dynamic/DAST security test, or to check a running app for the Top 10.
+  Localhost only; complements the static security-review. Produces findings[] (area:security, OWASP-A0*).
 mcp_tools:
   - playwright
 ---
 
-## Scope
+# OWASP Top 10 Scan (dynamic)
 
-Dynamischer Scan der **laufenden** App auf `http://localhost:*` (ZAP baseline/headless).
-Statische Härtung → security-review. Kein Internet-Target.
+Dynamic scan of the **running** app — finds what only shows at runtime (headers, auth flows, reflected
+inputs). The static counterpart is `security-review`; dependency CVEs are `dependency-vuln`.
 
-## Vorgehen
+## When to Use This Skill
 
-1. App lokal starten, Erreichbarkeit prüfen (max. 30 s).
-2. ZAP headless baseline-Scan gegen die localhost-URL.
-3. Alerts auf die OWASP-Top-10-Kategorien mappen, Rauschen filtern, je Fund Fix-Vorschlag.
+- "Run an OWASP / DAST / dynamic security scan" on a local app
+- Checking a running app against the OWASP Top 10
+- Pre-release security gate for a prototype
 
-## Checkliste (OWASP Top 10:2021)
+## Workflow
 
-1. **OWASP-A01 Broken Access Control** — fehlende Authz, IDOR, Directory-Traversal, Force-Browsing. *(critical)*
-2. **OWASP-A02 Cryptographic Failures** — fehlendes TLS/HSTS, schwache Cipher, Klartext-Transport sensibler Daten. *(high)*
-3. **OWASP-A03 Injection** — SQL/NoSQL/Command/LDAP-Injection, reflektiertes/stored XSS. *(critical)*
-4. **OWASP-A04 Insecure Design** — fehlende Rate-Limits, missbrauchbare Workflows. *(high)*
-5. **OWASP-A05 Security Misconfiguration** — Default-Creds, offene Debug-Endpoints, fehlende Security-Header. *(high)*
-6. **OWASP-A06 Vulnerable Components** — bekannte CVEs in Server/Libs (Cross-Check dependency-vuln). *(high)*
-7. **OWASP-A07 Auth Failures** — schwache Session-IDs, fehlendes Lockout, Credential-Stuffing möglich. *(high)*
-8. **OWASP-A08 Integrity Failures** — unsignierte Updates, unsichere Deserialisierung. *(high)*
-9. **OWASP-A09 Logging/Monitoring Failures** — sicherheitsrelevante Events nicht geloggt. *(medium)*
-10. **OWASP-A10 SSRF** — serverseitige Requests auf nutzerkontrollierte URLs ohne Allowlist. *(high)*
+### Step 1 — Start & reach the app
+Start the app, confirm reachable on `http://localhost:*` (max 30 s). Internet targets are blocked.
+
+### Step 2 — ZAP baseline scan
+Run ZAP headless baseline against the localhost URL (passive + a safe active subset).
+
+### Step 3 — Map & triage
+Map each alert to a Top 10 category and triage using
+**[references/owasp-top10.md](references/owasp-top10.md)** (what each category means, typical ZAP alerts,
+severity, fix direction). Filter noise; verify exploitability before reporting.
+
+### Step 4 — Report
+Emit `findings[]` with a `OWASP-A0*` ruleId and a concrete fix per finding.
 
 ## Output
 
-findings[] nach `docs/findings-schema.md`, `area: security`, ruleId aus `OWASP-A0*`. Bei `critical`/`high`: **[GATE]**.
+`findings[]` (`area: security`, ruleId `OWASP-A01`…`A10`), severity per category/impact. On
+critical/high → **[GATE]**. Cross-check component CVEs with `dependency-vuln` (A06).
