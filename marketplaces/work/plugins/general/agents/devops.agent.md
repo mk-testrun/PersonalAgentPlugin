@@ -1,6 +1,6 @@
 ---
 name: devops
-description: ADO-Agent für Work-Items, PRs, Builds und Git-Operationen im Work-Kontext.
+description: ADO-Agent für Work-Items, PRs, Builds und Git-Operationen im Azure-DevOps-Umfeld.
 tools:
   - ado.workitems
   - ado.queries

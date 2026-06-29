@@ -39,7 +39,7 @@ marketplaces/<name>/
 }
 ```
 
-**Zwei-Welten-Prinzip (§0):** Kein Teilen von Skills/Agents/Commands mit anderen Marketplaces.
+**Eigenständigkeit:** Jeder Marketplace ist self-contained — kein Teilen von Skills/Agents/Commands zwischen Marketplaces.
 
 **Abschluss-Checkliste:**
 1. `node tools/validate-plugins.mjs marketplaces/<name>` → 0 Fehler

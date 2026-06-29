@@ -20,7 +20,7 @@ alles: ohne Erfolgskriterium und Hard-Limit wird daraus eine teure Endlosschleif
 | Phase | Tätigkeit |
 |---|---|
 | **Plan** | Kleinste sinnvolle nächste Änderung benennen (eine Sache, kein Sammel-Refactor). |
-| **Aktion** | Genau diese Änderung umsetzen. Im Work-Kontext: vor jeder mutierenden Aktion **[CONFIRM]**. |
+| **Aktion** | Genau diese Änderung umsetzen — vor jeder mutierenden Aktion **[CONFIRM]**. |
 | **Verifikation** | Erfolgskriterium messen (Tests/Build/Review ausführen). Ergebnis ist Fakt, keine Annahme. |
 | **Entscheidung** | Kriterium erfüllt → **stop (Erfolg)**. Sonst: Erkenntnis in State schreiben, Zähler+1, nächste Runde. |
 

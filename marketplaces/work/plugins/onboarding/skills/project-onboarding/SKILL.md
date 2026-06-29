@@ -14,8 +14,8 @@ passt Tiefe an `state/onboarding.json` an.
 2. **Architektur & Flows** → `codebase-tour` (Composition-Root, Datenfluss, Kernflows, Patterns) — **nur für `programmierer`** in `detailliert`; für `nicht-programmierer` stattdessen Zweck/Hauptabläufe in Alltagssprache.
 3. **Wichtige Pakete** — zentrale Abhängigkeiten aus `*.csproj`/`package.json` nennen und ihren Zweck erklären.
 4. **Projekt-Konventionen** — projektspezifische Besonderheiten (Branch-Naming, Code-Style, Ordnerkonventionen) aus `general`/`blazor`-Conventions und Repo-Configs ableiten.
-5. **DevOps-Repo** — wo der Code liegt, Pipeline-Grundzüge, wie PRs laufen (ADO im Work-Kontext).
-6. **Dokumentation** — vorhandene Doku finden; im Work-Kontext Architektur-Seiten via `confluence-explain` (read-only) erklären.
+5. **DevOps-Repo** — wo der Code liegt, Pipeline-Grundzüge, wie PRs laufen (Azure DevOps).
+6. **Dokumentation** — vorhandene Doku finden; Architektur-Seiten via `confluence-explain` (read-only) erklären.
 7. **Erster Schritt** — optional `first-task-pick` für eine gute Einstiegsaufgabe (mit [CONFIRM]).
 
 ## Rollen-Adaptivität

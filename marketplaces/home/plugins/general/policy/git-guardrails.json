@@ -19,5 +19,5 @@
     "git filter-branch",
     "git filter-repo"
   ],
-  "note": "Home-Modus: Guardrails warnen statt blockieren — Ausnahme: Force-Push auf main/master bleibt block."
+  "note": "warn-Modus: Guardrails warnen statt blockieren — Ausnahme: Force-Push auf main/master bleibt block."
 }

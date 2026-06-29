@@ -6,7 +6,7 @@ description: Nutze um den AI-Readiness-Score eines Projekts zu messen (0–100).
 ## Scope
 
 Misst die **Marketplace-/Plugin-Reife** (wie gut ist dieses Repo als Copilot-Marketplace aufgesetzt).
-Für die allgemeine **Code-Repo**-AI-Readiness eines Projekts → reviewer/ai-readiness (Home).
+Die allgemeine **Code-Repo**-AI-Readiness eines beliebigen Projekts ist ein separater Reviewer-Skill.
 
 ## Scoring-Dimensionen (Summe 0–100)
 
