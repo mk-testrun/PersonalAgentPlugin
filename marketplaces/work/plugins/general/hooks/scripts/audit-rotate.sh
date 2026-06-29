@@ -1,18 +1,19 @@
 #!/usr/bin/env bash
-# Rotate audit log — keep last 90 days of entries
+# sessionEnd: Audit-Log auf die letzten 90 Tage kürzen. JSON-Filter via node.
 AUDIT_FILE=".copilot/state/audit.jsonl"
 if [ -f "$AUDIT_FILE" ]; then
   CUTOFF=$(date -u -d '90 days ago' +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || date -u -v-90d +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || echo "")
   if [ -n "$CUTOFF" ]; then
-    python3 -c "
-import sys, json
-cutoff = '$CUTOFF'
-with open('$AUDIT_FILE') as f:
-  lines = [l for l in f if l.strip()]
-kept = [l for l in lines if json.loads(l).get('ts','') >= cutoff]
-with open('$AUDIT_FILE', 'w') as f:
-  f.writelines(kept)
-" 2>/dev/null || true
+    CUTOFF="$CUTOFF" AUDIT_FILE="$AUDIT_FILE" node -e '
+      const fs = require("fs");
+      const file = process.env.AUDIT_FILE, cutoff = process.env.CUTOFF;
+      try {
+        const kept = fs.readFileSync(file, "utf8").split("\n")
+          .filter(l => l.trim())
+          .filter(l => { try { return (JSON.parse(l).ts || "") >= cutoff; } catch { return false; } });
+        fs.writeFileSync(file, kept.length ? kept.join("\n") + "\n" : "");
+      } catch {}
+    ' 2>/dev/null || true
   fi
 fi
 echo "{\"event\":\"sessionEnd\",\"ts\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"}" >> "$AUDIT_FILE"
