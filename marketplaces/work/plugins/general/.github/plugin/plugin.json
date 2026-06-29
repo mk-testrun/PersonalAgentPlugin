@@ -1,0 +1,48 @@
+{
+  "name": "general",
+  "description": "ADO-Fundament: Work-Items, PRs, Commits, Changelog, Git-Flow, PII-Proxy, Hooks, Policy, Git-Guardrails, Story/Grill/TDD/Triage.",
+  "version": "1.1.0",
+  "author": {
+    "name": "mkrueer"
+  },
+  "repository": "https://github.com/mk-testrun/PersonalAgentPlugin",
+  "license": "MIT",
+  "keywords": [
+    "ado",
+    "git",
+    "commits",
+    "pii",
+    "hooks",
+    "work-items",
+    "tdd",
+    "story",
+    "triage"
+  ],
+  "agents": [
+    "./agents/devops.agent.md"
+  ],
+  "commands": [
+    "./commands/moin.md",
+    "./commands/tagesabschluss.md",
+    "./commands/wochenabschluss.md",
+    "./commands/standup.md",
+    "./commands/commit.md",
+    "./commands/changelog.md",
+    "./commands/story.md",
+    "./commands/grill.md",
+    "./commands/tdd.md",
+    "./commands/triage.md"
+  ],
+  "skills": [
+    "./skills/ado-workitems/",
+    "./skills/ado-pull-requests/",
+    "./skills/commit-generate/",
+    "./skills/changelog-generate/",
+    "./skills/git-flow-helper/",
+    "./skills/pipeline-conventions/",
+    "./skills/story-author/",
+    "./skills/grill-me/",
+    "./skills/tdd-loop/",
+    "./skills/triage/"
+  ]
+}

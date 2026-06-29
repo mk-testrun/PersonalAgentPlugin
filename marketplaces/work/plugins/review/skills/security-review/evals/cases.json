@@ -1,0 +1,30 @@
+[
+  {
+    "skill": "security-review",
+    "query": "Review this repository for security issues before I merge.",
+    "expected_behavior": [
+      "Identifies the stack and scopes the review to the relevant/changed files",
+      "Walks the vuln categories from references/vuln-categories.md (injection, access control, crypto, headers, secrets)",
+      "Emits findings[] with area:security, a SEC-*/OWASP-A0* ruleId, file:line, message and a concrete suggestion",
+      "Sets [GATE] when at least one critical or high finding exists"
+    ]
+  },
+  {
+    "skill": "security-review",
+    "query": "Is this endpoint safe? It loads an invoice by id from the route and returns it.",
+    "expected_behavior": [
+      "Checks for authentication on the endpoint and authorization/ownership of the invoice object (IDOR)",
+      "Flags missing object-ownership checks as SEC-AUTHZ with critical/high severity",
+      "Proposes a concrete fix that enforces ownership server-side"
+    ]
+  },
+  {
+    "skill": "security-review",
+    "query": "Check this data-access code for SQL injection.",
+    "expected_behavior": [
+      "Traces user input into the query sink (FromSqlRaw/string concatenation)",
+      "Flags string-built SQL as SEC-SQL (critical) and recommends parameterized/FromSqlInterpolated form",
+      "Does not flag already-parameterized queries (avoids false positives)"
+    ]
+  }
+]

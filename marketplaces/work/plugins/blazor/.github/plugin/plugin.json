@@ -1,0 +1,34 @@
+{
+  "name": "blazor",
+  "description": "Blazor/.NET-Conventions, EF-Core (7 Skills), Roslyn via sharplens, SQL-Conventions.",
+  "version": "1.1.0",
+  "author": {
+    "name": "mkrueer"
+  },
+  "repository": "https://github.com/mk-testrun/PersonalAgentPlugin",
+  "license": "MIT",
+  "keywords": [
+    "blazor",
+    "dotnet",
+    "efcore",
+    "roslyn",
+    "csharp",
+    "sql"
+  ],
+  "agents": [
+    "./agents/blazor.agent.md"
+  ],
+  "skills": [
+    "./skills/blazor-conventions/",
+    "./skills/blazor-component-scaffold/",
+    "./skills/dotnet-conventions/",
+    "./skills/sql-conventions/",
+    "./skills/efcore-migration-add/",
+    "./skills/efcore-migration-script/",
+    "./skills/efcore-migration-revert-plan/",
+    "./skills/efcore-entity-design-review/",
+    "./skills/efcore-query-explain/",
+    "./skills/efcore-index-suggest/",
+    "./skills/efcore-compiled-query-suggest/"
+  ]
+}

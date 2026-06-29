@@ -1,0 +1,25 @@
+{
+  "name": "orchestration",
+  "description": "GitHub-Workflows: /feature, /bugfix, /review-flow — kein /ship, kein Workitem-Zwang.",
+  "version": "1.0.0",
+  "author": {
+    "name": "mkrueer"
+  },
+  "repository": "https://github.com/mk-testrun/PersonalAgentPlugin",
+  "license": "MIT",
+  "keywords": [
+    "orchestration",
+    "workflow",
+    "feature",
+    "bugfix",
+    "github"
+  ],
+  "agents": [
+    "./agents/orchestrator.agent.md"
+  ],
+  "commands": [
+    "./commands/feature.md",
+    "./commands/bugfix.md",
+    "./commands/review-flow.md"
+  ]
+}

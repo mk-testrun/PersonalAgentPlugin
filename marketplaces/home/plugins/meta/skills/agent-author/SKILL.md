@@ -1,39 +1,41 @@
 ---
 name: agent-author
-description: Nutze wenn du eine neue .agent.md-Persona erzeugen willst mit korrektem tools/model/Write-Scope nach §2.2 der Architektur-Konvention.
+description: Nutze um eine neue .agent.md-Persona zu erzeugen — korrektes tools/model und ein Body mit Mission, Tool-/Write-Scope, Delegation und Verboten (§2.2).
 ---
 
-Erzeuge eine vollständige `.agent.md`-Datei nach §2.2-Konvention:
+Erzeuge eine vollständige `.agent.md` nach §2.2. **Modell ist `gpt-5`** (Repo-Konvention für alle Agenten).
 
-**Pflichtfelder:**
+## Frontmatter (Pflicht)
+
 ```markdown
 ---
 name: <agent-name>
-description: <Wann Copilot diesen Agenten wählen soll>
+description: <Wann dieser Agent gewählt werden soll>
 tools:
   - <tool1>
   - <tool2>
-model: claude-opus-4-8
+model: gpt-5
 ---
-
-# <Agent-Name>
-
-## Write-Scope
-<Was der Agent schreiben darf — explizit, eng gefasst>
-
-## Verhalten
-<Kernverhalten, Entscheidungsregeln>
-
-## [CONFIRM]-Punkte
-<Liste destruktiver Aktionen die immer [CONFIRM] erfordern>
 ```
 
-**Write-Scope-Matrix (§2.2):**
+## Body (Pflicht-Gerüst)
+
+1. **Mission** — ein Satz, was der Agent leistet.
+2. **Zuständige Skills** — auf welche Skills/Agenten **desselben Marketplaces** er delegiert (statt selbst zu implementieren).
+3. **Tool- & Write-Scope** — welche Pfade/Operationen erlaubt sind, welche **[CONFIRM]** erfordern.
+4. **Verboten** — destruktive/unerwünschte Aktionen explizit.
+
+## Write-Scope-Matrix (§2.2)
+
 | Agent-Typ | Write-Scope |
 |---|---|
 | reviewer | read-only außer `state/reports/` |
-| orchestrator | keine Direkt-Writes ohne [CONFIRM] |
+| orchestrator | keine Direkt-Writes ohne [CONFIRM]; delegiert |
 | documenter | nur Drafts; publish mit [CONFIRM] |
 | dev-agent | normaler Write; [CONFIRM] destruktiv |
 
-**Validierung:** Nach Erzeugung mit `marketplace-validate` prüfen.
+## Regeln
+
+- **Keine** Verweise auf andere Marketplaces (jede „Welt" ist eigenständig).
+- Tool-Liste minimal halten (least-privilege).
+- Nach Erzeugung mit `marketplace-validate` prüfen.

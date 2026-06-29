@@ -1,0 +1,30 @@
+[
+  {
+    "skill": "security-review",
+    "query": "Review my Node app for security issues.",
+    "expected_behavior": [
+      "Identifies the stack and scopes the review",
+      "Walks the vuln categories (injection, XSS, access control, SSRF, crypto, secrets) with per-language signals",
+      "Emits findings[] with area:security, SEC-*/OWASP-A0* ruleId, file:line, message, suggestion",
+      "Sets [GATE] when any critical/high finding exists"
+    ]
+  },
+  {
+    "skill": "security-review",
+    "query": "Does this Python endpoint have SQL injection? It builds a query with an f-string.",
+    "expected_behavior": [
+      "Traces the f-string user input into cursor.execute()",
+      "Flags SEC-SQL (critical) and recommends parameterized queries",
+      "Avoids flagging already-parameterized statements"
+    ]
+  },
+  {
+    "skill": "security-review",
+    "query": "Check this repo for hardcoded secrets.",
+    "expected_behavior": [
+      "Detects hardcoded tokens/keys/DB URLs per secret-patterns.md and reports them redacted",
+      "Ignores placeholders in .env.example/docs",
+      "Recommends moving to env/secret store and rotating any committed secret"
+    ]
+  }
+]

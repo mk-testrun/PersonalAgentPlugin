@@ -1,16 +1,35 @@
 ---
 name: efcore-compiled-query-suggest
-description: Nutze wenn EF-Core-Queries auf Compiled-Query-Kandidaten zu prüfen.
+description: Nutze um Hot-Path-EF-Core-Queries als Kandidaten für EF.CompileAsyncQuery zu identifizieren.
 ---
 
-## Konfiguration
+## Scope
 
-- MigrationsFolder: ${env:EF_MIGRATIONS_FOLDER:-Migrations}
-- DbContext: ${env:EF_DBCONTEXT:-AppDbContext}
-- Provider: ${env:DB_PROVIDER:-SqlServer}
-- Connection String: via user-secrets (`dotnet user-secrets`)
+Wiederkehrende Hot-Path-Queries finden, die von vorkompilierten Queries profitieren (sparen
+Expression-Tree-Aufbau pro Aufruf). Index/SQL → efcore-index-suggest/efcore-query-explain.
 
-## Schritte
+## Kandidaten-Kriterien
 
-Analysiere den relevanten EF-Core-Code und führe die notwendigen Schritte aus.
-Alle Datenbankschema-Änderungen: **[CONFIRM]** vor dem Ausführen.
+1. **EFC-HOT** — Query wird sehr häufig ausgeführt (Request-Pfad, Schleife, Polling). *(Kandidat)*
+2. **EFC-STABLE** — Form ist stabil, nur Parameter ändern sich (kein dynamischer Query-Aufbau). *(Voraussetzung)*
+3. **EFC-SIMPLE** — Keine query-zeitabhängige Struktur (kein bedingtes `Include`/`Where` je nach Flag). *(Voraussetzung)*
+
+Dynamische/seltene Queries sind **keine** Kandidaten — dort lohnt der Aufwand nicht.
+
+## Vorher/Nachher
+
+```csharp
+// vorher: Expression-Tree wird bei jedem Aufruf neu gebaut
+var user = await db.Users.FirstOrDefaultAsync(u => u.Id == id, ct);
+
+// nachher: einmal kompiliert, danach wiederverwendet
+private static readonly Func<AppDbContext, int, CancellationToken, Task<User?>> _byId =
+    EF.CompileAsyncQuery((AppDbContext db, int id, CancellationToken ct) =>
+        db.Users.FirstOrDefault(u => u.Id == id));
+var user = await _byId(db, id, ct);
+```
+
+## Output
+
+Liste der Kandidaten mit Begründung (Häufigkeit/Stabilität) + konkretes Compiled-Query-Snippet.
+Keine DB-Änderung; reine Code-Empfehlung. Messung empfehlen (Benchmark) bevor breit ausgerollt wird.

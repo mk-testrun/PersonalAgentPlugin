@@ -1,12 +1,36 @@
 ---
 name: image-generate
-description: Nutze wenn ein Bild via Cloud-Bild-Generierung zu erzeugen (OpenAI, Tokens beachten).
+description: Nutze um ein Bild via Cloud-Bild-Generierung zu erzeugen (Home erlaubt Cloud — Tokens/Kosten beachten).
+mcp_tools:
+  - imagegen
 ---
+
+## Zweck
+
+Fotorealistische/kreative Bilder, die sich nicht deterministisch als SVG/Diagramm bauen lassen.
+
+## Wann statt Vektor
+
+- **image-generate:** kreativ/fotorealistisch/stilisiert.
+- Für Schemata/Icons/Diagramme → `svg-illustration`/`mermaid-diagram` (kein Token-/Kostenaufwand).
+
+## Aufbau
+
+1. **Prompt schärfen** — Motiv, Stil, Komposition, Seitenverhältnis; negative Aspekte ausschließen.
+2. **Kosten bewusst** — Cloud-Bild-Gen kostet Tokens/Geld; vorab kurz bestätigen bei mehreren/großen Bildern.
+3. **Generieren** via imagegen-MCP; Ergebnis nach `state/artifacts/` speichern.
+4. **Iteration** — bei Bedarf Prompt verfeinern statt blind neu würfeln.
+
+## Strikte Einschränkungen
+
+- Keine Bilder zu Personen/sensiblen/realen Identitäten ohne klare Berechtigung.
+- Keine PII im Prompt.
 
 ## Render-Pattern (§2.7)
 
-- **Rich:** HTML inline (VS Code Webview)
-- **Fallback:** Mermaid/SVG-Quelltext + state/artifacts/-Pfad
+- **Rich:** Bild inline (Webview) + Caption + Link.
+- **Fallback:** Datei-Pfad + Caption.
 
+## Output
 
-**Cloud-Bild-Gen erlaubt** — Tokens beachten. Output → state/artifacts/.
+`state/artifacts/image-<ts>.png` + Caption.

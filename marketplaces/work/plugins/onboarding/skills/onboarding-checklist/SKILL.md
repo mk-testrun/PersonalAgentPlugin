@@ -5,13 +5,18 @@ description: Nutze um den Onboarding-Fortschritt zu tracken und anzuzeigen.
 
 ## Checklistenpunkte
 
-- [ ] env-doctor grün
-- [ ] repo-orientation abgeschlossen
-- [ ] codebase-tour abgeschlossen
+- [ ] Profil gesetzt (Host + Rolle/Tiefe in state/onboarding.json)
+- [ ] Track Tool/Host (tool-onboarding)
+- [ ] Track Marketplace (marketplace-onboarding) — benötigte Plugins installiert & verifiziert
+- [ ] Track Projekt: env-doctor grün
+- [ ] Track Projekt: repo-orientation abgeschlossen
+- [ ] Track Projekt: codebase-tour / Projekt-Überblick (rollenabhängig)
+- [ ] Confluence-Architektur verstanden (confluence-explain, Work)
 - [ ] erste Aufgabe gewählt (first-task-pick)
 - [ ] erster Commit auf Feature-Branch
 - [ ] erster PR geöffnet
-- [ ] Confluence-Architektur verstanden (confluence-explain)
+
+Nicht jeder Punkt gilt für jede Rolle — Nicht-Programmierer überspringen Code-Schritte.
 
 ## Persistenz
 

@@ -8,6 +8,13 @@ mcp_tools:
 ## Schritte
 
 1. `playwright codegen <url>` → roher Flow
-2. Lokatoren stabilisieren (getByRole > getByTestId > CSS)
+2. Lokatoren stabilisieren (getByRole > getByTestId > CSS); keine `waitForTimeout`
 3. `playwright test` ausführen
 4. HTML-Report + Screenshots → `state/artifacts/explore-<ts>.html`
+
+## Persistente Tests (token-frei in CI)
+
+Wird aus dem erkundeten Flow ein **dauerhafter** Test, speichere ihn als
+`e2e/<feature>.spec.ts` (stabile Selektoren, Assertions auf sichtbares Verhalten,
+Playwright-Version gepinnt). Committet läuft er danach in CI **ohne Modell/Token** —
+reines `playwright test`.

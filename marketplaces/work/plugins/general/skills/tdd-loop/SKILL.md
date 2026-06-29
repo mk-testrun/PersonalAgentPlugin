@@ -1,6 +1,6 @@
 ---
 name: tdd-loop
-description: Nutze wenn du strikte Test-Driven-Development-Zyklen erzwingen willst — erst roter Test, dann Implementierung bis grün, dann Refactor. Nutzt testing/dotnet-test-run (Work).
+description: Nutze wenn du strikte Test-Driven-Development-Zyklen erzwingen willst — erst roter Test, dann Implementierung bis grün, dann Refactor. Nutzt testing/dotnet-test-run.
 ---
 
 Erzwinge den Red-Green-Refactor-Zyklus:
@@ -29,7 +29,7 @@ Iteration N:
   STATUS: [Anzahl] Tests grün / [Anzahl] Tests gesamt
 ```
 
-**Konventionen (Work):**
+**Konventionen:**
 - xUnit (Fact/Theory/InlineData)
 - bUnit für Blazor-Komponenten
 - Arrange-Act-Assert Struktur

@@ -21,7 +21,12 @@ Du bist der **orchestrator**-Agent.
 ## Write-Scope
 
 - Keine Direkt-Writes ohne **[CONFIRM]**
-- Delegiert an bestehende Skills: general, blazor, testing, review
+- Delegiert an bestehende Plugins desselben Marketplaces statt selbst zu implementieren:
+  - Code/EF/Conventions → `blazor`; Commits/PRs/Git → `general`
+  - Tests/Coverage/E2E → `testing` (tester-Agent)
+  - Qualitäts-Gates → `review` (reviewer-Agent; `critical`/`high` blockt den Workflow)
+  - Doku/ADR → `doku` (documenter) bzw. `experimental` (adr-write)
+  - Iteratives Nacharbeiten bis Kriterium → `loop`
 - Kein eigenes Schreiben in Produktionscode
 
 ## Verboten

@@ -16,14 +16,14 @@
     {
       "name": "onboarding",
       "source": "plugins/onboarding",
-      "description": "Neue Entwickler einführen: env-doctor, codebase-tour, first-task.",
+      "description": "Geführtes Onboarding: Initiator (Host+Rolle) → Tracks Tool/Host, Marketplace, Projekt.",
       "version": "1.0.0",
       "keywords": ["onboarding", "setup", "tour", "confluence"]
     },
     {
       "name": "blazor",
       "source": "plugins/blazor",
-      "description": "Blazor/.NET-Conventions, EF-Core-Skills (9), Roslyn/sharplens.",
+      "description": "Blazor/.NET-Conventions, EF-Core-Skills (7), Roslyn/sharplens.",
       "version": "1.0.0",
       "keywords": ["blazor", "dotnet", "efcore", "roslyn", "csharp"]
     },
@@ -51,7 +51,7 @@
     {
       "name": "doku",
       "source": "plugins/doku",
-      "description": "Confluence-Dokumentation: Draft, Format, ADR, README, a11y-Report.",
+      "description": "Confluence-Dokumentation: Draft, Storage-Format, Code→Doc, README, Diagramm-Embed.",
       "version": "1.0.0",
       "keywords": ["confluence", "documentation", "adr", "readme"]
     },
@@ -65,16 +65,16 @@
     {
       "name": "experimental",
       "source": "plugins/experimental",
-      "description": "Output-Studio: Diagramme, Dashboards, Slides, TTS (CDN-gesichert).",
+      "description": "Output-Studio: Diagramme, Dashboards, Slides, TTS, ADR (CDN-gesichert).",
       "version": "1.0.0",
       "keywords": ["diagrams", "charts", "slides", "dashboard", "visual"]
     },
     {
-      "name": "fun",
-      "source": "plugins/fun",
-      "description": "Ralph-Wiggum — opt-in, nur auf expliziten Trigger, nie in Reviews.",
+      "name": "loop",
+      "source": "plugins/loop",
+      "description": "Agent-Loop-Protokoll: iterativ auf ein prüfbares Ziel, Hard-Limit, State, [CONFIRM].",
       "version": "1.0.0",
-      "keywords": ["fun", "easter-egg", "ralph"]
+      "keywords": ["loop", "agent-loop", "iteration", "workflow"]
     }
   ]
 }

@@ -19,6 +19,10 @@ jobs:
         run: node tools/validate-plugins.mjs marketplaces/work
       - name: Validate Home Marketplace
         run: node tools/validate-plugins.mjs marketplaces/home
+      - name: Validate Skill Evals (Work)
+        run: node tools/run-evals.mjs marketplaces/work
+      - name: Validate Skill Evals (Home)
+        run: node tools/run-evals.mjs marketplaces/home
 
   mcp:
     name: Build & Test MCP Servers
@@ -56,6 +60,9 @@ jobs:
       - name: Test artifact-viewer fallback
         working-directory: mcp-servers/artifact-viewer
         run: node test/fallback.test.mjs
+      - name: Test artifact-viewer textfile
+        working-directory: mcp-servers/artifact-viewer
+        run: node test/textfile.test.mjs
       - name: Build dotnet-mcpserver-starter
         working-directory: mcp-servers/dotnet-mcpserver-starter
         run: |

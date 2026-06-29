@@ -13,6 +13,7 @@
 | documenter | doku | Nur Drafts; publish nur mit [CONFIRM] |
 | prompt-builder | meta | Plugin/Skill-Dateien; Marketplace-Config mit [CONFIRM] |
 | visualizer | experimental | Output nur nach `state/artifacts/`; CDN-Allowlist |
+| loop | loop | Iteriert mit Hard-Limit; mutierend nur mit [CONFIRM]; delegiert Verifikation |
 
 ## §2.1 Command vs. Skill vs. Agent
 

@@ -25,6 +25,6 @@ Universelle Anzeige über den `artifact-viewer`-MCP-Server (§N1).
 - Link ist **immer** vorhanden (auch im Rich-Modus)
 - `VIEWER_RICH=auto` (Client entscheidet)
 
-**Work-Kontext:** Keine externen Netzaufrufe durch artifact-viewer. CDN-Allowlist bleibt gültig.
+**Hinweis:** Keine externen Netzaufrufe durch artifact-viewer. CDN-Allowlist bleibt gültig.
 
 Artefakt-Speicherort: `.copilot/state/artifacts/`

@@ -1,0 +1,49 @@
+{
+  "name": "general",
+  "description": "GitHub Issues/PRs, Profile (MCP-Sets wechseln), Multi-Lang-Conventions, warn-Hooks, Git-Guardrails, Story/Grill/TDD.",
+  "version": "1.1.0",
+  "author": {
+    "name": "mkrueer"
+  },
+  "repository": "https://github.com/mk-testrun/PersonalAgentPlugin",
+  "license": "MIT",
+  "keywords": [
+    "github",
+    "profile",
+    "git",
+    "conventions",
+    "hooks",
+    "python",
+    "go",
+    "tdd",
+    "story"
+  ],
+  "agents": [
+    "./agents/devops-home.agent.md"
+  ],
+  "commands": [
+    "./commands/moin.md",
+    "./commands/tagesabschluss.md",
+    "./commands/wochenabschluss.md",
+    "./commands/profile.md",
+    "./commands/commit.md",
+    "./commands/changelog.md",
+    "./commands/story.md",
+    "./commands/grill.md",
+    "./commands/tdd.md"
+  ],
+  "skills": [
+    "./skills/github-issues/",
+    "./skills/github-prs/",
+    "./skills/commit-generate/",
+    "./skills/changelog-generate/",
+    "./skills/git-flow-helper/",
+    "./skills/dotnet-conventions/",
+    "./skills/python-conventions/",
+    "./skills/web-conventions/",
+    "./skills/homelab-conventions/",
+    "./skills/story-author/",
+    "./skills/grill-me/",
+    "./skills/tdd-loop/"
+  ]
+}

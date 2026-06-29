@@ -1,0 +1,36 @@
+{
+  "name": "testing",
+  "description": "Test-Ausführung, Coverage-Gates, E2E-Playwright (localhost only), Pipeline-Integration.",
+  "version": "1.0.0",
+  "author": {
+    "name": "mkrueer"
+  },
+  "repository": "https://github.com/mk-testrun/PersonalAgentPlugin",
+  "license": "MIT",
+  "keywords": [
+    "testing",
+    "coverage",
+    "playwright",
+    "e2e",
+    "xunit",
+    "bunit"
+  ],
+  "agents": [
+    "./agents/tester.agent.md"
+  ],
+  "commands": [
+    "./commands/test.md",
+    "./commands/coverage.md",
+    "./commands/e2e.md"
+  ],
+  "skills": [
+    "./skills/dotnet-test-run/",
+    "./skills/test-conventions/",
+    "./skills/code-coverage/",
+    "./skills/tests-review/",
+    "./skills/responsive-view/",
+    "./skills/e2e-playwright/",
+    "./skills/e2e-codegen/",
+    "./skills/e2e-pipeline-wire/"
+  ]
+}

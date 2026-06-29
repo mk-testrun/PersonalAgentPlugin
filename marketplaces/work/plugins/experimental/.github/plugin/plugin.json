@@ -1,0 +1,52 @@
+{
+  "name": "experimental",
+  "description": "Output-Studio: Mermaid, C4, ER, Sequence, Charts, Dashboards, Slides, TTS, Universal-Viewer. CDN-gesichert.",
+  "version": "1.1.0",
+  "author": {
+    "name": "mkrueer"
+  },
+  "repository": "https://github.com/mk-testrun/PersonalAgentPlugin",
+  "license": "MIT",
+  "keywords": [
+    "diagrams",
+    "charts",
+    "slides",
+    "dashboard",
+    "visual",
+    "tts",
+    "artifact-viewer"
+  ],
+  "agents": [
+    "./agents/visualizer.agent.md"
+  ],
+  "commands": [
+    "./commands/visualize.md",
+    "./commands/slides.md",
+    "./commands/explain.md",
+    "./commands/speak.md",
+    "./commands/diagram.md",
+    "./commands/dashboard.md",
+    "./commands/view.md",
+    "./commands/adr.md"
+  ],
+  "skills": [
+    "./skills/adr-write/",
+    "./skills/mermaid-diagram/",
+    "./skills/architecture-diagram/",
+    "./skills/er-diagram/",
+    "./skills/sequence-diagram/",
+    "./skills/dependency-graph/",
+    "./skills/chartjs-data/",
+    "./skills/html-dashboard/",
+    "./skills/metrics-dashboard/",
+    "./skills/data-grid/",
+    "./skills/kanban-render/",
+    "./skills/gantt-roadmap/",
+    "./skills/frontend-slides/",
+    "./skills/presentation-from-adr/",
+    "./skills/visual-explainer/",
+    "./skills/web-artifacts-builder/",
+    "./skills/speak-summary/",
+    "./skills/render-artifact/"
+  ]
+}

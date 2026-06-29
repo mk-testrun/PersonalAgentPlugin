@@ -1,0 +1,30 @@
+[
+  {
+    "skill": "confluence-format",
+    "query": "Turn this Markdown README into a Confluence page.",
+    "expected_behavior": [
+      "Maps headings/code/lists per references/markdown-mapping.md (does not repeat the title as H1)",
+      "Emits code blocks as the code macro with a language parameter and CDATA",
+      "Converts blockquotes/notes to panel macros rather than literal '>'",
+      "Returns valid storage-format XHTML for confluence-draft, without publishing"
+    ]
+  },
+  {
+    "skill": "confluence-format",
+    "query": "How should I show an ADR's status and a warning callout on the page?",
+    "expected_behavior": [
+      "Uses a coloured status lozenge for the ADR state (e.g. Green/ACCEPTED)",
+      "Uses a warning panel for the callout",
+      "References storage-format-macros.md for the exact macro syntax"
+    ]
+  },
+  {
+    "skill": "confluence-format",
+    "query": "Embed an architecture diagram in the page.",
+    "expected_behavior": [
+      "Recommends uploading the rendered diagram as an attachment and referencing it via ri:attachment (or the Mermaid/Draw.io macro if available)",
+      "Does not paste an external image URL",
+      "Keeps publishing as a separate [CONFIRM] step via confluence-draft"
+    ]
+  }
+]

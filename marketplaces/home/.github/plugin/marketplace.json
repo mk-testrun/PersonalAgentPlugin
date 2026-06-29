@@ -63,11 +63,11 @@
       "keywords": ["meta", "tooling", "skill-author", "validate"]
     },
     {
-      "name": "fun",
-      "source": "plugins/fun",
-      "description": "Ralph-Wiggum mit Easter-Eggs und Slide-Maskottchen (opt-in).",
+      "name": "loop",
+      "source": "plugins/loop",
+      "description": "Agent-Loop-Protokoll: iterativ auf ein prüfbares Ziel, Hard-Limit, State, warn-Modus.",
       "version": "1.0.0",
-      "keywords": ["fun", "easter-egg", "ralph", "opt-in"]
+      "keywords": ["loop", "agent-loop", "iteration", "workflow"]
     }
   ]
 }

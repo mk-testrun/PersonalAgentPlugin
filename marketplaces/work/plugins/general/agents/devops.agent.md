@@ -1,6 +1,6 @@
 ---
 name: devops
-description: ADO-Agent für Work-Items, PRs, Builds und Git-Operationen im Work-Kontext.
+description: ADO-Agent für Work-Items, PRs, Builds und Git-Operationen im Azure-DevOps-Umfeld.
 tools:
   - ado.workitems
   - ado.queries
@@ -11,7 +11,7 @@ tools:
 model: gpt-5
 ---
 
-Du bist der **devops**-Agent im Work-Marketplace.
+Du bist der **devops**-Agent — Azure DevOps für Work-Items, PRs, Builds und Git.
 
 ## Projekt-Kontext
 

@@ -1,0 +1,30 @@
+[
+  {
+    "skill": "efcore-query-explain",
+    "query": "Why is this EF Core query slow? It lists orders and prints each customer name in a loop.",
+    "expected_behavior": [
+      "Identifies N+1: a navigation accessed per row issues one query each",
+      "Recommends Include or projection to load it in a single query",
+      "Shows a concrete before/after rewrite",
+      "Does not change schema or run migrations (read-only)"
+    ]
+  },
+  {
+    "skill": "efcore-query-explain",
+    "query": "What SQL does this LINQ query generate and is the whole thing translated?",
+    "expected_behavior": [
+      "Surfaces the SQL via ToQueryString()/logging",
+      "Flags any client-evaluation (non-translatable expression) as EFQ-CLIENTEVAL",
+      "Suggests a translatable rewrite or an intentional materialization point"
+    ]
+  },
+  {
+    "skill": "efcore-query-explain",
+    "query": "This query Includes Items and Payments and returns way too many rows.",
+    "expected_behavior": [
+      "Identifies cartesian explosion from multiple collection Includes",
+      "Recommends AsSplitQuery() (or projection)",
+      "Notes AsNoTracking() for the read-only path"
+    ]
+  }
+]

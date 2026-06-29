@@ -13,7 +13,7 @@ const server = new McpServer({
 
 server.tool(
   'set_alarm',
-  'Set an alarm at a specific time (ISO 8601 or HH:MM).',
+  'Set an alarm at a specific time (ISO 8601 or HH:MM). Fires twice (sound), then it is done.',
   {
     time:  z.string().describe('Time as ISO 8601 or HH:MM'),
     label: z.string().default('Alarm').describe('Label for the alarm'),
@@ -28,7 +28,7 @@ server.tool(
 
 server.tool(
   'set_timer',
-  'Set a countdown timer.',
+  'Set a countdown timer (seconds). Fires twice (sound), then it is done.',
   {
     duration_seconds: z.number().int().min(1).describe('Timer duration in seconds'),
     label:            z.string().default('Timer').describe('Label for the timer'),
@@ -43,7 +43,7 @@ server.tool(
 
 server.tool(
   'list_alarms',
-  'List all active alarms and timers.',
+  'List active (pending) alarms and timers. Fired and cancelled ones are not shown.',
   {},
   async () => {
     const alarms = scheduler.listAlarms();
@@ -59,7 +59,7 @@ server.tool(
 
 server.tool(
   'cancel_alarm',
-  'Cancel an alarm or timer by id.',
+  'Cancel a pending alarm or timer by id (before it fires).',
   {
     id: z.string().describe('Alarm id to cancel'),
   },

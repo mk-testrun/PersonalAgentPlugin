@@ -1,0 +1,30 @@
+[
+  {
+    "skill": "review-aggregate",
+    "query": "Run the full review and give me one report with a merge decision.",
+    "expected_behavior": [
+      "Collects findings[] from the review skills that ran",
+      "Deduplicates by ruleId+file+line keeping the highest severity",
+      "Sorts critical→high→medium→low→info and renders MD + interactive HTML with filters",
+      "Sets [GATE] BLOCKED when any critical/high finding exists, else PASS"
+    ]
+  },
+  {
+    "skill": "review-aggregate",
+    "query": "Two skills reported the same SQL injection on the same line — consolidate.",
+    "expected_behavior": [
+      "Merges the duplicate into a single finding keeping critical severity",
+      "Records both contributing skills as sources",
+      "Does not double-count it in the per-severity totals"
+    ]
+  },
+  {
+    "skill": "review-aggregate",
+    "query": "Only low and info findings this time — what's the gate?",
+    "expected_behavior": [
+      "Computes gate=false (no critical/high)",
+      "Renders the report header as PASS",
+      "Still lists the low/info findings in the per-area sections"
+    ]
+  }
+]

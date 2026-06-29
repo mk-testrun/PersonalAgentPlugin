@@ -1,0 +1,29 @@
+{
+  "name": "lab",
+  "description": "Spielwiese: Playwright codegen, neue MCPs sichten, Home Assistant steuern.",
+  "version": "1.0.0",
+  "author": {
+    "name": "mkrueer"
+  },
+  "repository": "https://github.com/mk-testrun/PersonalAgentPlugin",
+  "license": "MIT",
+  "keywords": [
+    "lab",
+    "playwright",
+    "homeassistant",
+    "exploration",
+    "mcp"
+  ],
+  "agents": [
+    "./agents/lab.agent.md"
+  ],
+  "commands": [
+    "./commands/explore.md",
+    "./commands/list-tools.md"
+  ],
+  "skills": [
+    "./skills/pw-explore/",
+    "./skills/tool-inventory/",
+    "./skills/homeassistant-control/"
+  ]
+}

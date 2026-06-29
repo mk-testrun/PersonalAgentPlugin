@@ -1,20 +1,33 @@
 ---
 name: speak-summary
-description: Nutze wenn eine Zusammenfassung als Audio (TTS via SuperTonic) auszugeben — nur nicht-sensible Inhalte.
+description: Nutze um eine Zusammenfassung als Audio (TTS via SuperTonic) auszugeben — nur nicht-sensible Inhalte.
+mcp_tools:
+  - supertonic
 ---
+
+## Zweck
+
+Kurze Zusammenfassungen hörbar machen (z.B. Stand-up, Briefing) statt nur Text.
+
+## Aufbau
+
+1. Text auf das Wesentliche kürzen (**max. 4000 Zeichen**), hörfreundlich formulieren (keine Tabellen/Code).
+2. **Sensibilitäts-Check** (siehe Einschränkungen) — bei Treffer abbrechen, nichts vorlesen.
+3. TTS via supertonic-MCP erzeugen; MP3 nach `state/audio/`.
+4. Plattform-Player zur sofortigen Wiedergabe; Pfad ausgeben.
+
+## Einschränkungen (harte Verweigerung)
+
+Verweigert Ausführung bei:
+- `findings[]`-Inhalten (Review-Ergebnissen),
+- Security-/Review-Antworten,
+- Texten mit erkannten Secrets oder PII.
 
 ## Render-Pattern (§2.7)
 
-- **Rich:** HTML-Artefakt als MCP-UI-Resource inline (VS Code Webview)
-- **Fallback:** Mermaid-Quelltext / ASCII + Pfad zu state/artifacts/
+- **Rich:** Audio-Player-Artefakt (Webview) + Transkript.
+- **Fallback:** MP3-Pfad + Transkript-Text.
 
+## Output
 
-
-## Einschränkungen
-
-Verweigert Ausführung bei:
-- findings[]-Inhalten
-- Security-/Review-Antworten
-- Texten mit erkannten Secrets oder PII
-
-Max. 4000 Zeichen. MP3 nach `state/audio/`.
+`state/audio/summary-<ts>.mp3` + Transkript.

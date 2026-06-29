@@ -1,0 +1,24 @@
+{
+  "name": "audio",
+  "description": "TTS via SuperTonic und Sound-Notifications — kein STT.",
+  "version": "1.0.0",
+  "author": {
+    "name": "mkrueer"
+  },
+  "repository": "https://github.com/mk-testrun/PersonalAgentPlugin",
+  "license": "MIT",
+  "keywords": [
+    "audio",
+    "tts",
+    "speak",
+    "notifications",
+    "supertonic"
+  ],
+  "commands": [
+    "./commands/speak.md"
+  ],
+  "skills": [
+    "./skills/speak-summary/",
+    "./skills/sound-notifications/"
+  ]
+}

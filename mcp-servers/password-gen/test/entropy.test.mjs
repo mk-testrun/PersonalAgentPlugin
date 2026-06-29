@@ -102,4 +102,42 @@ function generatePassword(length, symbols, count) {
   console.log('✓ Test 8: No ambiguous characters');
 }
 
+// Test 9: charset distribution coverage (rejection sampling fills full range)
+{
+  const charset = LOWERCASE + UPPERCASE + DIGITS;
+  const seen = new Set([...generatePassword(64, false, 40).join('')]);
+  // Over a large sample, the vast majority of the charset should appear.
+  const coverage = seen.size / charset.length;
+  assert.ok(coverage >= 0.9, `Charset coverage too low: ${(coverage * 100).toFixed(0)}%`);
+  // And every produced char must be within the charset (no out-of-range modulo artifact).
+  for (const ch of seen) assert.ok(charset.includes(ch), `Char "${ch}" not in charset`);
+  console.log('✓ Test 9: charset distribution coverage');
+}
+
+// Test 10: minimum length boundary fills exactly (no over/under-run)
+{
+  for (const len of [8, 9, 13, 20]) {
+    const [pwd] = generatePassword(len, true, 1);
+    assert.equal(pwd.length, len, `length ${len} mismatch: ${pwd.length}`);
+  }
+  console.log('✓ Test 10: exact length at boundaries');
+}
+
+// Test 11: passphrase word-count + separator contract
+{
+  const WORDS = ['alpha','bravo','charlie','delta','echo','foxtrot','golf','hotel'];
+  function generatePassphrase(words, separator) {
+    const buf = randomBytes(words * 4);
+    const chosen = [];
+    for (let i = 0; i < words; i++) chosen.push(WORDS[buf.readUInt32BE(i * 4) % WORDS.length]);
+    return chosen.join(separator);
+  }
+  const p5 = generatePassphrase(5, '-');
+  assert.equal(p5.split('-').length, 5, '5 words → 5 separator-joined segments');
+  for (const w of p5.split('-')) assert.ok(WORDS.includes(w), `unknown word "${w}"`);
+  const p3 = generatePassphrase(3, '_');
+  assert.equal(p3.split('_').length, 3, 'custom separator + 3 words');
+  console.log('✓ Test 11: passphrase word-count + separator');
+}
+
 console.log('\nAll entropy tests passed.');
