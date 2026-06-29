@@ -3,7 +3,13 @@
 Transparenter stdio-Proxy zwischen dem Copilot-Client und einem Downstream-MCP-Server.
 Maskiert PII bidirektional.
 
-> **PROTOTYPE** — vor Produktionseinsatz härten (Audit, Rate-Limiting, Logging-Absicherung).
+## Robustheit
+
+- **Framing:** newline-delimitiertes JSON-RPC; unparsbare Zeilen werden unverändert durchgereicht.
+- **Block-PII:** fail-closed → JSON-RPC-Error (`-32001`), nichts wird geleakt.
+- **Unerwartete Masker-Fehler:** fail-closed (`-32002`) + stderr-Log — der Proxy **crasht nicht**.
+- **Downstream-Fehler/Write-Fehler:** abgefangen und geloggt.
+- **Persistenz:** deterministische Pseudonym-Map (`ANON_MAP_FILE`).
 
 ## Datenfluss
 

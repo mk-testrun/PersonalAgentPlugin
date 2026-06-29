@@ -2,7 +2,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
-import { readFileSync } from 'fs';
+import { getText } from './textfile.js';
 import { toContent } from './fallback.js';
 import { renderMarkdown } from './renderers/markdown.js';
 import { renderHtml } from './renderers/html.js';
@@ -26,12 +26,6 @@ const FileParams = {
   source: z.string().describe('Absolute or relative path to the file'),
   title: z.string().optional().describe('Optional title'),
 };
-
-function getText(p: { content?: string; source?: string }): string {
-  if (p.content) return p.content;
-  if (p.source) return readFileSync(p.source, 'utf8');
-  throw new Error('Provide either content or source');
-}
 
 server.tool('render_markdown',
   'Render Markdown. Rich: HTML webview. Fallback: text inline + file:// link.',

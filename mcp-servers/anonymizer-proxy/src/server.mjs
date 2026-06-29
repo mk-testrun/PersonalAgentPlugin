@@ -12,7 +12,9 @@
  *   ANON_MAP_FILE         path for persistent pseudonym map
  *   UNMASK_RESULTS        "false" to skip unmask on client→downstream (default: "true")
  *
- * PROTOTYPE — harden before production use.
+ * Robustheit: newline-delimited JSON-RPC-Framing; unparsbare Zeilen werden durchgereicht;
+ * Block-PII fail-closed (JSON-RPC-Error); unerwartete Masker-Fehler crashen den Proxy nicht
+ * (fail-closed + stderr-Log). Pseudonym-Map wird persistiert (ANON_MAP_FILE).
  */
 
 import { createInterface } from 'readline';
@@ -100,11 +102,18 @@ async function main() {
           process.stdout.write(errLine + '\n');
           return;
         }
-        throw e;
+        // Fail-closed: never forward args we could not safely process; do not crash the proxy.
+        process.stderr.write(`anonymizer-proxy: mask error (args): ${e.message}\n`);
+        process.stdout.write(jsonRpcError(msg.id, -32002, 'anonymizer-proxy: failed to process tool arguments') + '\n');
+        return;
       }
     }
 
-    downstream.stdin.write(JSON.stringify(msg) + '\n');
+    try {
+      downstream.stdin.write(JSON.stringify(msg) + '\n');
+    } catch (e) {
+      process.stderr.write(`anonymizer-proxy: downstream write failed: ${e.message}\n`);
+    }
   });
 
   clientReader.on('close', () => {
@@ -132,7 +141,10 @@ async function main() {
         process.stdout.write(errLine + '\n');
         return;
       }
-      throw e;
+      // Fail-closed: never emit an unmasked result; do not crash the proxy.
+      process.stderr.write(`anonymizer-proxy: mask error (result): ${e.message}\n`);
+      process.stdout.write(jsonRpcError(msg.id, -32002, 'anonymizer-proxy: failed to mask tool result') + '\n');
+      return;
     }
 
     process.stdout.write(JSON.stringify(msg) + '\n');
