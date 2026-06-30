@@ -1,0 +1,47 @@
+# .betterleaks.toml — betterleaks config using the NEW expressions approach (Expr),
+# NOT the old gitleaks allowlist/regex-only method.
+#   • `prefilter` / `filter` : Expr predicates that cut false positives BEFORE you ever see them.
+#   • `validate`             : Expr that fires an HTTP request to confirm a secret is LIVE.
+# Place this at the repo root; the pre-push hook auto-uses it via `--config .betterleaks.toml`.
+# Docs: https://github.com/betterleaks/betterleaks
+title = "betterleaks (expressions)"
+
+# Global prefilter — skip whole paths cheaply before per-rule work runs (Expr over the fragment).
+prefilter = '''
+!finding["path"].contains("/testdata/")
+&& !finding["path"].contains("/fixtures/")
+&& !finding["path"].endsWith(".lock")
+'''
+
+# Global filter — drop low-entropy values and obvious placeholders across every rule.
+filter = '''
+filter.entropy(finding["secret"]) > 3.0
+&& !finding["secret"].matches("(?i)example|changeme|placeholder|dummy|xxxx+")
+'''
+
+[[rules]]
+id = "github-pat"
+description = "GitHub Personal Access Token"
+regex = '''ghp_[0-9A-Za-z]{36}'''
+keywords = ["ghp_"]
+# Live validation (new expressions feature): confirm the token is active. Value stays redacted in output.
+validate = '''
+let r = http.get("https://api.github.com/user", {"headers": {"Authorization": "Bearer " + finding["secret"]}});
+r.status == 200 ? validate.active(r) : (r.status == 401 ? validate.inactive(r) : validate.unknown(r))
+'''
+
+[[rules]]
+id = "aws-access-key"
+description = "AWS Access Key ID"
+regex = '''AKIA[0-9A-Z]{16}'''
+keywords = ["AKIA"]
+# Contextual filter — ignore keys committed by the CI service account.
+filter = '''
+get(attributes, "git.author_name", "") != "ci-runner"
+'''
+
+[[rules]]
+id = "private-key"
+description = "Private key block (RSA/EC/OPENSSH/PGP)"
+regex = '''-----BEGIN (?:RSA |EC |OPENSSH |PGP )?PRIVATE KEY-----'''
+keywords = ["PRIVATE KEY"]

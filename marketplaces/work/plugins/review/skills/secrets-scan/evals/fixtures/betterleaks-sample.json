@@ -1,0 +1,3 @@
+[ {"RuleID":"aws-access-key","Description":"AWS Access Key ID","File":"src/config.cs","StartLine":12,"Secret":"AKIAREALSECRETXYZ","Commit":"abcdef1234567890","Validation":"active"},
+  {"RuleID":"generic-api-key","Description":"Generic API Key","File":"src/config.cs","StartLine":12,"Secret":"dup-same-line"},
+  {"RuleID":"private-key","Description":"Private Key","File":"keys/id_rsa","StartLine":1,"Secret":"-----BEGIN...","Validation":"unknown"} ]

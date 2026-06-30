@@ -10,7 +10,7 @@ applyTo: ["**/azure-pipelines*.yml", "**/azure-pipelines*.yaml"]
 2. **Kein `latest`-Tag:** Container-Images immer mit festem Digest/Version pinnen
 3. **Secret-Variablen:** `isSecret: true` für alle Keys die `token|password|secret|key|pat` enthalten
 4. **Caching:** `cache` für npm/NuGet/pip aktivieren (Cache-Key: lockfile-Hash)
-5. **Branch-Policies:** `gitleaks` und `kingfisher` als Gate-Step (kein Merge ohne grünen Scan)
+5. **Branch-Policies:** `betterleaks` und `kingfisher` als Gate-Step (kein Merge ohne grünen Scan)
 6. **Kein `continue-on-error: true`** außer bei optionalen Analyse-Steps
 
 ## Bei Problemen

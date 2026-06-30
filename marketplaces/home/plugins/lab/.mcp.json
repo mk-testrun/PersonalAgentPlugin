@@ -21,10 +21,6 @@
         "HASS_URL": "${env:HASS_URL}",
         "HASS_TOKEN": "${env:HASS_TOKEN}"
       }
-    },
-    "kingfisher": {
-      "command": "kingfisher",
-      "args": ["mcp-mode"]
     }
   }
 }

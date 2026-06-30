@@ -3,19 +3,21 @@
     "skill": "secrets-scan",
     "query": "Scan the repo for committed secrets, including history.",
     "expected_behavior": [
-      "Runs gitleaks over the working tree and git history with --redact",
-      "Runs scripts/gitleaks-to-findings.mjs to map the report to findings[]",
-      "Never emits the cleartext secret — values are redacted",
+      "Uses the expressions config (.betterleaks.toml) — copies templates/betterleaks.toml if absent",
+      "Runs betterleaks dir . and betterleaks git . with --redact (working tree + history)",
+      "Runs scripts/betterleaks-to-findings.mjs to map the report(s) to findings[]",
+      "Never emits the cleartext secret — values are redacted; live-validated finds are tagged",
       "Each real find is critical and raises [GATE]"
     ]
   },
   {
     "skill": "secrets-scan",
-    "query": "Convert this gitleaks report to findings.",
-    "files": ["fixtures/gitleaks-sample.json"],
+    "query": "Convert this betterleaks report to findings.",
+    "files": ["fixtures/betterleaks-sample.json"],
     "expected_behavior": [
       "Maps each leak to SECR-* (e.g. aws→SECR-CLOUD, private-key→SECR-PRIVKEY)",
       "Messages contain no cleartext secret (redacted) and the output is schema-valid",
+      "Surfaces betterleaks validation status (LIVE) without printing the value",
       "Recommends rotate-then-purge-history for each"
     ]
   },

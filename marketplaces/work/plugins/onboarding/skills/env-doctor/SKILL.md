@@ -5,7 +5,7 @@ description: Nutze wenn die Entwicklungsumgebung auf Vollständigkeit geprüft w
 
 ## Prüfungen
 
-1. **Tools vorhanden:** `dotnet --version`, `git --version`, `node --version`, `gitleaks version`
+1. **Tools vorhanden:** `dotnet --version`, `git --version`, `node --version`, `betterleaks version`
 2. **Optionale Tools:** `az --version`, `docker --version`
 3. **Env-Variablen (Präsenz, nie Werte):** ADO_ORG, ADO_PROJECT, CONFLUENCE_URL
 4. **Secrets (nur ob gesetzt):** ADO_PAT, CONFLUENCE_TOKEN (Keychain)
