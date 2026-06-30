@@ -1,51 +1,45 @@
 ---
 name: accessibility-bfsg
-description: Nutze um WCAG-Befunde auf BFSG/BITV 2.0 zu mappen und eine publizierfähige „Erklärung zur Barrierefreiheit" (§12 BFSG) zu erzeugen.
+description: >-
+  Maps WCAG 2.2 audit findings to German accessibility law (BFSG / BITV 2.0 / EN 301 549) and generates
+  the legally required "Erklärung zur Barrierefreiheit" (§12 BFSG). Use after a WCAG audit when asked
+  about BFSG/BITV conformance, the accessibility statement, or legal accessibility for a German B2C
+  service. Produces findings[] (area:accessibility, BFSG-*) plus the statement as a Markdown artifact.
 ---
 
-## Scope
+# BFSG / BITV Mapping & Statement
 
-Rechtliches Mapping deutscher Barrierefreiheit. Voraussetzung: WCAG-Befunde aus
-`accessibility-wcag`. Erzeugt zusätzlich die gesetzlich geforderte Erklärung.
+Turns a technical WCAG audit into the legal view German law requires: a conformance status and the
+publishable "Erklärung zur Barrierefreiheit". Prerequisite: WCAG findings from `accessibility-wcag`.
 
-## Vorgehen
+## When to Use This Skill
 
-1. WCAG-2.2-Befunde (aus accessibility-wcag) übernehmen.
-2. Jedes Kriterium auf BITV-2.0-Anlage / BFSG-Anforderung mappen.
-3. Konformitätsgrad ableiten und die Erklärung generieren.
+- "Are we BFSG/BITV compliant?" · "generate the accessibility statement"
+- Preparing legal evidence for a German public-facing B2C service (BFSG, in force 28.06.2025)
 
-## Checkliste — BFSG/BITV-Mapping
+## Workflow
 
-1. **BFSG-MAP** — Jeder WCAG-AA-Fail einer BITV-2.0-Anforderung zugeordnet. *(severity vom WCAG-Impact)*
-2. **BFSG-SCOPE** — Geltungsbereich geklärt (öffentlich zugängliche Dienstleistung / B2C ab 28.06.2025). *(info)*
-3. **BFSG-CONFORM** — Konformitätsstatus: „vollständig | teilweise | nicht konform" begründet. *(high bei „nicht konform")*
-4. **BFSG-FEEDBACK** — Feedback-Mechanismus + Kontakt für Barriere-Meldungen vorhanden. *(medium)*
-5. **BFSG-ENFORCE** — Hinweis auf Durchsetzungsverfahren/Schlichtungsstelle enthalten. *(low)*
+### Step 1 — Take the WCAG findings
+Use the AA results from `accessibility-wcag` (run it first if not done).
 
-## Erklärung zur Barrierefreiheit (§12 BFSG) — Vorlage
+### Step 2 — Map to BITV/EN 301 549
+Apply **[references/bitv-mapping.md](references/bitv-mapping.md)**: each AA fail → a non-conformance;
+derive the conformance status (vollständig / teilweise / nicht konform).
 
-```markdown
-# Erklärung zur Barrierefreiheit
+### Step 3 — Generate the statement
+Fill **[references/erklaerung-template.md](references/erklaerung-template.md)** from the mapped results
+(status, non-accessible content + criteria + dates, feedback contact, enforcement reference).
 
-**Geltungsbereich:** <Anwendung/Domain>
-**Stand:** <YYYY-MM-DD>  ·  **Erstellt auf Basis:** Selbstbewertung / WCAG-2.2-Prüfung
+## Checklist (→ findings[], area: accessibility, ruleId BFSG-*)
 
-## Konformitätsstatus
-<vollständig | teilweise | nicht> konform mit BITV 2.0 / EN 301 549.
-
-## Nicht barrierefreie Inhalte
-- <Befund + betroffenes WCAG-Kriterium + geplante Behebung/Datum>
-
-## Feedback & Kontakt
-<E-Mail/Formular für Barriere-Meldungen>
-
-## Durchsetzungsverfahren
-<Schlichtungsstelle / zuständige Aufsicht>
-```
-
-Ausgabe als Markdown; optionale Confluence-Veröffentlichung über `doku/confluence-draft` + **[CONFIRM]**.
+1. **BFSG-MAP** — every WCAG-AA fail mapped to a BITV non-conformance. *(severity from WCAG impact)*
+2. **BFSG-SCOPE** — in-scope service clarified (B2C, exceptions). *(info)*
+3. **BFSG-CONFORM** — status justified and consistent with the audit. *(high if "nicht konform")*
+4. **BFSG-FEEDBACK** — feedback mechanism + contact present. *(medium)*
+5. **BFSG-ENFORCE** — enforcement/Schlichtungsstelle reference present. *(low)*
 
 ## Output
 
-findings[] nach `docs/findings-schema.md`, `area: accessibility`, ruleId aus `BFSG-*`,
-**plus** die fertige Erklärung als Markdown-Artefakt. Bei `critical`/`high`: **[GATE]**.
+`findings[]` (`area: accessibility`, `BFSG-*`) **plus** the finished "Erklärung zur Barrierefreiheit"
+as a Markdown artifact in `state/artifacts/`. Optional Confluence publish via `doku/confluence-draft`
++ **[CONFIRM]**. On critical/high → **[GATE]**.

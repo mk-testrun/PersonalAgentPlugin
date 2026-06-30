@@ -11,7 +11,7 @@
 
 - [ ] Keine Secrets in Dateien (nur `${secret:NAME}`)
 - [ ] secret-scan bleibt scharf (auch im warn-Modus)
-- [ ] gitleaks bleibt scharf für secrets-scan
+- [ ] betterleaks bleibt scharf für secrets-scan
 
 ## Validierung
 

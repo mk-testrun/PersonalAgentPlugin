@@ -1,8 +1,8 @@
 {
   "profiles": {
     "coding": {
-      "description": "Entwicklungs-Modus: dotnet-mcp-builder, context7",
-      "mcpServers": ["dotnet-mcp-builder", "context7", "filesystem", "git"]
+      "description": "Entwicklungs-Modus: github, context7, git",
+      "mcpServers": ["github", "context7", "filesystem", "git"]
     },
     "writing": {
       "description": "Schreib-Modus: fetch, brave-search",

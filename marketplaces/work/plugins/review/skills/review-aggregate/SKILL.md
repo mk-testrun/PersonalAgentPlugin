@@ -22,13 +22,22 @@ independently runnable; this one consolidates their output.
 
 ## Workflow
 
-### Step 1 — Collect
+### Step 1 — Collect & validate
 Gather the `findings[]` arrays from every review skill that ran (schema: `docs/findings-schema.md`).
+Self-check the merged input before aggregating:
+```bash
+node tools/validate-findings.mjs <findings.json>
+```
+Fix any schema problems it reports, then continue.
 
-### Step 2 — Aggregate
-Apply the rules in **[references/aggregation-rules.md](references/aggregation-rules.md)**:
-dedupe by `ruleId+file+line` (keep highest severity, merge source skills), sort by severity then
-area then file, compute the gate flag, pick the Top-N summary.
+### Step 2 — Aggregate (run the script — deterministic, low freedom)
+Don't merge by hand. Run the bundled utility:
+```bash
+node scripts/aggregate.mjs <findings.json> --top 10
+```
+It dedupes by `ruleId+file+line` (keeps highest severity, merges source skills), sorts by severity →
+area → file, computes the gate flag, and emits `{ gate, counts, byArea, top, findings }`. Rules:
+**[references/aggregation-rules.md](references/aggregation-rules.md)**; worked example: **[examples.md](examples.md)**.
 
 ### Step 3 — Render
 Produce both outputs per **[references/report-rendering.md](references/report-rendering.md)**:

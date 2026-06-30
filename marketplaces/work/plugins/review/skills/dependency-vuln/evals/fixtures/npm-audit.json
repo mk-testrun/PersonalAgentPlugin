@@ -1,0 +1,2 @@
+{ "vulnerabilities": { "lodash": { "severity": "high", "range": "<4.17.21", "fixAvailable": true,
+  "via": [ { "title": "Prototype Pollution in lodash" } ] } } }

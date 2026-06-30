@@ -1,0 +1,30 @@
+[
+  {
+    "skill": "accessibility-wcag",
+    "query": "Run a WCAG AA audit of my local app.",
+    "expected_behavior": [
+      "Opens the localhost URL in Playwright and runs axe-core",
+      "Also checks human-judgement criteria from references/wcag-criteria.md (focus order, alt meaningfulness, keyboard)",
+      "Reports per-criterion Pass/Fail/NA grouped by level with concrete fixes",
+      "Emits findings[] area:wcag with WCAG-criterion ruleIds and severity from impact"
+    ]
+  },
+  {
+    "skill": "accessibility-wcag",
+    "query": "Is the contrast and keyboard access okay on this page?",
+    "expected_behavior": [
+      "Checks 1.4.3 contrast (>=4.5:1) via axe",
+      "Tabs through to verify 2.1.1 keyboard operability and 2.4.3 focus order (no traps)",
+      "Flags failures with the exact WCAG criterion and a markup/CSS fix"
+    ]
+  },
+  {
+    "skill": "accessibility-wcag",
+    "query": "We need this audited for BFSG — what next?",
+    "expected_behavior": [
+      "Performs the WCAG 2.2 AA audit first",
+      "Maps axe impact to finding severity and raises [GATE] on critical/serious",
+      "Chains to accessibility-bfsg for the BITV mapping and legal statement"
+    ]
+  }
+]

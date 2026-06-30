@@ -23,6 +23,7 @@ mkrueer-copilot/
 │   ├── password-gen/         # Kryptografischer Passwort-Generator
 │   ├── alarm-mcp/            # Alarm/Timer (Home)
 │   ├── artifact-viewer/      # Universal-Renderer (rich/fallback, §3.5)
+│   ├── supertonic/           # On-device TTS (wraps `supertonic serve`)
 │   └── dotnet-mcpserver-starter/  # .NET-Template
 ├── marketplaces/
 │   ├── work/                 # 10 Plugins
@@ -114,6 +115,7 @@ Gesperrte Operationen: `git push --force/-f`, `git reset --hard`, `git clean -fd
 | password-gen | TypeScript | Kryptografischer Passwort-Generator |
 | alarm-mcp | TypeScript | Alarme/Timer (Home) |
 | artifact-viewer | TypeScript | Universal-Renderer (rich + fallback, §3.5) |
+| supertonic | Node ESM | On-device TTS via `supertonic serve` (OpenAI-kompatibel, kein API-Key) |
 | dotnet-mcpserver-starter | .NET 8 | Template für eigene .NET-MCPs |
 
 ### §3.5 artifact-viewer

@@ -1,0 +1,30 @@
+[
+  {
+    "skill": "accessibility-bfsg",
+    "query": "Generate the accessibility statement for our app based on the WCAG audit.",
+    "expected_behavior": [
+      "Takes the WCAG AA findings (runs accessibility-wcag first if missing)",
+      "Maps each AA fail to a BITV/EN 301 549 non-conformance per references/bitv-mapping.md",
+      "Fills references/erklaerung-template.md with status, non-accessible content, feedback, enforcement",
+      "Outputs the statement as a Markdown artifact and findings[] with BFSG-* ruleIds"
+    ]
+  },
+  {
+    "skill": "accessibility-bfsg",
+    "query": "Are we BFSG conformant if we still have AA contrast failures?",
+    "expected_behavior": [
+      "Derives status 'teilweise konform' (AA fails exist), not 'vollständig'",
+      "Lists the failures with their WCAG criteria and remediation dates",
+      "Raises BFSG-CONFORM as high when core tasks are blocked"
+    ]
+  },
+  {
+    "skill": "accessibility-bfsg",
+    "query": "Is our internal admin tool in scope for BFSG?",
+    "expected_behavior": [
+      "Flags BFSG-SCOPE as info for legal review rather than asserting a legal conclusion",
+      "Notes the B2C/public-service scope criteria and exceptions",
+      "Does not fabricate a definitive legal answer"
+    ]
+  }
+]

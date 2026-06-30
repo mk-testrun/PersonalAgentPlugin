@@ -1,8 +1,8 @@
 {
   "mcpServers": {
     "github": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "command": "docker",
+      "args": ["run", "-i", "--rm", "-e", "GITHUB_PERSONAL_ACCESS_TOKEN", "ghcr.io/github/github-mcp-server"],
       "env": {
         "GITHUB_PERSONAL_ACCESS_TOKEN": "${secret:GH_PAT}"
       }
@@ -12,12 +12,12 @@
       "args": ["-y", "@modelcontextprotocol/server-filesystem", "${env:USERPROFILE}/Projects"]
     },
     "git": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-git"]
+      "command": "uvx",
+      "args": ["mcp-server-git"]
     },
     "fetch": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-fetch"]
+      "command": "uvx",
+      "args": ["mcp-server-fetch"]
     },
     "brave-search": {
       "command": "npx",
@@ -32,10 +32,6 @@
       "env": {
         "CONTEXT7_API_KEY": "${secret:CONTEXT7_KEY}"
       }
-    },
-    "dotnet-mcp-builder": {
-      "command": "dnx",
-      "args": ["dotnet-mcp-builder"]
     },
     "password-gen": {
       "command": "password-gen-mcp"

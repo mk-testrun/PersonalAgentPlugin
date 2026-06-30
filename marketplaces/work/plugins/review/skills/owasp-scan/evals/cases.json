@@ -1,0 +1,30 @@
+[
+  {
+    "skill": "owasp-scan",
+    "query": "Run an OWASP Top 10 scan on my local app.",
+    "expected_behavior": [
+      "Starts the app and confirms it is reachable on localhost (no internet target)",
+      "Runs a ZAP headless baseline scan",
+      "Maps alerts to OWASP A01–A10 per references/owasp-top10.md and filters false positives",
+      "Emits findings[] area:security with OWASP-A0* ruleIds, [GATE] on critical/high"
+    ]
+  },
+  {
+    "skill": "owasp-scan",
+    "query": "ZAP reported a reflected XSS — is it real and how do I fix it?",
+    "expected_behavior": [
+      "Verifies exploitability before reporting (not a false positive)",
+      "Classifies it as A03 Injection (critical) and recommends context-aware output encoding",
+      "Provides the affected endpoint/parameter"
+    ]
+  },
+  {
+    "skill": "owasp-scan",
+    "query": "The scan found missing security headers.",
+    "expected_behavior": [
+      "Classifies as A05 Security Misconfiguration with appropriate (high/medium) severity, not critical",
+      "Recommends the specific headers (CSP, HSTS, X-Content-Type-Options)",
+      "Suggests cross-checking component versions via dependency-vuln for A06"
+    ]
+  }
+]

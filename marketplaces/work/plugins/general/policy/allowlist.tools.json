@@ -8,7 +8,7 @@
       "npm test",
       "npm run*",
       "reportgenerator*",
-      "gitleaks*"
+      "betterleaks*"
     ],
     "deny": [
       "rm -rf*",

@@ -49,7 +49,7 @@ copilot plugin install onboarding
 | `CONFLUENCE_TOKEN` | secret | Confluence API-Token |
 | `ANON_SALT` | secret | Salt für PII-Pseudonymisierung |
 | `CONTEXT7_KEY` | secret | Context7 Key (optional) |
-| `SUPERTONIC_KEY` | secret | SuperTonic TTS-Key |
+| `ST_BASE_URL` | env (optional) | SuperTonic `serve`-URL (Default `http://127.0.0.1:8000`; on-device, kein Key) |
 
 ## Sicherheitsmodell
 

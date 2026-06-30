@@ -48,6 +48,11 @@ function jsonRpcError(id, code, message) {
   return JSON.stringify({ jsonrpc: '2.0', id, error: { code, message } });
 }
 
+// catch(e) may receive a non-Error value — normalize before logging so logging never throws.
+function errMsg(e) {
+  return e instanceof Error ? e.message : String(e);
+}
+
 async function main() {
   const downstreamCmd = process.env.DOWNSTREAM_CMD;
   if (!downstreamCmd) {
@@ -103,7 +108,7 @@ async function main() {
           return;
         }
         // Fail-closed: never forward args we could not safely process; do not crash the proxy.
-        process.stderr.write(`anonymizer-proxy: mask error (args): ${e.message}\n`);
+        process.stderr.write(`anonymizer-proxy: mask error (args): ${errMsg(e)}\n`);
         process.stdout.write(jsonRpcError(msg.id, -32002, 'anonymizer-proxy: failed to process tool arguments') + '\n');
         return;
       }
@@ -112,7 +117,7 @@ async function main() {
     try {
       downstream.stdin.write(JSON.stringify(msg) + '\n');
     } catch (e) {
-      process.stderr.write(`anonymizer-proxy: downstream write failed: ${e.message}\n`);
+      process.stderr.write(`anonymizer-proxy: downstream write failed: ${errMsg(e)}\n`);
     }
   });
 
@@ -142,7 +147,7 @@ async function main() {
         return;
       }
       // Fail-closed: never emit an unmasked result; do not crash the proxy.
-      process.stderr.write(`anonymizer-proxy: mask error (result): ${e.message}\n`);
+      process.stderr.write(`anonymizer-proxy: mask error (result): ${errMsg(e)}\n`);
       process.stdout.write(jsonRpcError(msg.id, -32002, 'anonymizer-proxy: failed to mask tool result') + '\n');
       return;
     }

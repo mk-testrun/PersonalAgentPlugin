@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<coverage line-rate="0.7" branch-rate="0.72">
+  <packages><package name="Acme.Domain" line-rate="0.7" branch-rate="0.65"/></packages>
+</coverage>

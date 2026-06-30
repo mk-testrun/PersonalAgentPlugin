@@ -1,28 +1,46 @@
 ---
 name: dependency-vuln
-description: Nutze für verwundbare Abhängigkeiten (dotnet list package --vulnerable, npm audit) inkl. transitiver Pakete.
+description: >-
+  Finds vulnerable dependencies (direct and transitive) via `dotnet list package --vulnerable` and
+  `npm audit`, then converts the audit output to findings[] with a bundled script and ranks by CVSS.
+  Use when asked to check dependencies for CVEs, run an audit, or assess supply-chain risk. EOL/LTS
+  status → lts-check; license conformance → license-check. [GATE] on critical/high.
 ---
 
-## Scope
+# Dependency Vulnerabilities
 
-Bekannte CVEs in direkten **und** transitiven Paketen. LTS-/EOL-Versionsstatus → lts-check;
-Lizenzkonformität → license-check.
+Known CVEs in direct **and** transitive packages, mapped deterministically to findings[].
 
-## Vorgehen
+## When to Use This Skill
 
-1. `dotnet list package --vulnerable --include-transitive` (alle Projekte).
-2. Für JS-Anteile `npm audit --omit=dev` bzw. `--json`.
-3. Treffer nach CVSS einstufen, transitiv → nächstes direktes Paket als Fix-Hebel benennen.
+- "Check dependencies for vulnerabilities / CVEs" · "run an audit" · supply-chain risk
+- Pre-merge/pre-release dependency gate
 
-## Checkliste
+## Workflow
 
-1. **DEP-CRIT** — CVE mit CVSS ≥ 9.0 oder bekannt aktiv ausgenutzt. *(critical)*
-2. **DEP-HIGH** — CVSS 7.0–8.9. *(high)*
-3. **DEP-MED** — CVSS 4.0–6.9. *(medium)*
-4. **DEP-TRANSITIVE** — Verwundbarkeit nur transitiv → direktes Paket pinnen/anheben oder `<PackageReference>`-Override. *(severity nach CVSS)*
-5. **DEP-FIX** — Je Fund: kleinste sichere Zielversion + Breaking-Change-Hinweis. *(info)*
-6. **DEP-NOFIX** — Kein Patch verfügbar → Mitigation/Workaround dokumentieren, Risiko markieren. *(high)*
+### Step 1 — Produce the audit
+```bash
+dotnet list package --vulnerable --include-transitive --format json > audit.json   # .NET
+npm audit --omit=dev --json > audit.json                                            # JS
+```
+
+### Step 2 — Convert to findings (run the script — deterministic)
+```bash
+node scripts/audit-to-findings.mjs audit.json        # auto-detects dotnet vs npm
+```
+Emits findings[] (`area: deps`, ruleId `DEP-CRIT|HIGH|MED|LOW`), severity from the audit, transitive
+flagged with the nearest-direct-package fix hint. The output is schema-valid (verify with
+`tools/validate-findings.mjs`).
+
+### Step 3 — Triage & fix
+Per finding: smallest safe target version + breaking-change note. Transitive → bump/override the
+nearest direct package. No patch → document a mitigation and mark the risk.
+
+## Checklist (severity from CVSS)
+- **DEP-CRIT** CVSS ≥ 9.0 / actively exploited · **DEP-HIGH** 7.0–8.9 · **DEP-MED** 4.0–6.9 · **DEP-LOW** < 4.0
+- **DEP-TRANSITIVE** only transitive → override at the nearest direct dependency.
+- **DEP-NOFIX** no patch → mitigation + risk note *(high)*.
 
 ## Output
 
-findings[] nach `docs/findings-schema.md`, `area: deps`, ruleId aus `DEP-*` (CVE-ID in `message`). Bei `critical`/`high`: **[GATE]**.
+`findings[]` (`area: deps`, `DEP-*`, advisory in `message`). On critical/high → **[GATE]**.

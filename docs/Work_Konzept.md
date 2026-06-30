@@ -8,7 +8,7 @@ PII wird anonymisiert, Secrets verlassen nie das Modell.
 
 ## Charakter
 
-- **Sicherheit first:** Tool-Guardian blockt unerlaubte Befehle, gitleaks/kingfisher scannen Secrets
+- **Sicherheit first:** Tool-Guardian blockt unerlaubte Befehle, betterleaks/kingfisher scannen Secrets
 - **ADO-zentriert:** Work-Items, PRs, Builds, Pipelines über `@azure-devops/mcp` (hinter anonymizer-proxy)
 - **Blazor/.NET-Stack:** sharplens (Roslyn), EF-Core, Testcontainers, xUnit, Playwright (localhost-only)
 - **Review-Matrix:** OWASP ASVS L2, WCAG 2.2, BFSG, Performance, SQL, Licenses, Pipelines
@@ -52,4 +52,4 @@ PII wird anonymisiert, Secrets verlassen nie das Modell.
 | `ADO_PAT` | secret | Azure DevOps Personal Access Token |
 | `CONFLUENCE_TOKEN` | secret | Confluence API-Token |
 | `CONTEXT7_KEY` | secret | Context7 API-Key (optional) |
-| `SUPERTONIC_KEY` | secret | SuperTonic TTS API-Key |
+| `ST_BASE_URL` | env (optional) | SuperTonic `serve`-URL (Default `http://127.0.0.1:8000`; on-device, kein Key) |

@@ -1,0 +1,19 @@
+{
+  "name": "@mkrueer/supertonic",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "MCP server for on-device Supertonic TTS — wraps a local `supertonic serve` (OpenAI-compatible) endpoint, no API key.",
+  "license": "MIT",
+  "bin": {
+    "supertonic3-mcp": "./src/server.mjs"
+  },
+  "main": "./src/server.mjs",
+  "scripts": {
+    "check": "node --check src/tts.mjs && node --check src/server.mjs",
+    "start": "node src/server.mjs",
+    "test": "node test/tts.test.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

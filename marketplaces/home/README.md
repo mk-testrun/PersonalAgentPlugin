@@ -35,14 +35,14 @@ copilot plugin marketplace add ./marketplaces/home
 | `BRAVE_KEY` | secret | Brave Search API-Key |
 | `NOTION_TOKEN` | secret | Notion Token |
 | `OPENAI_KEY` | secret | OpenAI API-Key (image-generate) |
-| `SUPERTONIC_KEY` | secret | SuperTonic TTS-Key |
+| `ST_BASE_URL` | env (optional) | SuperTonic `serve`-URL (Default `http://127.0.0.1:8000`; on-device, kein Key) |
 | `CONTEXT7_KEY` | secret | Context7 Key (optional) |
 
 ## Profile (`/profile <name>`)
 
 | Profil | MCPs |
 |---|---|
-| coding | dotnet-mcp-builder, context7, filesystem, git |
+| coding | github, context7, filesystem, git |
 | writing | fetch, brave-search, filesystem |
 | media | supertonic, imagegen |
 | audio | supertonic, alarm-mcp, time |

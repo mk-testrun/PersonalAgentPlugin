@@ -39,6 +39,7 @@
     "./skills/commit-generate/",
     "./skills/changelog-generate/",
     "./skills/git-flow-helper/",
+    "./skills/secrets-prepush-hook/",
     "./skills/pipeline-conventions/",
     "./skills/story-author/",
     "./skills/grill-me/",

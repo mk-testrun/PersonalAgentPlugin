@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+# pre-push secret guard — scans the pushed commits with betterleaks (native, expressions-based).
+# Uses .betterleaks.toml (Expr filter/validate) when present at the repo root.
+# Local fast-feedback layer; the hard gate is CI (kingfisher, see general/pipeline-conventions).
+# False positive? bypass once with:  git push --no-verify
+set -euo pipefail
+
+if ! command -v betterleaks >/dev/null 2>&1; then
+  echo "pre-push: betterleaks not installed — skipping local secret scan." >&2
+  echo "         install: https://github.com/betterleaks/betterleaks  (CI still scans via kingfisher)" >&2
+  exit 0
+fi
+
+# Use the repo's expressions-based config if present (Expr filter/validate, not gitleaks allowlists).
+cfg=()
+[ -f .betterleaks.toml ] && cfg=(--config .betterleaks.toml)
+
+ZERO="0000000000000000000000000000000000000000"
+status=0
+
+# git feeds ref updates on stdin: <local_ref> <local_sha> <remote_ref> <remote_sha>
+while read -r local_ref local_sha remote_ref remote_sha; do
+  [ "$local_sha" = "$ZERO" ] && continue                 # branch deletion → nothing to scan
+  if [ "$remote_sha" = "$ZERO" ]; then
+    range="$local_sha --not --remotes"                   # new branch → commits not yet on any remote
+  else
+    range="${remote_sha}..${local_sha}"                  # existing branch → the pushed range
+  fi
+  # Native betterleaks git scan, scoped to the pushed commit range; secrets are redacted.
+  if ! betterleaks git . "${cfg[@]}" --redact --no-banner --log-opts="$range"; then
+    status=1
+  fi
+done
+
+if [ "$status" -ne 0 ]; then
+  {
+    echo ""
+    echo "✗ pre-push BLOCKED: betterleaks detected secrets in the commits being pushed."
+    echo "  → Rotate the secret, remove it from history (amend/rebase), then push again."
+    echo "  → False positive? refine .betterleaks.toml (filter expression) — or bypass once: git push --no-verify"
+  } >&2
+  exit 1
+fi
+exit 0

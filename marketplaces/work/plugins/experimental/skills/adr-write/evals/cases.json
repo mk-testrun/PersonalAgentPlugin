@@ -1,0 +1,30 @@
+[
+  {
+    "skill": "adr-write",
+    "query": "Record an ADR: we decided to use PostgreSQL as the primary store.",
+    "expected_behavior": [
+      "Runs scripts/next-adr.mjs to compute the next NNNN and scaffold content (read-only)",
+      "Fills Kontext/Entscheidung/Begründung/Konsequenzen",
+      "Writes docs/adr/NNNN-<slug>.md only after [CONFIRM]",
+      "Does not publish to Confluence"
+    ]
+  },
+  {
+    "skill": "adr-write",
+    "query": "What number will the next ADR get?",
+    "expected_behavior": [
+      "Runs next-adr.mjs which derives the next number from existing docs/adr files",
+      "Reports the number and target path without writing a file",
+      "Zero-pads to four digits (e.g. 0005)"
+    ]
+  },
+  {
+    "skill": "adr-write",
+    "query": "Make slides from our ADRs.",
+    "expected_behavior": [
+      "Recognizes this is out of scope for adr-write",
+      "Delegates to presentation-from-adr",
+      "Does not create a new ADR"
+    ]
+  }
+]
