@@ -9,7 +9,7 @@ entspannte Tool-Guardian-Policy.
 ## Charakter
 
 - **Visual-first:** Dashboards, Charts, Excalidraw-Skizzen, Cloud-Bild-Generierung erlaubt
-- **GitHub-zentriert:** Issues, PRs, Actions über `@modelcontextprotocol/server-github`
+- **GitHub-zentriert:** Issues, PRs, Actions über den offiziellen GitHub MCP Server (`ghcr.io/github/github-mcp-server`)
 - **Multi-Lang:** C#, Python (uv/ruff/mypy), Go, TypeScript, Compose/Homelab
 - **Warn-Modus:** Tool-Guardian warnt statt zu blocken (Ausnahme: secret-scan bleibt block)
 - **Profile:** coding/writing/media/audio/lab wechseln MCP-Sets via `/profile`
