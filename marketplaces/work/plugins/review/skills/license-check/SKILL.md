@@ -1,26 +1,44 @@
 ---
 name: license-check
-description: Nutze um Paket-Lizenzen auf Copyleft-/Denylist-Konflikte zu prüfen (SPDX).
+description: >-
+  Checks package licenses (direct + transitive) against an SPDX policy — strong copyleft (GPL/AGPL)
+  denied, weak copyleft and unknown/custom flagged — using a bundled script that emits findings[]. Use
+  when asked about license compliance, copyleft/GPL conflicts, or whether a dependency is legally
+  shippable. CVEs → dependency-vuln; EOL/LTS → lts-check. [GATE] on critical/high.
 ---
 
-## Scope
+# License Check
 
-Lizenzkonformität direkter und transitiver Pakete. CVEs → dependency-vuln; EOL → lts-check.
+Deterministic SPDX policy check over the dependency licenses.
 
-## Vorgehen
+## When to Use This Skill
 
-1. Lizenzen je Paket ermitteln (NuGet-Metadaten/`nuget-license`, `license-checker` für npm).
-2. Gegen SPDX-Kategorien und Projekt-Denylist abgleichen.
+- "Check licenses for compliance" · "any GPL/copyleft conflicts?" · "is this dependency shippable?"
+- Pre-release legal gate
 
-## Checkliste
+## Workflow
 
-1. **LIC-DENY** — Strong-Copyleft (GPL-3.0, AGPL-3.0) in proprietärem/verteiltem Code → Konflikt. *(critical)*
-2. **LIC-WEAK** — Weak-Copyleft (LGPL, MPL-2.0) → Bedingungen (dynamisches Linken) prüfen. *(high)*
-3. **LIC-UNKNOWN** — Keine/unklare Lizenz → rechtlich nicht freigegeben. *(high)*
-4. **LIC-CUSTOM** — Nicht-OSI-/Custom-Lizenz → manuelle Freigabe nötig. *(medium)*
-5. **LIC-ATTRIB** — Permissive (MIT/Apache-2.0/BSD) ok, aber Attribution/NOTICE-Pflicht erfüllt? *(low)*
-6. **LIC-COMPAT** — Lizenz-Mix untereinander/zur Projektlizenz kompatibel. *(medium)*
+### Step 1 — Collect licenses
+```bash
+nuget-license -i App.sln -o json > licenses.json        # .NET
+npx license-checker --json | node -e '...'              # JS → array of { name, license }
+```
+Normalize to a JSON array of `{ name, version?, license }` (license = SPDX id).
+
+### Step 2 — Apply the policy (run the script — deterministic)
+```bash
+node scripts/license-gate.mjs licenses.json
+```
+Emits findings[] (`area: licenses`, `LIC-*`) for problematic licenses only (permissive = OK, no
+finding); schema-valid (verify with `tools/validate-findings.mjs`).
+
+## Policy (ruleId · severity)
+- **LIC-DENY** *(critical)* — strong copyleft (GPL/AGPL/SSPL) in proprietary/distributed code.
+- **LIC-WEAK** *(high)* — weak copyleft (LGPL/MPL/EPL) → check linking terms.
+- **LIC-UNKNOWN** *(high)* — no/unclear license → not cleared.
+- **LIC-CUSTOM** *(medium)* — non-OSI/custom → manual approval.
+- Permissive (MIT/Apache-2.0/BSD/ISC) → OK; ensure attribution/NOTICE (`LIC-ATTRIB`, low) if required.
 
 ## Output
 
-findings[] nach `docs/findings-schema.md`, `area: licenses`, ruleId aus `LIC-*` (SPDX-ID in `message`). Bei `critical`/`high`: **[GATE]**.
+`findings[]` (`area: licenses`, `LIC-*`, SPDX id in `message`). On critical/high → **[GATE]**.

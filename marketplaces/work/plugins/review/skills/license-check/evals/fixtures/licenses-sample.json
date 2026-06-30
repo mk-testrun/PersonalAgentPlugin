@@ -1,0 +1,5 @@
+[ {"name":"Newtonsoft.Json","version":"13.0","license":"MIT"},
+  {"name":"SomeGplLib","version":"1.0","license":"GPL-3.0-only"},
+  {"name":"WeakLib","version":"2.0","license":"LGPL-2.1"},
+  {"name":"MysteryLib","version":"0.1","license":null},
+  {"name":"CorpLib","version":"3.0","license":"Acme-Proprietary"} ]

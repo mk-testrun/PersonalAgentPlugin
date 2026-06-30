@@ -1,0 +1,31 @@
+[
+  {
+    "skill": "license-check",
+    "query": "Check our dependency licenses for compliance.",
+    "expected_behavior": [
+      "Collects package licenses (nuget-license / license-checker) into { name, license } JSON",
+      "Runs scripts/license-gate.mjs to classify against the SPDX policy",
+      "Flags GPL/AGPL as LIC-DENY (critical), permissive licenses produce no finding",
+      "Raises [GATE] on critical/high; output is schema-valid"
+    ]
+  },
+  {
+    "skill": "license-check",
+    "query": "Classify this license list.",
+    "files": ["fixtures/licenses-sample.json"],
+    "expected_behavior": [
+      "GPL-3.0 → LIC-DENY critical; LGPL-2.1 → LIC-WEAK high; null → LIC-UNKNOWN high; custom → LIC-CUSTOM medium",
+      "MIT produces no finding (permissive OK)",
+      "Findings sorted by severity and schema-valid"
+    ]
+  },
+  {
+    "skill": "license-check",
+    "query": "Is it okay to ship with an LGPL dependency?",
+    "expected_behavior": [
+      "Flags LIC-WEAK and explains the linking-terms condition (dynamic vs static)",
+      "Recommends legal review rather than asserting a blanket yes/no",
+      "Defers CVEs to dependency-vuln and EOL to lts-check"
+    ]
+  }
+]

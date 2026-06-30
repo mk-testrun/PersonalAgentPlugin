@@ -1,0 +1,31 @@
+[
+  {
+    "skill": "secrets-scan",
+    "query": "Scan the repo for committed secrets, including history.",
+    "expected_behavior": [
+      "Runs gitleaks over the working tree and git history with --redact",
+      "Runs scripts/gitleaks-to-findings.mjs to map the report to findings[]",
+      "Never emits the cleartext secret — values are redacted",
+      "Each real find is critical and raises [GATE]"
+    ]
+  },
+  {
+    "skill": "secrets-scan",
+    "query": "Convert this gitleaks report to findings.",
+    "files": ["fixtures/gitleaks-sample.json"],
+    "expected_behavior": [
+      "Maps each leak to SECR-* (e.g. aws→SECR-CLOUD, private-key→SECR-PRIVKEY)",
+      "Messages contain no cleartext secret (redacted) and the output is schema-valid",
+      "Recommends rotate-then-purge-history for each"
+    ]
+  },
+  {
+    "skill": "secrets-scan",
+    "query": "We removed the leaked key in a new commit — are we safe?",
+    "expected_behavior": [
+      "Explains removal alone is insufficient because history retains the secret",
+      "Recommends rotating the secret and purging history",
+      "Treats a history-only secret as critical (SECR-HISTORY)"
+    ]
+  }
+]
