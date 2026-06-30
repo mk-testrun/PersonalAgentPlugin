@@ -46,5 +46,5 @@ entspannte Tool-Guardian-Policy.
 | `BRAVE_KEY` | secret | Brave Search API-Key |
 | `NOTION_TOKEN` | secret | Notion Integration Token |
 | `OPENAI_KEY` | secret | OpenAI API-Key (für image-generate) |
-| `SUPERTONIC_KEY` | secret | SuperTonic TTS API-Key |
+| `ST_BASE_URL` | env (optional) | SuperTonic `serve`-URL (Default `http://127.0.0.1:8000`; on-device, kein Key) |
 | `CONTEXT7_KEY` | secret | Context7 API-Key (optional) |

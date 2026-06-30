@@ -10,6 +10,7 @@ mkrueer-copilot/
 │   ├── anonymizer-proxy/ # PII-Proxy für Work/ADO
 │   ├── password-gen/     # Kryptografischer Passwort-Generator
 │   ├── alarm-mcp/        # Alarm/Timer-Server (Home)
+│   ├── supertonic/       # On-device TTS (wraps `supertonic serve`)
 │   └── dotnet-mcpserver-starter/  # .NET-MCP-Template
 ├── marketplaces/
 │   ├── work/             # Work-Marketplace (10 Plugins, ADO/Blazor/.NET)

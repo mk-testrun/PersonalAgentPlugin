@@ -3,7 +3,7 @@
     "supertonic": {
       "command": "supertonic3-mcp",
       "env": {
-        "ST_API_KEY": "${secret:SUPERTONIC_KEY}",
+        "ST_BASE_URL": "${env:ST_BASE_URL}",
         "ST_DEFAULT_VOICE": "warm-de",
         "ST_OUTPUT_DIR": "${env:USERPROFILE}/.copilot/state/audio"
       }

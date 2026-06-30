@@ -52,4 +52,4 @@ PII wird anonymisiert, Secrets verlassen nie das Modell.
 | `ADO_PAT` | secret | Azure DevOps Personal Access Token |
 | `CONFLUENCE_TOKEN` | secret | Confluence API-Token |
 | `CONTEXT7_KEY` | secret | Context7 API-Key (optional) |
-| `SUPERTONIC_KEY` | secret | SuperTonic TTS API-Key |
+| `ST_BASE_URL` | env (optional) | SuperTonic `serve`-URL (Default `http://127.0.0.1:8000`; on-device, kein Key) |
