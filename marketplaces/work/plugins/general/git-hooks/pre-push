@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+# pre-push secret guard — scans the commits being pushed with betterleaks (gitleaks-compatible).
+# Local fast-feedback layer; the hard gate is CI (kingfisher, see general/pipeline-conventions).
+# False positive? bypass once with:  git push --no-verify
+set -euo pipefail
+
+if ! command -v betterleaks >/dev/null 2>&1; then
+  echo "pre-push: betterleaks not installed — skipping local secret scan." >&2
+  echo "         install: https://github.com/betterleaks/betterleaks  (CI still scans via kingfisher)" >&2
+  exit 0
+fi
+
+ZERO="0000000000000000000000000000000000000000"
+status=0
+
+# git feeds ref updates on stdin: <local_ref> <local_sha> <remote_ref> <remote_sha>
+while read -r local_ref local_sha remote_ref remote_sha; do
+  [ "$local_sha" = "$ZERO" ] && continue                 # branch deletion → nothing to scan
+  if [ "$remote_sha" = "$ZERO" ]; then
+    logopts="$local_sha --not --remotes"                 # new branch → commits not yet on any remote
+  else
+    logopts="${remote_sha}..${local_sha}"                # existing branch → the pushed range
+  fi
+  # betterleaks is a drop-in gitleaks replacement: `git --log-opts` scans that commit range.
+  if ! betterleaks git --redact --no-banner --log-opts="$logopts" .; then
+    status=1
+  fi
+done
+
+if [ "$status" -ne 0 ]; then
+  {
+    echo ""
+    echo "✗ pre-push BLOCKED: betterleaks detected secrets in the commits being pushed."
+    echo "  → Rotate the secret, remove it from history (amend/rebase), then push again."
+    echo "  → False positive? bypass once: git push --no-verify"
+  } >&2
+  exit 1
+fi
+exit 0

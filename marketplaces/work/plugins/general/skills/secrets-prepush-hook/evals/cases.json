@@ -1,0 +1,30 @@
+[
+  {
+    "skill": "secrets-prepush-hook",
+    "query": "Set up a pre-push hook that blocks pushing secrets.",
+    "expected_behavior": [
+      "Checks betterleaks is installed (gives the install hint if not)",
+      "Installs the bundled git-hooks/pre-push into a tracked .githooks/ and sets core.hooksPath with [CONFIRM]",
+      "Verifies core.hooksPath and that the hook is executable",
+      "Explains the hook only scans the pushed commit range and CI still gates via kingfisher"
+    ]
+  },
+  {
+    "skill": "secrets-prepush-hook",
+    "query": "The hook blocked my push but it's a false positive.",
+    "expected_behavior": [
+      "Explains the secret is redacted in the output (never printed)",
+      "Offers the one-time bypass: git push --no-verify",
+      "Suggests refining the betterleaks config/allowlist for the false positive rather than disabling the hook"
+    ]
+  },
+  {
+    "skill": "secrets-prepush-hook",
+    "query": "A teammate doesn't have betterleaks installed — will the hook break their push?",
+    "expected_behavior": [
+      "Explains the hook self-skips with a warning when betterleaks is absent (does not block)",
+      "Notes the CI gate (kingfisher) still catches secrets server-side",
+      "Recommends installing betterleaks for local fast feedback"
+    ]
+  }
+]

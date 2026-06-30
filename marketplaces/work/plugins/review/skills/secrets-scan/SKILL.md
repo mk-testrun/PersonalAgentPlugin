@@ -1,16 +1,19 @@
 ---
 name: secrets-scan
 description: >-
-  Scans the whole repo (working tree AND git history) for hardcoded secrets with gitleaks, then maps
-  the report to redacted findings[] via a bundled script. Use when asked to scan for secrets/leaked
-  credentials, check for committed API keys/tokens/private keys, or audit history for secrets. Secret
-  values are never emitted. Conceptual secret-handling (KeyVault) → security-review. Each find → [GATE].
+  Scans the whole repo (working tree AND git history) for hardcoded secrets with betterleaks (the
+  gitleaks-compatible successor), then maps the report to redacted findings[] via a bundled script. Use
+  when asked to scan for secrets/leaked credentials, check for committed API keys/tokens/private keys,
+  or audit history for secrets. Secret values are never emitted. Conceptual secret-handling (KeyVault) →
+  security-review. Each find → [GATE].
 ---
 
 # Secrets Scan
 
 Concrete secret finds in the repo — working tree and **history** — mapped to findings[] with values
-**redacted**. Detection is gitleaks; the bundled script does the deterministic mapping.
+**redacted**. Detection is **betterleaks** (drop-in gitleaks successor — same report format, plus
+CEL-based live validation); the bundled script does the deterministic mapping. CI uses kingfisher; the
+local pre-push layer is `general/secrets-prepush-hook`.
 
 ## When to Use This Skill
 
@@ -21,12 +24,13 @@ Concrete secret finds in the repo — working tree and **history** — mapped to
 
 ### Step 1 — Detect
 ```bash
-gitleaks detect --no-banner --redact --report-format json --report-path leaks.json   # working tree + history
+betterleaks detect --no-banner --redact --report-format json --report-path leaks.json   # working tree + history
 ```
+(gitleaks-compatible: the same command/report works if only gitleaks is available.)
 
 ### Step 2 — Map to findings (run the script — deterministic, redacted)
 ```bash
-node scripts/gitleaks-to-findings.mjs leaks.json
+node scripts/gitleaks-to-findings.mjs leaks.json    # report format is shared by gitleaks/betterleaks
 ```
 Emits findings[] (`area: security`, `SECR-*`) with the secret **redacted** (never the cleartext);
 schema-valid (verify with `tools/validate-findings.mjs`).
