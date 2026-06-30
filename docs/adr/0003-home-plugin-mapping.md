@@ -31,7 +31,7 @@ GitHub statt ADO, entspanntere Policy, aber secret-scan bleibt scharf.
 ## Profile-System
 
 `general/policy/profiles.json` definiert MCP-Sets je Profil:
-- `coding` → dotnet-mcp-builder, context7
+- `coding` → github, context7, git
 - `writing` → fetch, brave-search
 - `media` → supertonic, imagegen
 - `audio` → supertonic, alarm-mcp, time

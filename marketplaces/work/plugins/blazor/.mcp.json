@@ -7,13 +7,9 @@
         "DOTNET_SOLUTION_PATH": "${env:DOTNET_SOLUTION_PATH}"
       }
     },
-    "dotnet-mcp-builder": {
-      "command": "dnx",
-      "args": ["dotnet-mcp-builder"]
-    },
     "nuget": {
       "command": "dnx",
-      "args": ["nuget-mcp"]
+      "args": ["NuGet.Mcp.Server", "--yes"]
     },
     "context7": {
       "command": "npx",

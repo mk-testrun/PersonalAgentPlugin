@@ -1,13 +1,13 @@
 {
   "mcpServers": {
     "confluence": {
-      "command": "npx",
-      "args": ["-y", "@aaronsb/confluence-mcp"],
+      "command": "uvx",
+      "args": ["mcp-atlassian"],
       "env": {
         "CONFLUENCE_URL": "${env:CONFLUENCE_URL}",
-        "CONFLUENCE_USER": "${env:CONFLUENCE_USER}",
-        "CONFLUENCE_TOKEN": "${secret:CONFLUENCE_TOKEN}",
-        "CONFLUENCE_SPACE_ALLOWLIST": "${env:CONFLUENCE_SPACES}"
+        "CONFLUENCE_USERNAME": "${env:CONFLUENCE_USER}",
+        "CONFLUENCE_API_TOKEN": "${secret:CONFLUENCE_TOKEN}",
+        "CONFLUENCE_SPACES_FILTER": "${env:CONFLUENCE_SPACES}"
       }
     }
   }

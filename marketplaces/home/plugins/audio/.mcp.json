@@ -12,8 +12,8 @@
       "command": "alarm-mcp"
     },
     "time": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-time"]
+      "command": "uvx",
+      "args": ["mcp-server-time"]
     }
   }
 }

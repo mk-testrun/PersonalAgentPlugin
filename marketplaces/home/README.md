@@ -42,7 +42,7 @@ copilot plugin marketplace add ./marketplaces/home
 
 | Profil | MCPs |
 |---|---|
-| coding | dotnet-mcp-builder, context7, filesystem, git |
+| coding | github, context7, filesystem, git |
 | writing | fetch, brave-search, filesystem |
 | media | supertonic, imagegen |
 | audio | supertonic, alarm-mcp, time |

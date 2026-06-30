@@ -7,10 +7,6 @@
         "PLAYWRIGHT_HEADLESS": "true"
       }
     },
-    "playwright-cli": {
-      "command": "playwright",
-      "args": ["mcp"]
-    },
     "chrome-devtools": {
       "command": "npx",
       "args": ["-y", "chrome-devtools-mcp"]

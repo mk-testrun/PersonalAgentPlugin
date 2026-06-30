@@ -12,12 +12,12 @@
       "args": ["-y", "@modelcontextprotocol/server-filesystem", "${env:USERPROFILE}/Projects"]
     },
     "git": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-git"]
+      "command": "uvx",
+      "args": ["mcp-server-git"]
     },
     "fetch": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-fetch"]
+      "command": "uvx",
+      "args": ["mcp-server-fetch"]
     },
     "brave-search": {
       "command": "npx",
@@ -32,10 +32,6 @@
       "env": {
         "CONTEXT7_API_KEY": "${secret:CONTEXT7_KEY}"
       }
-    },
-    "dotnet-mcp-builder": {
-      "command": "dnx",
-      "args": ["dotnet-mcp-builder"]
     },
     "password-gen": {
       "command": "password-gen-mcp"
