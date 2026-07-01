@@ -1,8 +1,6 @@
 ---
 name: github-prs
 description: Nutze wenn GitHub-PRs aufgelistet, geöffnet oder reviewt werden sollen.
-mcp_tools:
-  - github.pulls
 ---
 
 ## Aktionen

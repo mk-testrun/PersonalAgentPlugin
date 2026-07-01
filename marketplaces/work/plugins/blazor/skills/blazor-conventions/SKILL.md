@@ -1,7 +1,6 @@
 ---
 name: blazor-conventions
 description: Nutze proaktiv beim Schreiben oder Reviewen von Blazor-Komponenten und Code-Behind-Dateien.
-applyTo: ["**/*.razor", "**/*.razor.cs", "**/Components/**"]
 ---
 
 ## Regeln

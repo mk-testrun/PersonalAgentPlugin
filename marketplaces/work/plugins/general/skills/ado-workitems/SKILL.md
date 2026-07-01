@@ -1,9 +1,6 @@
 ---
 name: ado-workitems
 description: Nutze wenn Work-Items in Azure DevOps aufgelistet, erstellt, geschlossen oder reviewt werden sollen.
-mcp_tools:
-  - ado.workitems
-  - ado.queries
 ---
 
 ## Aktionen

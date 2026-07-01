@@ -23,7 +23,7 @@ erzeugen — deterministisch, lokal, reproduzierbar.
 
 ## Tool- & Write-Scope
 
-- `editFiles` für Test-Dateien; `runCommands` für `dotnet test`/Coverage/Playwright.
+- `edit` für Test-Dateien; `execute` für `dotnet test`/Coverage/Playwright.
 - Playwright **nur** `localhost:*` — kein Internet (Tool-Guardian).
 
 ## Regeln

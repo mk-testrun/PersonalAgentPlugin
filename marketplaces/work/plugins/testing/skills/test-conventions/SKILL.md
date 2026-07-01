@@ -1,7 +1,6 @@
 ---
 name: test-conventions
 description: Nutze proaktiv beim Schreiben von Tests für .NET-Projekte.
-applyTo: ["**/*Tests.cs", "**/*Test.cs", "**/Tests/**"]
 ---
 
 ## Stack

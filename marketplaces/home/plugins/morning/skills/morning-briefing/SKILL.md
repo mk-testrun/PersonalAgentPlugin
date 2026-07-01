@@ -1,9 +1,6 @@
 ---
 name: morning-briefing
 description: Nutze für das tägliche Morgen-Briefing-Dashboard.
-mcp_tools:
-  - fetch
-  - github.issues
 ---
 
 ## Dashboard-Inhalt (morning-<date>.html)

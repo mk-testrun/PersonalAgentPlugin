@@ -1,8 +1,6 @@
 ---
 name: speak-summary
 description: Nutze wenn eine Zusammenfassung als Audio (TTS) ausgegeben werden soll.
-mcp_tools:
-  - supertonic
 ---
 
 ## Verhalten

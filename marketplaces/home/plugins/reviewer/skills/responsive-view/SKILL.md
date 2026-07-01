@@ -1,8 +1,6 @@
 ---
 name: responsive-view
 description: Nutze für visuelle Responsiveness-Prüfung einer Web-App über Breakpoints — auch Internet-Targets erlaubt.
-mcp_tools:
-  - playwright
 ---
 
 ## Schritte

@@ -1,8 +1,6 @@
 ---
 name: confluence-draft
 description: Nutze für Confluence-Drafts, -Suche, -Lesen und -Verlinken mit Work-Items.
-mcp_tools:
-  - confluence
 ---
 
 ## Aktionen

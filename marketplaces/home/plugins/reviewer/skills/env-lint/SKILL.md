@@ -1,7 +1,6 @@
 ---
 name: env-lint
 description: Nutze proaktiv beim Prüfen von Umgebungskonfigurationen — toleranter: echte .env OK, solange nicht committed.
-applyTo: ["**/.env*", "**/*.config.*", "**/settings*.json"]
 ---
 
 ## Scope

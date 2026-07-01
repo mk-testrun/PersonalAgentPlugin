@@ -22,7 +22,7 @@ Aus einer Idee einen sauberen, validen Baustein machen: Skill / Command / Agent 
 
 ## Tool- & Write-Scope
 
-- `editFiles` für Plugin-/Skill-/Manifest-Dateien; keine Produktionscode-Änderungen.
+- `edit` für Plugin-/Skill-/Manifest-Dateien; keine Produktionscode-Änderungen.
 - Verweise nur auf Bausteine **dieses** Marketplaces.
 
 ## Verboten

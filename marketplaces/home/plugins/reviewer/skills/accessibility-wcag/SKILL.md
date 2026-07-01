@@ -1,8 +1,6 @@
 ---
 name: accessibility-wcag
 description: Nutze für eine WCAG 2.2 Accessibility-Prüfung (A/AA/AAA, Ziel-Stufe wählbar) — auch gegen Internet-Targets.
-mcp_tools:
-  - playwright
 ---
 
 ## Parameter

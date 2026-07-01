@@ -1,8 +1,6 @@
 ---
 name: homeassistant-control
 description: Nutze um Home-Assistant-Entitäten zu lesen oder zu schalten.
-mcp_tools:
-  - homeassistant
 ---
 
 ## Aktionen

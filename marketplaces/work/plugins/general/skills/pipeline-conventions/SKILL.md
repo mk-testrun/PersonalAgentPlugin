@@ -1,7 +1,6 @@
 ---
 name: pipeline-conventions
 description: Nutze proaktiv beim Schreiben oder Reviewen von Azure-Pipelines-YAML-Dateien.
-applyTo: ["**/azure-pipelines*.yml", "**/azure-pipelines*.yaml"]
 ---
 
 ## Regeln (proaktiv prüfen)

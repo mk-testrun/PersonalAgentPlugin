@@ -5,7 +5,7 @@ description: Nutze um einen neuen Skill nach dem Marketplace-Pattern zu erstelle
 
 ## Eingaben
 
-- `name` (kebab-case) · `description` („Nutze wenn …") · optional `applyTo` (Globs) · optional `mcp_tools`.
+- `name` (kebab-case) · `description` (3. Person, „Nutze wenn …", nennt Trigger **und** genutzte MCP-Server im Text). Copilot CLI liest nur diese zwei Frontmatter-Felder.
 
 ## Pflicht-Pattern (Body)
 
@@ -14,9 +14,7 @@ Jeder Skill hat **echten, recherchierten Inhalt** in dieser Struktur:
 ```markdown
 ---
 name: <name>
-description: Nutze wenn …
-applyTo: [...]      # falls proaktiv
-mcp_tools: [...]    # falls MCP genutzt
+description: Nutze wenn … (Trigger + genutzte MCP-Server im Text)
 ---
 
 ## Scope        – was abgedeckt ist / was nicht (Abgrenzung zu Nachbar-Skills)

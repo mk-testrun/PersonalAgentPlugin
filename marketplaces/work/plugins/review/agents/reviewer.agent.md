@@ -29,7 +29,7 @@ mit Severity, Fundort und konkretem Fix liefern — read-only, mit hartem Gate b
 
 ## Tool- & Write-Scope
 
-- **Read-only** — `editFiles` ausschließlich für `state/reports/`. Kein Schreiben in Produktionscode/Tests/Config.
+- **Read-only** — `edit` ausschließlich für `state/reports/`. Kein Schreiben in Produktionscode/Tests/Config.
 
 ## Output
 

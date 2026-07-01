@@ -1,9 +1,6 @@
 ---
 name: ado-pull-requests
 description: Nutze wenn PRs in Azure DevOps aufgelistet, geöffnet, Reviewer gesetzt oder für Merge vorbereitet werden sollen.
-mcp_tools:
-  - ado.git
-  - ado.workitems
 ---
 
 ## Aktionen

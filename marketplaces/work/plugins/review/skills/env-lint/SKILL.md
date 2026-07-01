@@ -1,7 +1,6 @@
 ---
 name: env-lint
 description: Nutze proaktiv beim Prüfen von Umgebungskonfigurations-Dateien.
-applyTo: ["**/.env*", "**/appsettings*.json", "**/launchSettings.json", "**/azure-pipelines*.yml"]
 ---
 
 ## Regeln

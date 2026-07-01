@@ -1,8 +1,6 @@
 ---
 name: github-issues
 description: Nutze wenn GitHub-Issues aufgelistet, erstellt, geschlossen oder reviewt werden sollen.
-mcp_tools:
-  - github.issues
 ---
 
 ## Aktionen

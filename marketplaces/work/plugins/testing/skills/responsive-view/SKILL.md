@@ -1,8 +1,6 @@
 ---
 name: responsive-view
 description: Nutze für visuelle Responsiveness-Prüfung einer lokalen Webanwendung.
-mcp_tools:
-  - playwright
 ---
 
 ## Schritte

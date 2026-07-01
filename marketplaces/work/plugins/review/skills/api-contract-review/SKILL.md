@@ -1,7 +1,6 @@
 ---
 name: api-contract-review
 description: Nutze für OpenAPI/Swagger- und REST-Vertrag-Prüfung — Breaking Changes, Versionierung, Nullability, Status-Codes.
-applyTo: ["**/*.openapi.*", "**/swagger*.json", "**/openapi*.y?ml"]
 ---
 
 ## Scope

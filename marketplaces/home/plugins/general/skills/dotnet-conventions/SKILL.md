@@ -1,7 +1,6 @@
 ---
 name: dotnet-conventions
 description: Nutze proaktiv beim Schreiben von C#-Code in privaten .NET-Projekten.
-applyTo: ["**/*.cs", "**/*.csproj"]
 ---
 
 ## Scope

@@ -1,7 +1,6 @@
 ---
 name: sql-conventions
 description: Nutze proaktiv beim Schreiben von SQL-Skripten und EF-Core-Migrations.
-applyTo: ["**/*.sql", "**/Migrations/**"]
 ---
 
 ## Regeln

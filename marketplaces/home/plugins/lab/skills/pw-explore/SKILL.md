@@ -1,8 +1,6 @@
 ---
 name: pw-explore
 description: Nutze um eine URL mit Playwright zu erkunden und ein stabiles Flow-Skript zu generieren.
-mcp_tools:
-  - playwright
 ---
 
 ## Schritte

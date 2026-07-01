@@ -86,10 +86,11 @@ name: <kebab-case, ≤64 Zeichen, nur a-z0-9-, keine Reserved-Words 'anthropic'/
 description: >-
   <3. PERSON. Was der Skill tut + WIE + WANN (Trigger-Phrasen/Schlüsselbegriffe).
    ≤1024 Zeichen. Das ist die Discovery-Schicht — sei spezifisch.>
-applyTo: ["**/*.x"]   # optional, für proaktive Aktivierung
-mcp_tools: ["Server:tool"]  # optional, voll qualifiziert
 ---
 ```
+> Copilot CLI liest im SKILL.md-Frontmatter **nur `name` und `description`**. Felder wie `applyTo`
+> oder `mcp_tools` gibt es hier nicht (VS-Code-Instructions-Syntax) — welche MCP-Server ein Skill nutzt
+> und wann er greift, gehört in die `description` bzw. den Body, nicht in ein ignoriertes Feld.
 
 **Gut:** „Scans a codebase for security vulnerabilities by tracing data flows … Use when asked to
 check for SQL injection, XSS, exposed secrets, insecure dependencies, or 'is my code secure?'."

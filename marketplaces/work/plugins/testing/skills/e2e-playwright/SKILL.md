@@ -1,8 +1,6 @@
 ---
 name: e2e-playwright
 description: Nutze für End-to-End-Tests der lokalen App mit Playwright.
-mcp_tools:
-  - playwright
 ---
 
 ## Voraussetzungen

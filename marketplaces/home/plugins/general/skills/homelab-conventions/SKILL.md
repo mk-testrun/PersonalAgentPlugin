@@ -1,7 +1,6 @@
 ---
 name: homelab-conventions
 description: Nutze proaktiv bei Docker-Compose und Homelab-Konfigurationen.
-applyTo: ["**/docker-compose*.yml", "**/compose.yml"]
 ---
 
 ## Regeln

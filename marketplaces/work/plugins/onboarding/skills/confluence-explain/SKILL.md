@@ -1,8 +1,6 @@
 ---
 name: confluence-explain
 description: Nutze wenn Confluence-Architekturseiten für Neueinsteiger erklärt werden sollen.
-mcp_tools:
-  - confluence
 ---
 
 ## Verhalten

@@ -1,8 +1,6 @@
 ---
 name: image-generate
 description: Nutze um ein Bild via Cloud-Bild-Generierung zu erzeugen (Home erlaubt Cloud — Tokens/Kosten beachten).
-mcp_tools:
-  - imagegen
 ---
 
 ## Zweck

@@ -1,7 +1,6 @@
 ---
 name: python-conventions
 description: Nutze proaktiv beim Schreiben von Python-Code.
-applyTo: ["**/*.py", "**/pyproject.toml"]
 ---
 
 ## Stack

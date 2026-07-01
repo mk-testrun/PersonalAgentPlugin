@@ -1,7 +1,6 @@
 ---
 name: pipeline-review
 description: Nutze für Azure-Pipelines-YAML-Review — Approval-Gates, Pinning, Least-Privilege, Secret-Handling.
-applyTo: ["**/azure-pipelines*.yml", "**/.azure/**/*.yml", "**/*.pipeline.yml"]
 ---
 
 ## Scope

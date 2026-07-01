@@ -9,6 +9,8 @@ import { readFileSync, readdirSync, statSync, existsSync } from 'fs';
 import { join, resolve } from 'path';
 
 const REQUIRED_PLUGIN_FIELDS = ['name', 'description', 'version', 'author', 'license'];
+// Copilot CLI SKILL.md frontmatter fields (issue github/copilot-cli#3095). Not: mcp_tools, applyTo (VS Code).
+const ALLOWED_SKILL_KEYS = new Set(['name', 'description', 'license', 'argument-hint', 'user-invocable', 'disable-model-invocation']);
 const REQUIRED_MARKETPLACE_FIELDS = ['name', 'plugins'];
 const RESERVED_NAME_WORDS = ['anthropic', 'claude'];
 
@@ -65,6 +67,15 @@ function validateSkillDir(skillDir, pluginName, ref, errors, warnings) {
   }
   if (!fm.description) errors.push(`[${pluginName}] ${ref}SKILL.md frontmatter missing "description"`);
   else if (fm.description.length > 1024) errors.push(`[${pluginName}] ${ref} description >1024 chars`);
+
+  // reject unsupported frontmatter fields (e.g. mcp_tools/applyTo — inert VS Code syntax)
+  const fmRaw = readFileSync(skillMd, 'utf8').match(/^---\r?\n([\s\S]*?)\r?\n---/);
+  if (fmRaw) for (const line of fmRaw[1].split(/\r?\n/)) {
+    const km = line.match(/^([a-zA-Z_][\w-]*):/);
+    if (km && !ALLOWED_SKILL_KEYS.has(km[1])) {
+      errors.push(`[${pluginName}] ${ref} SKILL.md: unsupported frontmatter field "${km[1]}" (Copilot CLI reads only: ${[...ALLOWED_SKILL_KEYS].join(', ')})`);
+    }
+  }
 }
 
 // Valid Copilot CLI agent tool identifiers: built-in aliases, "*", or an MCP reference "server/..." .

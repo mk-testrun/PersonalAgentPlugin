@@ -1,7 +1,6 @@
 ---
 name: dotnet-conventions
 description: Nutze proaktiv beim Schreiben von C#-Code und .csproj-Dateien.
-applyTo: ["**/*.cs", "**/*.csproj"]
 ---
 
 ## Regeln

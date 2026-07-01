@@ -1,7 +1,6 @@
 ---
 name: web-conventions
 description: Nutze proaktiv bei TypeScript/JavaScript-Webprojekten.
-applyTo: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"]
 ---
 
 ## Regeln
