@@ -9,6 +9,16 @@
         "CONFLUENCE_API_TOKEN": "${secret:CONFLUENCE_TOKEN}",
         "CONFLUENCE_SPACES_FILTER": "${env:CONFLUENCE_SPACES}"
       }
+    },
+    "ado": {
+      "command": "anonymizer-proxy",
+      "env": {
+        "DOWNSTREAM_CMD": "npx",
+        "DOWNSTREAM_ARGS": "[\"-y\",\"@azure-devops/mcp\",\"${env:ADO_ORG}\"]",
+        "AZURE_DEVOPS_PAT": "${secret:ADO_PAT}",
+        "AZURE_DEVOPS_PROJECT": "${env:ADO_PROJECT}",
+        "ANON_SALT": "${secret:ANON_SALT}"
+      }
     }
   }
 }

@@ -3,8 +3,10 @@ name: documenter
 description: Dokumentierungs-Agent — Confluence-Drafts & technische Doku aus Code. Publish nur mit [CONFIRM].
 tools:
   - edit
+  - execute
   - search
   - confluence/*
+  - ado/*
 model: gpt-5
 ---
 
@@ -21,6 +23,8 @@ Confluence-Seiten und Repo-Doku (README, Code→Doc) entwerfen — idiomatisch f
 - API/XML-Doc → Doku → `doc-from-code`
 - README → `readme-generate`
 - Diagramme einbetten → `diagram-embed` (Quelle: experimental-Diagramme)
+- Funktionskatalog aus ADO auf Confluence-Seite mergen → `product-functions`
+  (deterministischer extend-Merge über stabile Anker; `execute` für die zwei Skripte)
 
 > ADRs gehören **nicht** hierher — sie sind versionierte Repo-Artefakte (`experimental/adr-write`), kein Confluence-Inhalt.
 
