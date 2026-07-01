@@ -16,6 +16,9 @@
   "agents": [
     "./agents/documenter.agent.md"
   ],
+  "commands": [
+    "./commands/functions-sync.md"
+  ],
   "skills": [
     "./skills/confluence-draft/",
     "./skills/confluence-format/",
