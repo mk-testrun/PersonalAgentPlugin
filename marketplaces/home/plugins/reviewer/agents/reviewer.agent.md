@@ -3,10 +3,9 @@ name: reviewer
 description: Multi-Domain-Reviewer für private Projekte — read-only außer state/reports/, Internet-Playwright erlaubt.
 tools:
   - search
-  - problems
-  - runCommands
-  - editFiles
-  - playwright
+  - execute
+  - edit
+  - playwright/*
 model: gpt-5
 ---
 

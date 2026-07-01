@@ -2,7 +2,7 @@
 name: prompt-builder
 description: Meta-Agent zum Erstellen und Validieren von Skills, Commands, Agenten, Plugins und Marketplace-Konfigurationen — strikt nach dem Authoring-Guide, kein leeres Boilerplate.
 tools:
-  - editFiles
+  - edit
   - search
 model: gpt-5
 ---

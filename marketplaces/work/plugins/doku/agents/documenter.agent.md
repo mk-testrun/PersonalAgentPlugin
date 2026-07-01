@@ -2,9 +2,9 @@
 name: documenter
 description: Dokumentierungs-Agent — Confluence-Drafts & technische Doku aus Code. Publish nur mit [CONFIRM].
 tools:
-  - editFiles
+  - edit
   - search
-  - confluence
+  - confluence/*
 model: gpt-5
 ---
 

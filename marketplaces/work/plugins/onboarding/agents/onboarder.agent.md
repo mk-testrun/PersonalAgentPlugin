@@ -3,11 +3,11 @@ name: onboarder
 description: Onboarding-Initiator — erkennt Host & Rolle, zeigt ein Bereichs-Menü und führt gezielt durch Tool-, Marketplace- oder Projekt-Onboarding.
 tools:
   - search
-  - runCommands
-  - editFiles
-  - filesystem
-  - git
-  - confluence
+  - execute
+  - edit
+  - filesystem/*
+  - git-local/*
+  - confluence/*
 model: gpt-5
 ---
 

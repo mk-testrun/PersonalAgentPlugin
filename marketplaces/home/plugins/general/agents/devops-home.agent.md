@@ -2,10 +2,9 @@
 name: devops-home
 description: GitHub-Agent für alle privaten Repos — Issues, PRs, Git. Kein Workitem-Zwang.
 tools:
-  - github.issues
-  - github.pulls
-  - git
-  - filesystem
+  - github/*
+  - git/*
+  - filesystem/*
 model: gpt-5
 ---
 

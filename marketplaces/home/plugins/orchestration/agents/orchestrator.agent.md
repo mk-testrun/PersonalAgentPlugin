@@ -3,9 +3,9 @@ name: orchestrator
 description: Orchestriert GitHub-Workflows (Feature, Bugfix) über bestehende Skills — Dry-run und [CONFIRM]-Punkte, kein /ship.
 tools:
   - search
-  - problems
-  - editFiles
-  - runCommands
+  - edit
+  - execute
+  - agent
 model: gpt-5
 ---
 

@@ -3,9 +3,8 @@ name: loop
 description: Agent-Loop-Runner — iteriert diszipliniert auf ein prüfbares Ziel, mit hartem Iterationslimit und State zwischen den Runden.
 tools:
   - search
-  - problems
-  - editFiles
-  - runCommands
+  - edit
+  - execute
 model: gpt-5
 ---
 

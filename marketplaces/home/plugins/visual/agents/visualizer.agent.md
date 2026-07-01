@@ -2,8 +2,8 @@
 name: visualizer
 description: Visual-first-Agent — Cloud-Bild-Gen erlaubt, Output nach state/artifacts/, Caption+Link.
 tools:
-  - editFiles
-  - filesystem
+  - edit
+  - filesystem/*
 model: gpt-5
 ---
 

@@ -2,12 +2,9 @@
 name: devops
 description: ADO-Agent für Work-Items, PRs, Builds und Git-Operationen im Azure-DevOps-Umfeld.
 tools:
-  - ado.workitems
-  - ado.queries
-  - ado.builds
-  - ado.git
-  - git
-  - filesystem
+  - ado/*
+  - git-local/*
+  - filesystem/*
 model: gpt-5
 ---
 

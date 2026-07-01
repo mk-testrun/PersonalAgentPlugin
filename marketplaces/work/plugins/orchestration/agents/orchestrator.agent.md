@@ -3,9 +3,9 @@ name: orchestrator
 description: Orchestriert mehrstufige Workflows (Feature, Bugfix, Ship, Review-Flow) über bestehende Plugins — immer Dry-run zuerst, [CONFIRM] vor mutierenden Schritten, [GATE] aus Review blockt. Implementiert nichts selbst, delegiert.
 tools:
   - search
-  - problems
-  - editFiles
-  - runCommands
+  - edit
+  - execute
+  - agent
 model: gpt-5
 ---
 

@@ -67,6 +67,25 @@ function validateSkillDir(skillDir, pluginName, ref, errors, warnings) {
   else if (fm.description.length > 1024) errors.push(`[${pluginName}] ${ref} description >1024 chars`);
 }
 
+// Valid Copilot CLI agent tool identifiers: built-in aliases, "*", or an MCP reference "server/..." .
+// VS Code names (editFiles/runCommands/problems/usages/…) and dot-namespacing (github.issues) are NOT valid.
+const VALID_AGENT_TOOLS = new Set(['execute', 'read', 'edit', 'search', 'agent', 'web', 'todo']);
+function validateAgentTools(file, pluginName, ref, errors) {
+  const raw = readFileSync(file, 'utf8');
+  const fm = raw.match(/^---\r?\n([\s\S]*?)\r?\n---/);
+  if (!fm) return;
+  const lines = fm[1].split(/\r?\n/);
+  const ti = lines.findIndex(l => /^tools:\s*$/.test(l));
+  if (ti === -1) return; // no block tools list (omitted or inline) — nothing to check here
+  for (let j = ti + 1; j < lines.length; j++) {
+    const m = lines[j].match(/^\s+-\s+(.+?)\s*$/);
+    if (!m) break;
+    const tool = m[1].replace(/^['"]|['"]$/g, '');
+    const ok = tool === '*' || VALID_AGENT_TOOLS.has(tool) || tool.includes('/');
+    if (!ok) errors.push(`[${pluginName}] ${ref}: invalid agent tool "${tool}" (use ${[...VALID_AGENT_TOOLS].join('/')}, "*", or "server/*")`);
+  }
+}
+
 function validatePlugin(pluginDir, pluginName, errors, warnings) {
   const manifestPath = join(pluginDir, '.github', 'plugin', 'plugin.json');
   if (!existsSync(manifestPath)) {
@@ -87,7 +106,10 @@ function validatePlugin(pluginDir, pluginName, errors, warnings) {
     const full = join(pluginDir, ref);
     return existsSync(full) && (isDir ? statSync(full).isDirectory() : statSync(full).isFile());
   };
-  for (const ref of m.agents ?? []) if (!refExists(ref, false)) errors.push(`[${pluginName}] Agent not found: ${ref}`);
+  for (const ref of m.agents ?? []) {
+    if (!refExists(ref, false)) { errors.push(`[${pluginName}] Agent not found: ${ref}`); continue; }
+    validateAgentTools(join(pluginDir, ref), pluginName, ref, errors);
+  }
   for (const ref of m.commands ?? []) if (!refExists(ref, false)) errors.push(`[${pluginName}] Command not found: ${ref}`);
   for (const ref of m.skills ?? []) validateSkillDir(join(pluginDir, ref), pluginName, ref, errors, warnings);
 
@@ -99,7 +121,35 @@ function validatePlugin(pluginDir, pluginName, errors, warnings) {
     else if (!mcp.mcpServers) errors.push(`[${pluginName}] .mcp.json missing "mcpServers"`);
   }
   const hooksPath = join(pluginDir, 'hooks.json');
-  if (existsSync(hooksPath) && readJson(hooksPath).__error) errors.push(`[${pluginName}] Invalid JSON in hooks.json`);
+  if (existsSync(hooksPath)) validateHooks(hooksPath, pluginDir, pluginName, errors);
+}
+
+// Real GitHub Copilot CLI hooks schema: { version: 1, hooks: { <event>: [ {type, bash|powershell, ...} ] } }.
+const VALID_HOOK_EVENTS = new Set([
+  'sessionStart', 'sessionEnd', 'userPromptSubmitted', 'preToolUse', 'postToolUse',
+  'errorOccurred', 'subagentStart', 'PermissionRequest',
+]);
+function validateHooks(hooksPath, pluginDir, pluginName, errors) {
+  const h = readJson(hooksPath);
+  if (h.__error) { errors.push(`[${pluginName}] Invalid JSON in hooks.json: ${h.__error}`); return; }
+  if (h.version !== 1) errors.push(`[${pluginName}] hooks.json: missing "version": 1`);
+  if (Array.isArray(h.hooks) || typeof h.hooks !== 'object' || h.hooks === null) {
+    errors.push(`[${pluginName}] hooks.json: "hooks" must be an object keyed by event name (not an array)`);
+    return;
+  }
+  for (const [event, entries] of Object.entries(h.hooks)) {
+    if (!VALID_HOOK_EVENTS.has(event)) errors.push(`[${pluginName}] hooks.json: unknown event "${event}"`);
+    if (!Array.isArray(entries)) { errors.push(`[${pluginName}] hooks.json: "${event}" must map to an array`); continue; }
+    for (const e of entries) {
+      if (!e || e.type !== 'command') errors.push(`[${pluginName}] hooks.json: "${event}" entry needs "type": "command"`);
+      if (!e || (!e.bash && !e.powershell)) errors.push(`[${pluginName}] hooks.json: "${event}" entry needs "bash" and/or "powershell"`);
+      // any {{plugin_data_dir}}-referenced bundled script must actually exist
+      for (const cmd of [e?.bash, e?.powershell]) {
+        const m = typeof cmd === 'string' && cmd.match(/\{\{plugin_data_dir\}\}\/(\S+?\.(?:sh|ps1))/);
+        if (m && !existsSync(join(pluginDir, m[1]))) errors.push(`[${pluginName}] hooks.json: referenced script not found: ${m[1]}`);
+      }
+    }
+  }
 }
 
 function validateMarketplace(marketplacePath) {

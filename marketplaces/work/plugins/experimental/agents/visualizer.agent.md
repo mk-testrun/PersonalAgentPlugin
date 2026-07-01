@@ -2,8 +2,8 @@
 name: visualizer
 description: Output-Studio-Agent — erzeugt Diagramme, Dashboards, Slides und TTS. CDN-gesichert, kein Cloud-Bild-Gen.
 tools:
-  - editFiles
-  - filesystem
+  - edit
+  - filesystem/*
 model: gpt-5
 ---
 

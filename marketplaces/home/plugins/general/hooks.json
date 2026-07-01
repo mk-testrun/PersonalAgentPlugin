@@ -1,24 +1,37 @@
 {
-  "hooks": [
-    {
-      "event": "sessionStart",
-      "script": "hooks/scripts/audit-init.sh",
-      "scriptWindows": "hooks/scripts/audit-init.ps1"
-    },
-    {
-      "event": "preToolUse",
-      "script": "hooks/scripts/pre-tool-guardian-warn.sh",
-      "scriptWindows": "hooks/scripts/pre-tool-guardian-warn.ps1"
-    },
-    {
-      "event": "postToolUse",
-      "script": "hooks/scripts/audit-tool.sh",
-      "scriptWindows": "hooks/scripts/audit-tool.ps1"
-    },
-    {
-      "event": "sessionEnd",
-      "script": "hooks/scripts/audit-rotate.sh",
-      "scriptWindows": "hooks/scripts/audit-rotate.ps1"
-    }
-  ]
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      {
+        "type": "command",
+        "bash": "bash \"{{plugin_data_dir}}/hooks/scripts/audit-init.sh\"",
+        "powershell": "pwsh -File \"{{plugin_data_dir}}/hooks/scripts/audit-init.ps1\"",
+        "timeoutSec": 10
+      }
+    ],
+    "preToolUse": [
+      {
+        "type": "command",
+        "bash": "bash \"{{plugin_data_dir}}/hooks/scripts/pre-tool-guardian-warn.sh\"",
+        "powershell": "pwsh -File \"{{plugin_data_dir}}/hooks/scripts/pre-tool-guardian-warn.ps1\"",
+        "timeoutSec": 15
+      }
+    ],
+    "postToolUse": [
+      {
+        "type": "command",
+        "bash": "bash \"{{plugin_data_dir}}/hooks/scripts/audit-tool.sh\"",
+        "powershell": "pwsh -File \"{{plugin_data_dir}}/hooks/scripts/audit-tool.ps1\"",
+        "timeoutSec": 15
+      }
+    ],
+    "sessionEnd": [
+      {
+        "type": "command",
+        "bash": "bash \"{{plugin_data_dir}}/hooks/scripts/audit-rotate.sh\"",
+        "powershell": "pwsh -File \"{{plugin_data_dir}}/hooks/scripts/audit-rotate.ps1\"",
+        "timeoutSec": 15
+      }
+    ]
+  }
 }

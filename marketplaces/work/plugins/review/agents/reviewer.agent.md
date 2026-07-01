@@ -3,9 +3,8 @@ name: reviewer
 description: Multi-Domain-Reviewer (Security, WCAG/BFSG, SQL, Performance, Deps, Pipelines) — read-only außer state/reports/. Führt einzelne Review-Skills oder die ganze Matrix aus und liefert findings[] mit Gate.
 tools:
   - search
-  - problems
-  - runCommands
-  - editFiles
+  - execute
+  - edit
 model: gpt-5
 ---
 
