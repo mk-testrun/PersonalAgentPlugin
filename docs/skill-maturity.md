@@ -1,7 +1,7 @@
 # Skill-Maturity (auto-generiert)
 
 > **DO NOT EDIT** — regenerieren mit `node tools/validate-plugins.mjs <mp> --maturity-md docs/skill-maturity.md`.
-> Erzeugt: 2026-07-02 · 150 Skills · ⌀ 33% · Verteilung: 5★: 3 · 4★: 2 · 3★: 14 · 2★: 24 · 1★: 107 · 0★: 0
+> Erzeugt: 2026-07-02 · 151 Skills · ⌀ 34% · Verteilung: 5★: 3 · 4★: 3 · 3★: 14 · 2★: 24 · 1★: 107 · 0★: 0
 >
 > Gegenstück: `docs/skill-uplift-tracker.md` (manuell — *Absicht/Wellenplan*). Diese Datei = *Ist-Stand*.
 
@@ -11,6 +11,7 @@
 | 5★ | 100 | `review/secrets-scan` | — |
 | 5★ | 95 | `doku/product-functions` | — |
 | 4★ | 89 | `orchestration/workflow-router` | — |
+| 4★ | 81 | `general/profile-switch` | examples.md fehlt |
 | 4★ | 80 | `testing/code-coverage` | examples.md fehlt |
 | 3★ | 71 | `review/dependency-vuln` | reference(.md|references/) fehlt; examples.md fehlt |
 | 3★ | 71 | `review/license-check` | reference(.md|references/) fehlt; examples.md fehlt |

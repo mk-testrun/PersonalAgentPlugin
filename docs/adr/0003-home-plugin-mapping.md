@@ -31,11 +31,14 @@ Verantwortungsbereichen**, mit visual-first als eigener Persönlichkeit.
 - `morning` **delegiert** an audio für die TTS-Begrüßung — dupliziert die Fähigkeit nicht; besitzt die
   Dashboard- und Energy-Tracking-Logik.
 
-## Profile-System
-`general/policy/profiles.json` deklariert MCP-Sets je Profil (coding/writing/media/audio/lab). **Wichtig:**
-das Profil beeinflusst heute primär, welche Server der Agent *priorisiert* — es tauscht die tatsächlich
-geladenen MCP-Server nicht zur Laufzeit aus (Copilot CLI lädt `.mcp.json` beim Start). Eine wirksame
-Umschaltung wäre ein Config-Overlay/Neustart — bewusst offen gelassen.
+## Profile-System (funktional, 2026-07)
+`general/policy/profiles.json` deklariert MCP-Sets je Profil (coding/writing/media/audio/lab). Die
+Umschaltung ist **echt**, nicht nur ein Prompt-Hinweis: Copilot CLI (de)aktiviert MCP-Server zur Laufzeit
+per `/mcp enable`/`/mcp disable` (bzw. `copilot mcp enable|disable`) — ohne Neustart. Der
+`profile-switch`-Skill mit `scripts/profile-apply.mjs` berechnet deterministisch aus profiles.json, welche
+Server an-/auszuschalten sind (Universe = Vereinigung aller Profil-Server), emittiert die exakten
+Kommandos und persistiert das aktive Profil in `state/profile.json`. Damit ist die frühere offene Frage
+(„schaltet real um vs. nur Prompt-Fokus") aufgelöst. Grenze: `/mcp`-Toggles wirken je Session.
 
 ## Konsequenzen
 - **Positiv:** visual-first als klare Home-Identität; warn-Regime erlaubt Experimente, secret-scan +
@@ -46,5 +49,6 @@ Umschaltung wäre ein Config-Overlay/Neustart — bewusst offen gelassen.
   `audio/hooks/scripts/notify-with-sound.*` braucht plattformunabhängige Sound-Logik.
 
 ## Offene Fragen
-- Profile-System: soll es real MCP-Server umschalten (Config-Overlay + Neustart) oder bewusst nur eine
-  Prioritäts-/Fokus-Hilfe im Prompt bleiben?
+- Profile-System: **aufgelöst** (2026-07) — schaltet real über `/mcp enable/disable` um (profile-switch-Skill).
+  Verbleibend: sollen Profile über Sessions hinweg automatisch reaktiviert werden (heute merkt sich
+  `state/profile.json` nur die letzte Wahl, angewendet wird sie auf `/profile`)?

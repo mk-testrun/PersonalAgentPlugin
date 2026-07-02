@@ -36,6 +36,7 @@
     "./commands/loop.md"
   ],
   "skills": [
+    "./skills/profile-switch/",
     "./skills/github-issues/",
     "./skills/github-prs/",
     "./skills/commit-generate/",
