@@ -7,10 +7,13 @@
 
 ## 0. Zielbild
 
-Zwei GitHub-Copilot-CLI-Marketplaces (Work + Home) mit fünf geteilten Custom-MCP-Servern.
+Ein persönliches Agent-Monorepo: zwei GitHub-Copilot-CLI-Marketplaces (Work + Home),
+fünf geteilte Custom-MCP-Server und eine geteilte Infrastruktur-Schicht
+(Editor-Settings, Maschinen-Profile, Templates, Copilot-Harness, Bootstrap).
 
-**Zwei-Welten-Prinzip:** Work und Home teilen **keine** Skills, Agenten, Commands oder Konfiguration.
-Das **einzige** Geteilte sind die Custom-MCP-Server unter `mcp-servers/`.
+**Zwei-Welten-Prinzip (seit ADR-0010):** Work und Home teilen **keine fachlichen Inhalte**
+(Skills, Agenten, Commands, Hooks, Policies). Geteilt ist ausschließlich **Infrastruktur**:
+`mcp-servers/`, `editor/`, `profiles/`, `templates/`, `tools/` und die Repo-Harness unter `.github/`.
 
 ---
 
@@ -27,11 +30,18 @@ mkrueer-copilot/
 ├── marketplaces/
 │   ├── work/                 # 9 Plugins
 │   └── home/                 # 8 Plugins
+├── editor/                   # VS-Code-Baseline + Home/Work-Overlays (ADR-0010)
+├── profiles/                 # Maschinen-Profile: Marketplace, Plugins, Editor, mcpExtras
+├── templates/                # repo-starter (agent-ready Kopiervorlage)
 ├── tools/
 │   ├── validate-plugins.mjs  # tiered validation + scoped runs + maturity
+│   ├── bootstrap.mjs         # Maschinen-Setup: --profile home|work [--apply]
 │   ├── validate-findings.mjs · run-evals.mjs
 │   └── lib/                  # field-taxonomy.mjs, maturity.mjs
-└── docs/                     # ADRs, Konzepte, findings-Schema, Authoring-Guide, skill-maturity
+├── .github/                  # Copilot-Harness: copilot-instructions, instructions/,
+│                             #   prompts/, copilot-setup-steps.yml, CI
+└── docs/                     # ADRs, Konzepte, findings-Schema, Authoring-Guide,
+                              #   skill-maturity, upstream-catalog
 ```
 
 ---
@@ -190,3 +200,22 @@ Manifest-Struktur, SKILL.md-/Agent-/Command-Frontmatter, Agent-Tool-IDs, `.mcp.j
 
 MCP-Server-Konventionen: [ADR-0005](docs/adr/0005-mcp-server-conventions.md) ·
 Skill-Paket-Layout: [ADR-0006](docs/adr/0006-skill-package-layout.md).
+
+---
+
+## §10 Geteilte Infrastruktur-Schicht (ADR-0010)
+
+- **editor/** — `settings.shared.json` ⊕ `settings.{home,work}.json` (Overlay gewinnt) plus
+  Extensions-Listen; `.editorconfig` im Root ist die formatierende Wahrheit je Projekt.
+- **profiles/** — `profile.json` je Maschine: Marketplace(+Name), Plugin-Set, Editor-Overlays,
+  globale `mcpExtras` (Server ohne Plugin-Bindung, z. B. `memory`). Abgrenzung zum
+  Laufzeit-`profile-switch`-Skill: siehe `profiles/README.md`.
+- **tools/bootstrap.mjs** — idempotentes Maschinen-Setup: merged verwaltete Editor-Keys in die
+  VS-Code-User-Settings, merged `mcpExtras` in `~/.copilot/mcp-config.json`, druckt
+  Extension-/Copilot-CLI-Kommandos. Dry-Run ist Default, `--apply` schreibt.
+- **templates/repo-starter/** — agent-ready Vorlage für neue Repos (AGENTS.md,
+  Copilot-Instructions, `.editorconfig`-Kopie [CI-synchronisiert], Starter-CI, `.mcp.json`).
+- **.github/** — Harness des Monorepos selbst: `copilot-instructions.md`, pfadbezogene
+  `instructions/*.instructions.md`, wiederverwendbare `prompts/*.prompt.md`
+  (`/new-skill`, `/new-mcp-server`, `/repo-health`), `copilot-setup-steps.yml` (Coding Agent).
+- **docs/upstream-catalog.md** — Inventar aller Upstream-Referenzen inkl. Pinning-Policy.

@@ -1,0 +1,27 @@
+# Setup-Steps für den GitHub Copilot Coding Agent (Cloud-Harness).
+# Der Job-Name MUSS exakt `copilot-setup-steps` heißen.
+name: "Copilot Setup Steps"
+
+on:
+  workflow_dispatch:
+  push:
+    paths: [".github/workflows/copilot-setup-steps.yml"]
+  pull_request:
+    paths: [".github/workflows/copilot-setup-steps.yml"]
+
+jobs:
+  copilot-setup-steps:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install workspaces
+        run: npm install
+      - name: Prime validators
+        run: |
+          node tools/validate-plugins.mjs marketplaces/work
+          node tools/validate-plugins.mjs marketplaces/home

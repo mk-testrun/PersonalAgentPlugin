@@ -8,13 +8,13 @@ on:
 
 jobs:
   validate:
-    name: Validate Plugins
+    name: Validate Marketplaces
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
       - name: Validate Work Marketplace
         run: node tools/validate-plugins.mjs marketplaces/work
       - name: Validate Home Marketplace
@@ -24,6 +24,29 @@ jobs:
       - name: Validate Skill Evals (Home)
         run: node tools/run-evals.mjs marketplaces/home
 
+  tools:
+    name: Tools, Profiles & Templates
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Test tools (validator, evals, hooks, bootstrap)
+        run: npm run test:tools
+      - name: Bootstrap dry-run (beide Profile)
+        run: |
+          node tools/bootstrap.mjs --profile home
+          node tools/bootstrap.mjs --profile work
+      - name: JSON-Syntax (profiles, editor, templates)
+        run: |
+          for f in $(find profiles editor templates .vscode -name '*.json'); do
+            node -e "JSON.parse(require('fs').readFileSync('$f','utf8'))" || { echo "Invalid JSON: $f"; exit 1; }
+            echo "ok $f"
+          done
+      - name: repo-starter .editorconfig ist mit Root synchron
+        run: diff .editorconfig templates/repo-starter/.editorconfig
+
   mcp:
     name: Build & Test MCP Servers
     runs-on: ubuntu-latest
@@ -31,44 +54,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
       - name: Install Workspaces
-        run: npm ci || npm install
-      - name: Syntax Check anonymizer-proxy
-        working-directory: mcp-servers/anonymizer-proxy
-        run: |
-          node --check src/masker.mjs
-          node --check src/server.mjs
-      - name: Test anonymizer-proxy roundtrip
-        working-directory: mcp-servers/anonymizer-proxy
-        run: node test/roundtrip.mjs
-      - name: Build password-gen
-        working-directory: mcp-servers/password-gen
-        run: npm run build
-      - name: Test password-gen entropy
-        working-directory: mcp-servers/password-gen
-        run: node test/entropy.test.mjs
-      - name: Build alarm-mcp
-        working-directory: mcp-servers/alarm-mcp
-        run: npm run build
-      - name: Test alarm-mcp scheduler
-        working-directory: mcp-servers/alarm-mcp
-        run: node test/scheduler.test.mjs
-      - name: Build artifact-viewer
-        working-directory: mcp-servers/artifact-viewer
-        run: npm run build
-      - name: Test artifact-viewer fallback
-        working-directory: mcp-servers/artifact-viewer
-        run: node test/fallback.test.mjs
-      - name: Test artifact-viewer textfile
-        working-directory: mcp-servers/artifact-viewer
-        run: node test/textfile.test.mjs
-      - name: Build dotnet-mcpserver-starter
-        working-directory: mcp-servers/dotnet-mcpserver-starter
-        run: |
-          if command -v dotnet &>/dev/null; then
-            dotnet build
-          else
-            echo "No .NET SDK found — skipping dotnet build (optional step)"
-          fi
-        continue-on-error: true
+        run: npm install
+      - name: Build all workspaces
+        run: npm run build --workspaces --if-present
+      - name: Test all workspaces
+        run: npm test --workspaces

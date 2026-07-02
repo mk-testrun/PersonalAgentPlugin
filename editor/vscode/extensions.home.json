@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "ms-python.python",
+    "ms-python.vscode-pylance",
+    "golang.go",
+    "ms-playwright.playwright",
+    "pomdtr.excalidraw-editor",
+    "ms-vscode.live-server"
+  ]
+}

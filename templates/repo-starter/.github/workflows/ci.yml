@@ -1,0 +1,22 @@
+# Starter-CI: Platzhalter-Steps durch echte Build-/Test-Kommandos ersetzen (siehe AGENTS.md).
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # TODO: Toolchain-Setup, z. B.:
+      # - uses: actions/setup-node@v4
+      #   with: { node-version: "22" }
+      # - uses: actions/setup-dotnet@v4
+      #   with: { dotnet-version: "9.0.x" }
+      - name: Build
+        run: 'echo "TODO: build-Kommando aus AGENTS.md" && exit 0'
+      - name: Test
+        run: 'echo "TODO: test-Kommando aus AGENTS.md" && exit 0'

@@ -1,0 +1,10 @@
+{
+  "// _managed": "Home-Overlay — wird NACH settings.shared.json gemergt (gewinnt bei Konflikt).",
+  "telemetry.telemetryLevel": "error",
+  "workbench.colorTheme": "Default Dark Modern",
+  "editor.fontSize": 14,
+  "editor.minimap.enabled": false,
+  "python.defaultInterpreterPath": "python3",
+  "go.toolsManagement.autoUpdate": true,
+  "playwright.reuseBrowser": true
+}

@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "ms-dotnettools.csdevkit",
+    "ms-dotnettools.csharp",
+    "ms-dotnettools.blazorwasm-companion",
+    "ms-playwright.playwright",
+    "ms-azure-devops.azure-pipelines",
+    "ms-mssql.mssql"
+  ]
+}

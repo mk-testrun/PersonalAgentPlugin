@@ -1,0 +1,33 @@
+{
+  "name": "home",
+  "description": "Home-Maschine: GitHub, Multi-Lang, visual-first, Guardian warn.",
+  "marketplace": {
+    "path": "marketplaces/home",
+    "name": "mkrueer-copilot-marketplace-home"
+  },
+  "plugins": [
+    "general",
+    "visual",
+    "audio",
+    "morning",
+    "reviewer",
+    "meta",
+    "lab",
+    "orchestration"
+  ],
+  "editor": {
+    "settings": ["editor/vscode/settings.shared.json", "editor/vscode/settings.home.json"],
+    "extensions": ["editor/vscode/extensions.shared.json", "editor/vscode/extensions.home.json"]
+  },
+  "mcpExtras": {
+    "memory": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"],
+      "env": { "MEMORY_FILE_PATH": "${env:HOME}/.copilot/state/memory.json" }
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+    }
+  }
+}

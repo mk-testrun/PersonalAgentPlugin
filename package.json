@@ -5,7 +5,9 @@
     "mcp-servers/*"
   ],
   "scripts": {
-    "test:tools": "node --test tools/test/validate-plugins.test.mjs tools/test/run-evals.test.mjs tools/test/hooks.test.mjs",
+    "test:tools": "node --test tools/test/validate-plugins.test.mjs tools/test/run-evals.test.mjs tools/test/hooks.test.mjs tools/test/bootstrap.test.mjs",
+    "bootstrap:home": "node tools/bootstrap.mjs --profile home",
+    "bootstrap:work": "node tools/bootstrap.mjs --profile work",
     "test:servers": "npm test --workspaces",
     "validate": "node tools/validate-plugins.mjs marketplaces/work && node tools/validate-plugins.mjs marketplaces/home",
     "evals": "node tools/run-evals.mjs marketplaces/work && node tools/run-evals.mjs marketplaces/home",

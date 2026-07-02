@@ -1,0 +1,22 @@
+{
+  "// _note": "Workspace-Settings NUR für die Arbeit AN diesem Monorepo. Geteilte User-Settings (Home/Work-Maschinen): editor/vscode/.",
+  "files.eol": "\n",
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true,
+  "editor.formatOnSave": false,
+  "editor.rulers": [110],
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/.copilot/state": true
+  },
+  "files.associations": {
+    "SKILL.md": "markdown",
+    "*.agent.md": "markdown",
+    "*.prompt.md": "markdown",
+    "*.instructions.md": "markdown"
+  },
+  "json.schemas": [],
+  "markdown.validate.enabled": true,
+  "githubPullRequests.ignoredPullRequestBranches": ["main"]
+}

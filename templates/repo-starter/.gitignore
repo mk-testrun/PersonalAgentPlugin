@@ -1,0 +1,23 @@
+# Dependencies / Build
+node_modules/
+dist/
+build/
+bin/
+obj/
+__pycache__/
+.venv/
+
+# Secrets & lokale Konfiguration
+.env
+.env.*
+!.env.example
+*.pem
+*.pfx
+
+# Agent-State
+.copilot/state/
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+*.user

@@ -1,0 +1,14 @@
+{
+  "// _managed": "Work-Overlay — wird NACH settings.shared.json gemergt (gewinnt bei Konflikt). Hart abgesichert: keine Telemetrie, kein Auto-Task-Run, .NET/Blazor-Defaults.",
+  "telemetry.telemetryLevel": "off",
+  "task.allowAutomaticTasks": "off",
+  "security.workspace.trust.untrustedFiles": "prompt",
+  "workbench.colorTheme": "Default Light Modern",
+  "editor.fontSize": 13,
+  "editor.minimap.enabled": true,
+  "dotnet.completion.showCompletionItemsFromUnimportedNamespaces": true,
+  "dotnet.inlayHints.enableInlayHintsForParameters": true,
+  "csharp.inlayHints.enableInlayHintsForTypes": true,
+  "razor.format.enable": true,
+  "git.branchProtection": ["main", "master", "develop"]
+}

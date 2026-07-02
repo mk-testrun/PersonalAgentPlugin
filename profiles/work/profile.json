@@ -1,0 +1,29 @@
+{
+  "name": "work",
+  "description": "Work-Maschine: ADO, Blazor/.NET, hart abgesichert, Guardian block.",
+  "marketplace": {
+    "path": "marketplaces/work",
+    "name": "mkrueer-copilot-marketplace"
+  },
+  "plugins": [
+    "general",
+    "blazor",
+    "experimental",
+    "review",
+    "onboarding",
+    "meta",
+    "testing",
+    "doku",
+    "orchestration"
+  ],
+  "editor": {
+    "settings": ["editor/vscode/settings.shared.json", "editor/vscode/settings.work.json"],
+    "extensions": ["editor/vscode/extensions.shared.json", "editor/vscode/extensions.work.json"]
+  },
+  "mcpExtras": {
+    "sequential-thinking": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+    }
+  }
+}
