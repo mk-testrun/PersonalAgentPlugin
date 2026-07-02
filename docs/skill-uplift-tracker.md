@@ -69,3 +69,27 @@ efcore-query-explain, loop · home: security-review.
 
 > Jede Welle endet grün (Validator + Evals) und wird committet. Kein Skill gilt als fertig,
 > solange er nur eine Checkliste ist (siehe Guide §6).
+
+---
+
+## Maturity-getriebene Wellen (ab 2026-07)
+
+Ab jetzt priorisiert nach dem **gemessenen** Score in `docs/skill-maturity.md`
+(`node tools/validate-plugins.mjs --maturity-md docs/skill-maturity.md`). Ziel: die wichtigsten Skills
+auf ≥4★, breite Masse auf ≥2★. Reihenfolge nach Hebel (Nutzungshäufigkeit × Score-Lücke).
+
+**Welle 2a (läuft):** die 3★-Skills, denen nur reference/examples fehlen, auf 5★ heben.
+- ✅ `doku/product-functions` (5★), `review/review-aggregate` (5★, Ordner-references jetzt gewertet)
+- ✅ `review/secrets-scan` → reference.md + examples.md ergänzt
+- ✅ `orchestration/workflow-router` (Work) → examples.md ergänzt
+- **offen 2a:** `review/dependency-vuln`, `review/license-check`, `experimental/adr-write`,
+  `testing/code-coverage`, `general/secrets-prepush-hook` (je reference.md + examples.md).
+
+**Welle 2b:** die meistgenutzten `general`-Skills (commit-generate, changelog-generate, ado-*) auf ≥3★
+(Description in 3. Person schärfen, reference wo Tiefe, ggf. Skript).
+
+**Welle 2c:** `*-conventions`-Skills (blazor/home) — **Anti-Ziel:** diese bleiben bewusst schlank
+(reine Wissens-Skills ohne Skript, ~2★ ist ok); nur Description-Schärfung, keine erzwungenen Pakete.
+
+**Rest:** Plugin für Plugin auf ◐/≥2★, je Welle `validate` + `run-evals` grün + thematischer Commit.
+Der Abgleich Tracker↔`skill-maturity.md` steuert die Priorität.

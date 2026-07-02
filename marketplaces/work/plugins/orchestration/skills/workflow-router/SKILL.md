@@ -60,6 +60,7 @@ ausgeführt, weil der State erledigte Schritte kennt.
 
 `general` (ADO/Git/PR) · `blazor` (Code/EF) · `testing` (Tests/Coverage/E2E) · `review` (Gates) ·
 `doku` (Doku/ADR) · `experimental` (loop, ADR-Record). Details + alle Schritt-Listen: `reference.md`.
+Durchgespielter Lauf (init→resume→advance→Gate→resume): [`examples.md`](examples.md).
 
 ## Output
 

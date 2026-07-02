@@ -62,16 +62,22 @@ export function scoreSkill(skillDir) {
   const desc = frontmatterValue(md, 'description');
   let d = 0;
   if (desc.length >= 200 && desc.length <= 1024) d += 8; else if (desc.length >= 120) d += 4;
-  if (/\b(use when|nutze (wenn|um|beim|proaktiv|für))\b/i.test(desc)) d += 6; else missing.push('description: Trigger-Phrase ("Nutze wenn …")');
+  // trigger phrase: EN "use when/after/to/for", "when asked/to" · DE "nutze wenn/um/beim/für/proaktiv"
+  if (/\b(use (when|after|to|for)|when asked|nutze (wenn|um|beim|proaktiv|für))\b/i.test(desc)) d += 6;
+  else missing.push('description: Trigger-Phrase ("Use when …" / "Nutze wenn …")');
   if (TOOL_KEYWORDS.test(desc)) d += 6;
   if (d < 12) missing.push('description: zu dünn (Länge/Trigger/Tool-Nennung)');
   got.description = { got: d, max: AXES.description };
 
-  // --- reference.md (15) ---
+  // --- reference (15) — reference.md (singular) OR a references/ folder with >=1 .md ---
   let r = 0;
   const refMd = read(join(skillDir, 'reference.md'));
+  const refDir = join(skillDir, 'references');
+  const refDirMds = existsSync(refDir) && statSync(refDir).isDirectory()
+    ? readdirSync(refDir).filter(f => f.endsWith('.md')) : [];
   if (refMd) { r += 10; if ((refMd.match(/^#{1,4}\s/gm) || []).length >= 2) r += 5; }
-  else missing.push('reference.md fehlt');
+  else if (refDirMds.length) { r += 10; if (refDirMds.length >= 2 || read(join(refDir, refDirMds[0])).length > 400) r += 5; }
+  else missing.push('reference(.md|references/) fehlt');
   got.reference = { got: r, max: AXES.reference };
 
   // --- examples.md (15) ---
