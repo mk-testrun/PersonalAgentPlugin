@@ -1,6 +1,9 @@
 ---
 name: sound-notifications
-description: Nutze um Benachrichtigungen mit Sound nach langen Operationen auszugeben.
+description: >-
+  Nutze um Benachrichtigungen mit Sound nach langen Operationen (> 30 Sekunden) auszugeben: spielt
+  plattformabhängig einen Ton über den postToolUse-Hook. Für gesprochene Zusammenfassungen → speak-summary;
+  kein STT.
 ---
 
 ## Schwelle

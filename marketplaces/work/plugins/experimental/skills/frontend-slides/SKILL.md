@@ -1,6 +1,9 @@
 ---
 name: frontend-slides
-description: Nutze um eine reveal.js-Präsentation aus einer Markdown-Outline zu erstellen.
+description: >-
+  Nutze um eine reveal.js-Präsentation aus einer Markdown-Outline zu erstellen: navigierbare Slides statt
+  Fließtext, Single-File-HTML über die CDN-Allowlist, Output nach state/artifacts/ mit Fallback. Aus ADRs →
+  presentation-from-adr.
 ---
 
 ## Zweck

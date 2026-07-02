@@ -1,6 +1,9 @@
 ---
 name: er-diagram
-description: Nutze um ein ER-Diagramm aus dem EF-Core-Model zu generieren.
+description: >-
+  Nutze um ein ER-Diagramm (Entities + Beziehungen) aus dem EF-Core-Model zu generieren: leitet Tabellen, Keys
+  und Kardinalitäten aus dem Modell ab, gerendert als Mermaid erDiagram. Output nach state/artifacts/ mit
+  Fallback. Index-/Query-Analyse → blazor/efcore-*.
 ---
 
 ## Zweck

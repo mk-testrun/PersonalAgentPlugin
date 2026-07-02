@@ -1,6 +1,9 @@
 ---
 name: pw-explore
-description: Nutze um eine URL mit Playwright zu erkunden und ein stabiles Flow-Skript zu generieren.
+description: >-
+  Nutze um eine URL mit Playwright zu erkunden und ein stabiles Flow-Skript zu generieren: `playwright
+  codegen` liefert den rohen Flow, der dann zu robusten (rollen-/label-basierten) Selektoren verdichtet wird.
+  Home darf Internet-Targets. Deterministische Testgenerierung im Work-Stack → testing/e2e-codegen.
 ---
 
 ## Schritte

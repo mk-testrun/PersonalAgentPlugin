@@ -1,6 +1,9 @@
 ---
 name: env-doctor
-description: Nutze wenn die Entwicklungsumgebung auf Vollständigkeit geprüft werden soll.
+description: >-
+  Nutze wenn die Entwicklungsumgebung auf Vollständigkeit geprüft werden soll: verifiziert Tools (dotnet, git,
+  node, betterleaks), optionale (az, docker), Präsenz von Env-Variablen und Secrets (nie Werte) sowie
+  installierte Plugins und aktive Hooks. Liefert ✓/✗ je Prüfung + konkrete Fix-Befehle.
 ---
 
 ## Prüfungen

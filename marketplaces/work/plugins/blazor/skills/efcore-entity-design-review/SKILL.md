@@ -1,6 +1,9 @@
 ---
 name: efcore-entity-design-review
-description: Nutze um ein EF-Core-Entity-/Model-Design auf Konventionen und Best Practices zu reviewen (inkl. Shadow-Properties).
+description: >-
+  Nutze um ein EF-Core-Entity-/Model-Design auf Konventionen und Best Practices zu reviewen: Keys,
+  Beziehungen, Nullability, Concurrency-Token, Mapping und Shadow-Properties. Liefert findings[] mit konkreter
+  Fluent-API-Korrektur. Query-Performance → efcore-query-explain; Indizes → efcore-index-suggest.
 ---
 
 ## Scope

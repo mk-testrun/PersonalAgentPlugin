@@ -1,6 +1,10 @@
 ---
 name: blazor-conventions
-description: Nutze proaktiv beim Schreiben oder Reviewen von Blazor-Komponenten und Code-Behind-Dateien.
+description: >-
+  Nutze proaktiv beim Schreiben oder Reviewen von Blazor-Komponenten und Code-Behind: prüft explizite
+  @rendermode-Deklaration, IStateContainer statt geteiltem Component-State, Dispose bei Subscriptions und
+  saubere Parameter-Konventionen. Reines Regel-/Wissens-Skill — meldet Verstöße mit konkreter Korrektur,
+  schreibt nicht selbst.
 ---
 
 ## Regeln

@@ -1,6 +1,9 @@
 ---
 name: mind-map
-description: Nutze um eine Mind-Map aus einer Markdown-Gliederung mit Markmap zu erstellen.
+description: >-
+  Nutze um eine Mind-Map aus einer Markdown-Gliederung mit Markmap zu erstellen: hierarchisches
+  Brainstorming/Themen-Übersicht als aufklappbare Map. Single-File-HTML über die CDN-Allowlist, Output nach
+  state/artifacts/ mit Fallback.
 ---
 
 ## Zweck

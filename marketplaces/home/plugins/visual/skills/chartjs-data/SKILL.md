@@ -1,6 +1,9 @@
 ---
 name: chartjs-data
-description: Nutze um einen Chart.js-Chart zu erstellen (Bar, Line, Pie, Doughnut, Radar, Scatter).
+description: >-
+  Nutze um quantitative Daten als interaktiven Chart.js-Chart (Bar, Line, Pie, Doughnut, Radar, Scatter) zu
+  rendern: Single-File-HTML über die CDN-Allowlist, Output nach state/artifacts/ mit garantiertem Fallback
+  (§2.7). Tabellarisch → table-as-grid; mehrere Widgets → html-dashboard.
 ---
 
 ## Zweck

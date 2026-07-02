@@ -1,6 +1,9 @@
 ---
 name: pipeline-review
-description: Nutze für Azure-Pipelines-YAML-Review — Approval-Gates, Pinning, Least-Privilege, Secret-Handling.
+description: >-
+  Nutze für Azure-Pipelines-YAML-Review mit Sicherheitsfokus: Approval-Gates vor Prod, Image-/Task-Pinning,
+  Least-Privilege-Berechtigungen und sauberes Secret-Handling (keine Klartext-Variablen). Liefert findings[]
+  (area: pipeline). App-Security → security-review.
 ---
 
 ## Scope

@@ -1,6 +1,9 @@
 ---
 name: mermaid-diagram
-description: Nutze um ein Mermaid-Diagramm zu erstellen (Flow, Sequence, Class, State, ER, Gantt).
+description: >-
+  Nutze um ein Mermaid-Diagramm (Flow, Sequence, Class, State, ER, Gantt) als textbasiertes, versionier- und
+  diff-bares Diagramm zu erstellen: Single-File-HTML über die CDN-Allowlist, Output nach state/artifacts/ mit
+  Fallback. Freie Skizze → excalidraw-sketch; Mind-Map → mind-map.
 ---
 
 ## Zweck

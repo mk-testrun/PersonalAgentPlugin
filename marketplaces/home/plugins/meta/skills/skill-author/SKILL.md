@@ -1,6 +1,9 @@
 ---
 name: skill-author
-description: Nutze um einen neuen Skill nach dem Marketplace-Pattern zu erstellen — echte Inhalte, keine leere Boilerplate.
+description: >-
+  Nutze um einen neuen Skill als Paket nach docs/skill-authoring-guide.md zu erstellen — echte Inhalte, keine
+  leere Boilerplate: SKILL.md-Hub (name + reiche description) plus reference/examples/templates/scripts/evals
+  wo sinnvoll. Copilot CLI liest nur name + description im Frontmatter.
 ---
 
 ## Eingaben

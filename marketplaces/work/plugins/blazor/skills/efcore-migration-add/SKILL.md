@@ -1,6 +1,9 @@
 ---
 name: efcore-migration-add
-description: Nutze um eine neue EF-Core-Migration sicher zu erstellen und vor dem Anwenden zu prüfen.
+description: >-
+  Nutze um eine neue EF-Core-Migration sicher aus Modelländerungen zu erzeugen und vor dem Anwenden zu prüfen
+  (Datenverlust, Rename-Fallen, PendingModelChanges). SQL-Skript für Deploys → efcore-migration-script;
+  Rollback-Plan → efcore-migration-revert-plan.
 ---
 
 ## Scope

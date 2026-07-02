@@ -1,6 +1,9 @@
 ---
 name: ai-readiness
-description: Nutze um den AI-Readiness-Score eines Repos zu messen (0–100) — wie gut ist es für KI-Agenten/Coding-Assistenten vorbereitet.
+description: >-
+  Nutze um zu messen (0–100), wie gut ein beliebiges Code-Repo von KI-Agenten/Coding-Assistenten verstanden
+  und bearbeitet werden kann: bewertet README/AGENTS.md, Struktur-Klarheit, Test-/Build-Auffindbarkeit und
+  Doku. Liefert Score + priorisierte Empfehlungen. (Marketplace-Reife dagegen → meta/ai-readiness.)
 ---
 
 ## Scope

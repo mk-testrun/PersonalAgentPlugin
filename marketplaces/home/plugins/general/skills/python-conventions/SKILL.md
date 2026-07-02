@@ -1,6 +1,9 @@
 ---
 name: python-conventions
-description: Nutze proaktiv beim Schreiben von Python-Code.
+description: >-
+  Nutze proaktiv beim Schreiben von Python-Code: uv statt pip direkt, ruff als Formatter/Linter, mypy --strict
+  für Typen und pytest fürs Testen. Regel-/Wissens-Skill — nennt je Verstoß die idiomatische, moderne
+  Python-Alternative.
 ---
 
 ## Stack

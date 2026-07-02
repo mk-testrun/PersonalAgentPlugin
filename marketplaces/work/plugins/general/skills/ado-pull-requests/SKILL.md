@@ -1,6 +1,10 @@
 ---
 name: ado-pull-requests
-description: Nutze wenn PRs in Azure DevOps aufgelistet, geöffnet, Reviewer gesetzt oder für Merge vorbereitet werden sollen.
+description: >-
+  Nutze wenn Pull Requests in Azure DevOps aufgelistet, geöffnet, mit Reviewern besetzt, an Work-Items
+  verlinkt oder (squash) für den Merge vorbereitet werden sollen. Arbeitet über den ADO-MCP hinter dem
+  anonymizer-proxy (PII-geschützt): listet offene PRs in zwei Sichten, öffnet PRs mit Titel/Beschreibung aus
+  dem Branch und setzt Auto-Complete erst nach [CONFIRM].
 ---
 
 ## Aktionen

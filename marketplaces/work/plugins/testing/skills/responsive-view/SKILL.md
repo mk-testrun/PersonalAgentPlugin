@@ -1,6 +1,9 @@
 ---
 name: responsive-view
-description: Nutze für visuelle Responsiveness-Prüfung einer lokalen Webanwendung.
+description: >-
+  Nutze für die visuelle Responsiveness-Prüfung einer lokalen Webanwendung (nur localhost:*) mit Playwright:
+  prüft Breakpoints Desktop 1440 / Tablet 768 / Mobile 375, erkennt Überlauf/abgeschnittene Elemente und
+  liefert Screenshots + findings[] je Breakpoint.
 ---
 
 ## Schritte

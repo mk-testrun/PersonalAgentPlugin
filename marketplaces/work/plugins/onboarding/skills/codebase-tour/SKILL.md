@@ -1,6 +1,9 @@
 ---
 name: codebase-tour
-description: Nutze für eine geführte Tour durch Architektur, Patterns und Hauptflows einer Codebasis.
+description: >-
+  Nutze für eine geführte Tour durch Architektur, Patterns und Hauptflows einer Codebasis: findet den
+  Composition-Root (Program.cs/Startup.cs/main.ts), leitet Schichten aus den DI-Registrierungen ab und
+  zeichnet die wichtigsten Request-Flows nach. Read-only; adaptiert die Tiefe an state/onboarding.json.
 ---
 
 ## Schritte

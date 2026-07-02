@@ -1,6 +1,9 @@
 ---
 name: performance-review
-description: Nutze für Performance-Prüfung in .NET/Blazor — Allokationen, Async-Hotspots, Caching, EF-Core-Tracking.
+description: >-
+  Nutze für Performance-Prüfung in .NET/Blazor: statische Heuristiken zu Allokationen, Async-Hotspots
+  (blockierendes .Result), Caching-Chancen und EF-Core-Tracking/Materialisierung. Liefert findings[] (area:
+  performance) mit Fundort + Fix. Datenbank-spezifisches (N+1, Indizes) ergänzend in sql-review.
 ---
 
 ## Scope

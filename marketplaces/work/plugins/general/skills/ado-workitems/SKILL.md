@@ -1,6 +1,10 @@
 ---
 name: ado-workitems
-description: Nutze wenn Work-Items in Azure DevOps aufgelistet, erstellt, geschlossen oder reviewt werden sollen.
+description: >-
+  Nutze wenn Work-Items in Azure DevOps aufgelistet, erstellt, geschlossen oder gereviewt werden sollen —
+  inklusive WIQL-Queries (z. B. unassignte oder offene Items). Läuft über den ADO-MCP hinter dem
+  anonymizer-proxy (PII-Pseudonyme); schreibende Aktionen (create/close/update) erst nach [CONFIRM], Duplikate
+  werden vermieden.
 ---
 
 ## Aktionen

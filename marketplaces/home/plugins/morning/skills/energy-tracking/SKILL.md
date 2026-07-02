@@ -1,6 +1,8 @@
 ---
 name: energy-tracking
-description: Nutze um die tägliche Energie/Stimmung zu erfassen und zu tracken.
+description: >-
+  Nutze um die tägliche Energie/Stimmung (1–5) zu erfassen und zu tracken: hängt den Wert an state/mood.jsonl
+  an und liefert einen kurzen Trend. Fließt in morning-briefing und week-highlight-reel ein.
 ---
 
 ## Eingabe

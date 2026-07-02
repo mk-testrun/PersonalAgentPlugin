@@ -1,6 +1,9 @@
 ---
 name: dotnet-conventions
-description: Nutze proaktiv beim Schreiben von C#-Code und .csproj-Dateien.
+description: >-
+  Nutze proaktiv beim Schreiben von C#-Code und .csproj-Dateien: erzwingt nullable-enable ohne unbegründete
+  Unterdrückung, konsequentes async/await (kein .Result/.Wait()), Dependency-Injection statt Statik und
+  moderne Language-Features. Regel-Skill — nennt je Verstoß die idiomatische .NET-Alternative.
 ---
 
 ## Regeln

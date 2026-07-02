@@ -1,6 +1,9 @@
 ---
 name: visual-explainer
-description: Nutze um ein Konzept visuell zu erklären — wählt automatisch die passende Darstellungsform.
+description: >-
+  Nutze um ein Konzept visuell zu erklären: wählt automatisch die passende Darstellungsform
+  (flow/sequence/chart/mind-map/timeline), delegiert an das passende Render-Skill und erläutert kurz.
+  Meta-Skill über den anderen visual-Skills; Output nach state/artifacts/.
 ---
 
 ## Zweck

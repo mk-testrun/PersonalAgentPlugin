@@ -1,6 +1,9 @@
 ---
 name: architecture-diagram
-description: Nutze um ein C4-Architekturdiagramm aus der .NET-Solution (via sharplens) zu erstellen.
+description: >-
+  Nutze um ein C4-Architekturdiagramm (Kontext/Container/Komponenten) aus der .NET-Solution zu erstellen:
+  sharplens (Roslyn) liefert Projekte/Referenzen, gerendert als Mermaid-C4. Output nach state/artifacts/ mit
+  garantiertem Fallback (§2.7). Datenmodell → er-diagram; Kopplung → dependency-graph.
 ---
 
 ## Zweck

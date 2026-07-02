@@ -1,6 +1,9 @@
 ---
 name: tool-inventory
-description: Nutze um die Tools einer neuen MCP-Verbindung zu inventarisieren bevor sie aktiviert wird.
+description: >-
+  Nutze um die Tools einer neuen MCP-Verbindung zu inventarisieren, BEVOR sie produktiv aktiviert wird: listet
+  Name, Beschreibung und Parameter aller Tools und markiert Risiken (schreibend, Netzwerk). Sicherheitsgurt
+  für Home's warn-Modus beim Ausprobieren neuer MCPs.
 ---
 
 ## Output

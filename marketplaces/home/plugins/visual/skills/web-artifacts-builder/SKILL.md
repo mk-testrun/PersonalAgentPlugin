@@ -1,6 +1,9 @@
 ---
 name: web-artifacts-builder
-description: Nutze um ein portables Single-File-HTML-Artefakt (alles inline) zu bauen.
+description: >-
+  Nutze um ein portables Single-File-HTML-Artefakt zu bauen (Styles/Scripts/Daten inline, läuft offline per
+  Doppelklick): erzwingt die CDN-Allowlist, Output nach state/artifacts/. Basis-Baustein für die anderen
+  visual-HTML-Skills; Rich-Vorschau via artifact-viewer.
 ---
 
 ## Zweck

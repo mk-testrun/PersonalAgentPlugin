@@ -1,6 +1,9 @@
 ---
 name: svg-illustration
-description: Nutze um eine SVG-Illustration direkt als Vektor-Code zu erstellen (Icons, einfache Grafiken, Schemata).
+description: >-
+  Nutze um eine SVG-Illustration direkt als Vektor-Code zu erstellen (Icons, einfache Grafiken, Schemata):
+  schlank, skalierbar, ohne Cloud-Bild-Gen. Output nach state/artifacts/. Fotorealistisch/kreativ →
+  image-generate; strukturierte Diagramme → mermaid-diagram.
 ---
 
 ## Zweck

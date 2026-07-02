@@ -1,6 +1,9 @@
 ---
 name: plugin-author
-description: Nutze um ein neues Plugin-Verzeichnis zu scaffolden — vollständiges Gerüst nach dem Marketplace-Pattern.
+description: >-
+  Nutze um ein neues Plugin-Verzeichnis nach dem Marketplace-Pattern zu scaffolden: erzeugt
+  .github/plugin/plugin.json mit allen Pflichtfeldern (name/description/version/author/license) +
+  agents/commands/skills-Listen und das Grundgerüst. Danach mit marketplace-validate prüfen.
 ---
 
 ## Erzeugt

@@ -1,6 +1,9 @@
 ---
 name: excalidraw-sketch
-description: Nutze um eine hand-gezeichnet wirkende Skizze als Excalidraw-Szene zu erstellen.
+description: >-
+  Nutze um eine hand-gezeichnet wirkende Skizze als Excalidraw-Szene zu erstellen: lockere
+  Whiteboard-Diagramme für Brainstorm/Architektur-Skizzen, exportiert als .excalidraw/SVG nach
+  state/artifacts/. Präzise, versionierbare Diagramme → mermaid-diagram.
 ---
 
 ## Zweck

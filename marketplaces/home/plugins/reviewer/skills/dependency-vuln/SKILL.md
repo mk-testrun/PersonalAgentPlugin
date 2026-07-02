@@ -1,6 +1,9 @@
 ---
 name: dependency-vuln
-description: Nutze für verwundbare Abhängigkeiten (npm audit, pip-audit, dotnet list package --vulnerable) inkl. transitiver Pakete.
+description: >-
+  Nutze für verwundbare Abhängigkeiten über mehrere Ökosysteme (npm audit, pip-audit, dotnet list package
+  --vulnerable) inkl. transitiver Pakete: mappt CVEs auf Severity und liefert findings[] (area: deps) mit
+  Fix-Version. LTS-/EOL-Risiko → lts-check.
 ---
 
 ## Scope

@@ -1,6 +1,9 @@
 ---
 name: sequence-diagram
-description: Nutze um ein Sequenzdiagramm aus einem konkreten Code-Pfad zu generieren.
+description: >-
+  Nutze um ein Sequenzdiagramm aus einem konkreten Code-Pfad zu generieren: macht die Request→Response-Kette
+  mehrerer Teilnehmer über die Zeit nachvollziehbar, gerendert als Mermaid sequenceDiagram. Output nach
+  state/artifacts/ mit Fallback (§2.7).
 ---
 
 ## Zweck

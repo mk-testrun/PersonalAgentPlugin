@@ -1,6 +1,10 @@
 ---
 name: git-flow-helper
-description: Nutze wenn Branch-Namen generiert, Cherry-Picks geplant oder Commit-Nachrichten nachträglich angepasst werden sollen.
+description: >-
+  Nutze wenn Branch-Namen nach Schema generiert (feature/AB-<id>-<slug>, bugfix/…), Cherry-Picks geplant oder
+  Commit-Nachrichten nachträglich angepasst werden sollen. Leitet konsistente Namen aus Work-Item-ID + Titel
+  ab und plant Cherry-Pick-Reihenfolgen — unter Git-Guardrails (kein destruktives History-Rewrite ohne
+  [CONFIRM]).
 ---
 
 ## Aktionen

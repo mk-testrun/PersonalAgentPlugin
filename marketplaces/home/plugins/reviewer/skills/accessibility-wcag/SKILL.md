@@ -1,6 +1,9 @@
 ---
 name: accessibility-wcag
-description: Nutze für eine WCAG 2.2 Accessibility-Prüfung (A/AA/AAA, Ziel-Stufe wählbar) — auch gegen Internet-Targets.
+description: >-
+  Nutze für eine WCAG-2.2-Accessibility-Prüfung (Ziel-Stufe A/AA/AAA, Default AA) — im Home-Marketplace auch
+  gegen Internet-Targets via Playwright. Prüft Kontrast, Tastaturbedienung, ARIA, Fokus-Reihenfolge und
+  liefert findings[] (area: wcag/accessibility) je Kriterium. Rechtliches Mapping (DE) → accessibility-bfsg.
 ---
 
 ## Parameter

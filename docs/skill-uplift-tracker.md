@@ -78,18 +78,19 @@ Ab jetzt priorisiert nach dem **gemessenen** Score in `docs/skill-maturity.md`
 (`node tools/validate-plugins.mjs --maturity-md docs/skill-maturity.md`). Ziel: die wichtigsten Skills
 auf ≥4★, breite Masse auf ≥2★. Reihenfolge nach Hebel (Nutzungshäufigkeit × Score-Lücke).
 
-**Welle 2a (läuft):** die 3★-Skills, denen nur reference/examples fehlen, auf 5★ heben.
-- ✅ `doku/product-functions` (5★), `review/review-aggregate` (5★, Ordner-references jetzt gewertet)
-- ✅ `review/secrets-scan` → reference.md + examples.md ergänzt
-- ✅ `orchestration/workflow-router` (Work) → examples.md ergänzt
-- **offen 2a:** `review/dependency-vuln`, `review/license-check`, `experimental/adr-write`,
-  `testing/code-coverage`, `general/secrets-prepush-hook` (je reference.md + examples.md).
+**Welle 2a (✅ erledigt):** Flaggschiffe auf 5★.
+- `doku/product-functions` (5★), `review/review-aggregate` (5★), `review/secrets-scan` (5★, reference+examples),
+  `orchestration/workflow-router` (Work, examples) — plus fairer Scorer (references/-Ordner, EN-Trigger, body-Achse).
 
-**Welle 2b:** die meistgenutzten `general`-Skills (commit-generate, changelog-generate, ado-*) auf ≥3★
-(Description in 3. Person schärfen, reference wo Tiefe, ggf. Skript).
+**Welle 2b/2c (✅ erledigt): Description-Sweep über ALLE ~150 Skills.**
+Jede Skill-`description` ist jetzt reich (3. Person, „was + wie + wann" + Trigger + genutztes Tool/MCP/Output)
+— die Discovery-Schicht ist durchgängig scharf. **0★-Stubs: 0.** Verteilung ~ 3×5★ · 2×4★ · 14×3★ · 24×2★ · Rest 1★.
 
-**Welle 2c:** `*-conventions`-Skills (blazor/home) — **Anti-Ziel:** diese bleiben bewusst schlank
-(reine Wissens-Skills ohne Skript, ~2★ ist ok); nur Description-Schärfung, keine erzwungenen Pakete.
+**Der 1★-Tier ist bewusstes Anti-Ziel, kein offener TODO** (ADR-0006): schlanke, vollständige Skills —
+`*-conventions`, kurze Single-Purpose-Aktionen — brauchen **kein** reference/examples/scripts/evals-Paket.
+Sie haben eine scharfe Description + klaren Body; ein erzwungenes Paket wäre genau die „flapsige Boilerplate",
+die wir vermeiden. Der Score misst „Paket-Tiefe", nicht „ist der Skill gut" — für diese Skills ist 1–2★ korrekt.
 
-**Rest:** Plugin für Plugin auf ◐/≥2★, je Welle `validate` + `run-evals` grün + thematischer Commit.
-Der Abgleich Tracker↔`skill-maturity.md` steuert die Priorität.
+**Künftige ★-Promotion (Kür, kein Gate):** einzelne Aktions-Skills mit echtem deterministischem Schritt
+(z. B. `github-issues/prs`, `energy-tracking`) können bei Bedarf reference/examples/Skript bekommen → 3★+.
+Priorität steuert der Abgleich Tracker ↔ `skill-maturity.md`. Nicht auf Vorrat.

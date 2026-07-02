@@ -1,6 +1,9 @@
 ---
 name: performance-review
-description: Nutze für Performance-Prüfung — Allokationen, Async-Hotspots, N+1, Caching, Rendering. Sprachneutral.
+description: >-
+  Nutze für eine framework-neutrale Performance-Prüfung (Web/Backend/Frontend): statische Heuristiken zu
+  Allokationen, Async-Hotspots, N+1-Queries, Caching und Rendering. Liefert findings[] (area: performance) mit
+  Fundort + konkretem Fix.
 ---
 
 ## Scope

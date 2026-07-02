@@ -1,6 +1,9 @@
 ---
 name: confluence-explain
-description: Nutze wenn Confluence-Architekturseiten für Neueinsteiger erklärt werden sollen.
+description: >-
+  Nutze wenn Confluence-Architekturseiten für Neueinsteiger erklärt werden sollen: liest Architektur-Seiten
+  read-only aus ${env:CONFLUENCE_SPACES} über den confluence-MCP und erklärt Diagramme, Flows und Begriffe
+  verständlich, ohne zu ändern. Ergänzt codebase-tour um die dokumentierte Sicht.
 ---
 
 ## Verhalten

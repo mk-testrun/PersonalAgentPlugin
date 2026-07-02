@@ -1,6 +1,9 @@
 ---
 name: lts-check
-description: Nutze um Frameworks/Laufzeiten auf LTS-/Support-Status zu prüfen (EOL-Risiko).
+description: >-
+  Nutze um Frameworks/Laufzeiten auf LTS-/Support-Status und EOL-Risiko zu prüfen (.NET, Node, DB-Treiber,
+  große Libs): gleicht Versionen gegen Support-Zeitpläne ab und meldet auslaufende/abgelaufene. findings[]
+  (area: deps). Bekannte CVEs → dependency-vuln; Lizenzen → license-check.
 ---
 
 ## Scope

@@ -1,6 +1,9 @@
 ---
 name: git-flow-helper
-description: Nutze für Branch-Namen, Cherry-Pick-Planung oder Commit-Message-Korrektur in privaten Repos.
+description: >-
+  Nutze für Branch-Namen, Cherry-Pick-Planung oder Commit-Message-Korrektur in privaten Repos:
+  leichtgewichtige Git-Hilfen ohne Workitem-Zwang, entspanntes Branch-Naming. Unter Git-Guardrails (force-push
+  auf main/master bleibt auch im Home-warn-Modus blockiert).
 ---
 
 ## Scope

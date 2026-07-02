@@ -1,6 +1,9 @@
 ---
 name: mcp-author
-description: Nutze wenn du einen neuen Custom-MCP-Server scaffolden willst — TypeScript via @modelcontextprotocol/sdk oder .NET via dotnet-mcpserver-starter. Korrekte bin-/Workspace-Verdrahtung nach §2.4.
+description: >-
+  Nutze wenn du einen neuen Custom-MCP-Server scaffolden willst — TypeScript via @modelcontextprotocol/sdk
+  (dep-arm, dist-Build) oder .NET via `dotnet new mcpserver`. Korrekte bin-/Workspace-Verdrahtung nach §2.4
+  (Referenz über Binärname, nie relativer Pfad). Danach mit marketplace-validate prüfen.
 ---
 
 Scaffold einen neuen MCP-Server unter `mcp-servers/<name>/`.

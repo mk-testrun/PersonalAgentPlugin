@@ -1,6 +1,9 @@
 ---
 name: repo-orientation
-description: Nutze wenn Stack, Build-Prozess, Tests und Verzeichnisstruktur eines Repos erklärt werden sollen.
+description: >-
+  Nutze wenn Stack, Build-Prozess, Tests und Verzeichnisstruktur eines Repos erklärt werden sollen: leitet den
+  Stack aus package.json/*.sln/*.csproj ab, ermittelt Build-/Test-Befehle aus README/scripts und fasst die
+  Verzeichnis-Landkarte zusammen. Read-only Einstieg vor der codebase-tour.
 ---
 
 ## Schritte

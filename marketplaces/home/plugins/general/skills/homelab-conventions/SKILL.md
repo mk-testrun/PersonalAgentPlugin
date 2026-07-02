@@ -1,6 +1,9 @@
 ---
 name: homelab-conventions
-description: Nutze proaktiv bei Docker-Compose und Homelab-Konfigurationen.
+description: >-
+  Nutze proaktiv bei Docker-Compose- und Homelab-Konfigurationen: Images pinnen (kein :latest), benannte
+  Volumes, Healthchecks, keine Secrets im Compose-File und least-privilege-Ports. Regel-Skill — meldet Risiken
+  mit konkreter Absicherung.
 ---
 
 ## Regeln

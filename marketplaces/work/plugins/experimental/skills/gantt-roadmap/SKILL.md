@@ -1,6 +1,8 @@
 ---
 name: gantt-roadmap
-description: Nutze um ADO-Iterationen/Roadmap als Mermaid-Gantt-Chart zu rendern.
+description: >-
+  Nutze um ADO-Iterationen/Roadmap als Mermaid-Gantt-Chart zu rendern: Meilensteine/Iterationen als
+  Zeitplan-Überblick, Quelle ADO-MCP (anonymisiert). Output nach state/artifacts/ mit Fallback (§2.7).
 ---
 
 ## Zweck

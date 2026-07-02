@@ -1,6 +1,10 @@
 ---
 name: story-author
-description: Nutze wenn du aus Gesprächskontext strukturierte User-Stories, Akzeptanzkriterien und Tasks mit Schätzung erzeugen und als GitHub Issues anlegen willst. Erst nach [CONFIRM] schreiben. Idempotent.
+description: >-
+  Nutze wenn du aus Gesprächskontext strukturierte User-Stories (Als … möchte ich … damit …),
+  Akzeptanzkriterien und Tasks mit Schätzung erzeugen und als GitHub Issues anlegen willst. Läuft über den
+  github-MCP; schreibt erst nach [CONFIRM], idempotent (aktualisiert bestehende statt Duplikate). Lücken
+  vorher finden → grill-me.
 ---
 
 Erstelle User-Stories im Standard-Format:

@@ -1,6 +1,9 @@
 ---
 name: table-as-grid
-description: Nutze um eine interaktive Datentabelle mit Grid.js zu erstellen (Sortierung, Suche, Pagination).
+description: >-
+  Nutze um tabellarische Daten als interaktive Grid.js-Tabelle mit Sortierung, Suche und Pagination
+  darzustellen: Single-File-HTML über die CDN-Allowlist, Output nach state/artifacts/ mit Fallback. Diagramm
+  statt Tabelle → chartjs-data.
 ---
 
 ## Zweck

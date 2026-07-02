@@ -1,6 +1,10 @@
 ---
 name: tdd-loop
-description: Nutze wenn du Test-Driven-Development erzwingen willst — erst roter Test, dann Implementierung bis grün, dann Refactor. Sprachagnostisch (Python/TypeScript/Go/C#).
+description: >-
+  Nutze wenn du strikte Test-Driven-Development-Zyklen erzwingen willst — erst roter Test, dann
+  Implementierung bis grün, dann Refactor — sprachagnostisch (Python/TypeScript/Go/C#). Führt den
+  Red-Green-Refactor-Loop diszipliniert mit dem projekteigenen Test-Runner; stoppt, wenn der Test nicht wie
+  erwartet rot/grün ist.
 ---
 
 Erzwinge den Red-Green-Refactor-Zyklus:

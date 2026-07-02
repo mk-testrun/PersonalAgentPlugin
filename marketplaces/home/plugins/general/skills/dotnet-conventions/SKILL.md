@@ -1,6 +1,9 @@
 ---
 name: dotnet-conventions
-description: Nutze proaktiv beim Schreiben von C#-Code in privaten .NET-Projekten.
+description: >-
+  Nutze proaktiv beim Schreiben von C#-Code in privaten .NET-Projekten: nullable-enable, async/await ohne
+  .Result/.Wait(), DI statt Statik — pragmatisch (weniger Dokumentationszwang als im Profi-Umfeld).
+  Regel-/Wissens-Skill, meldet Verstöße mit idiomatischer Alternative.
 ---
 
 ## Scope

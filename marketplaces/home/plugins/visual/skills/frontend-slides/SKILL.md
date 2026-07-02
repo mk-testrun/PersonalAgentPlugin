@@ -1,6 +1,8 @@
 ---
 name: frontend-slides
-description: Nutze um eine reveal.js-Präsentation (HTML-Slides) zu erstellen.
+description: >-
+  Nutze um eine reveal.js-Präsentation (navigierbare HTML-Slides statt Fließtext) aus einer Markdown-Outline
+  zu erstellen: Single-File-HTML über die CDN-Allowlist, Output nach state/artifacts/ mit Fallback (§2.7).
 ---
 
 ## Zweck

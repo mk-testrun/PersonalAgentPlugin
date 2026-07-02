@@ -1,6 +1,9 @@
 ---
 name: sql-conventions
-description: Nutze proaktiv beim Schreiben von SQL-Skripten und EF-Core-Migrations.
+description: >-
+  Nutze proaktiv beim Schreiben von SQL-Skripten und EF-Core-Migrations: kein DROP TABLE ohne
+  Backup-/Rollback-Plan, jede Migration mit beigelegtem SQL-Skript (efcore-migration-script), sichere Defaults
+  und Transaktionsgrenzen. Regel-Skill — meldet Risiken mit konkreter Absicherung.
 ---
 
 ## Regeln

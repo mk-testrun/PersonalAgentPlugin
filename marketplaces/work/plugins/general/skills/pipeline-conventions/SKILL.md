@@ -1,6 +1,10 @@
 ---
 name: pipeline-conventions
-description: Nutze proaktiv beim Schreiben oder Reviewen von Azure-Pipelines-YAML-Dateien.
+description: >-
+  Nutze proaktiv beim Schreiben oder Reviewen von Azure-Pipelines-YAML (`azure-pipelines*.yml`): prüft
+  Approval-Stage vor Prod-Deploys, kein `latest`-Tag (Digest/Version pinnen), `isSecret` für
+  Token/Passwörter, Caching per Lockfile-Hash und den Secret-Scan-Gate (betterleaks + kingfisher).
+  Hardcoded Secret-Wert → [GATE].
 ---
 
 ## Regeln (proaktiv prüfen)

@@ -14,12 +14,15 @@ import { execSync } from 'child_process';
 const TOOL_KEYWORDS = /\b(mcp|playwright|confluence|ado|betterleaks|sharplens|kingfisher|roslyn|ef[- ]?core|dotnet|sql|findings|artifact|supertonic|chart|mermaid|excalidraw|git|node|owasp|wcag)\b/i;
 
 // Achsen-Gewichte (Summe 100). Kern-Qualität schwerer als „Advanced".
+// Weights (sum 100). A "solid" self-contained skill (sharp description + substantive, well-structured
+// body) reaches ~2★ WITHOUT external files (ADR-0006: not every skill needs reference/scripts). 3★+ adds
+// reference/examples/evals/scripts. Resolves ADR-0008's open weight question (2026-07).
 export const AXES = {
-  description: 20,   // Länge + Trigger-Phrase + konkrete Tool/MCP-Nennung
-  reference:   15,   // reference.md vorhanden + Tiefe
-  examples:    15,   // examples.md + Code-Block
-  navigation:  15,   // SKILL.md verlinkt Ressourcen + hat Standard-Sektionen
-  evals:       20,   // cases.json + >=3 + Fixture
+  description: 22,   // Länge + Trigger-Phrase + konkrete Tool/MCP-Nennung (Discovery-Schicht)
+  body:        20,   // substantieller, gegliederter SKILL.md-Body + Ressourcen-Links (self-contained)
+  reference:   13,   // reference.md ODER references/-Ordner + Tiefe
+  examples:    12,   // examples.md + Code-Block
+  evals:       18,   // cases.json + >=3 + Fixture
   scripts:     15,   // scripts/*.mjs + Shebang + node --check clean
 };
 
@@ -58,52 +61,57 @@ export function scoreSkill(skillDir) {
   const got = {}; const missing = [];
   const has = p => existsSync(join(skillDir, p));
 
-  // --- description (20) ---
+  // --- description (22) ---
   const desc = frontmatterValue(md, 'description');
   let d = 0;
-  if (desc.length >= 200 && desc.length <= 1024) d += 8; else if (desc.length >= 120) d += 4;
-  // trigger phrase: EN "use when/after/to/for", "when asked/to" · DE "nutze wenn/um/beim/für/proaktiv"
+  if (desc.length >= 200 && desc.length <= 1024) d += 10; else if (desc.length >= 120) d += 5;
+  // trigger phrase: EN "use when/after/to/for", "when asked" · DE "nutze wenn/um/beim/für/proaktiv"
   if (/\b(use (when|after|to|for)|when asked|nutze (wenn|um|beim|proaktiv|für))\b/i.test(desc)) d += 6;
   else missing.push('description: Trigger-Phrase ("Use when …" / "Nutze wenn …")');
   if (TOOL_KEYWORDS.test(desc)) d += 6;
-  if (d < 12) missing.push('description: zu dünn (Länge/Trigger/Tool-Nennung)');
+  if (d < 14) missing.push('description: zu dünn (Länge/Trigger/Tool-Nennung)');
   got.description = { got: d, max: AXES.description };
 
-  // --- reference (15) — reference.md (singular) OR a references/ folder with >=1 .md ---
+  // --- body (20) — substantieller, gegliederter SKILL.md-Body + Ressourcen-Links (self-contained) ---
+  let b = 0;
+  const bodyText = md.replace(/^---[\s\S]*?---/, '').trim();
+  const headings = (bodyText.match(/^##\s/gm) || []).length;
+  if (headings >= 3) b += 6; else if (headings >= 2) b += 3;
+  if (bodyText.length > 1000) b += 6; else if (bodyText.length > 500) b += 3;
+  else missing.push('SKILL.md-Body zu dünn');
+  if (/##\s*.*(when to use|wann|scope)/i.test(md) && /##\s*.*(output|workflow|schritte|steps|regeln|aktionen)/i.test(md)) b += 4;
+  const links = ['reference.md', 'references/', 'examples.md', 'templates'].filter(t => md.includes(t)).length;
+  b += Math.min(4, links * 2);
+  got.body = { got: b, max: AXES.body };
+
+  // --- reference (13) — reference.md (singular) OR a references/ folder with >=1 .md ---
   let r = 0;
   const refMd = read(join(skillDir, 'reference.md'));
   const refDir = join(skillDir, 'references');
   const refDirMds = existsSync(refDir) && statSync(refDir).isDirectory()
     ? readdirSync(refDir).filter(f => f.endsWith('.md')) : [];
-  if (refMd) { r += 10; if ((refMd.match(/^#{1,4}\s/gm) || []).length >= 2) r += 5; }
-  else if (refDirMds.length) { r += 10; if (refDirMds.length >= 2 || read(join(refDir, refDirMds[0])).length > 400) r += 5; }
+  if (refMd) { r += 9; if ((refMd.match(/^#{1,4}\s/gm) || []).length >= 2) r += 4; }
+  else if (refDirMds.length) { r += 9; if (refDirMds.length >= 2 || read(join(refDir, refDirMds[0])).length > 400) r += 4; }
   else missing.push('reference(.md|references/) fehlt');
   got.reference = { got: r, max: AXES.reference };
 
-  // --- examples.md (15) ---
+  // --- examples.md (12) ---
   let e = 0;
   const exMd = read(join(skillDir, 'examples.md'));
-  if (exMd) { e += 8; if (/```/.test(exMd)) e += 7; }
+  if (exMd) { e += 7; if (/```/.test(exMd)) e += 5; }
   else missing.push('examples.md fehlt');
   got.examples = { got: e, max: AXES.examples };
 
-  // --- navigation (15) ---
-  let n = 0;
-  const links = ['reference.md', 'examples.md', 'templates'].filter(t => md.includes(t)).length;
-  n += Math.min(10, links * 4);
-  if (/##\s+(when to use|wann|scope)/i.test(md) && /##\s+(output|workflow|schritte|steps)/i.test(md)) n += 5;
-  got.navigation = { got: n, max: AXES.navigation };
-
-  // --- evals (20) ---
+  // --- evals (18) ---
   let ev = 0;
   const casesFile = join(skillDir, 'evals', 'cases.json');
   if (existsSync(casesFile)) {
-    ev += 8;
+    ev += 7;
     try {
       const cases = JSON.parse(read(casesFile));
-      if (Array.isArray(cases) && cases.length >= 3) ev += 7;
+      if (Array.isArray(cases) && cases.length >= 3) ev += 6;
       if (Array.isArray(cases) && cases.some(c => Array.isArray(c.files) && c.files.length)) ev += 5;
-    } catch { /* malformed → keep 8 */ }
+    } catch { /* malformed → keep 7 */ }
   } else missing.push('evals/cases.json fehlt');
   got.evals = { got: ev, max: AXES.evals };
 

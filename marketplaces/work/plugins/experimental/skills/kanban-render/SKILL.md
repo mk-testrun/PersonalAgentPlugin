@@ -1,6 +1,8 @@
 ---
 name: kanban-render
-description: Nutze um ADO-Work-Items als Kanban-HTML-Board (Spalten nach Status) zu rendern.
+description: >-
+  Nutze um ADO-Work-Items als Kanban-HTML-Board mit Spalten nach Status (New/Active/Resolved/Closed) zu
+  rendern: Quelle ADO-MCP (anonymisiert), Single-File-HTML, Output nach state/artifacts/ mit Fallback (§2.7).
 ---
 
 ## Zweck

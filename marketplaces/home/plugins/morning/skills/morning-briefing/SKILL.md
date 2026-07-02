@@ -1,6 +1,9 @@
 ---
 name: morning-briefing
-description: Nutze für das tägliche Morgen-Briefing-Dashboard.
+description: >-
+  Nutze für das tägliche Morgen-Briefing-Dashboard: bündelt Issues-Trend (7 Tage), offene PRs, Energie-Trend
+  und den Tagesfokus als morning-<date>.html. Zieht Daten über github-/fetch-MCP; delegiert die
+  Audio-Begrüßung an audio/speak-summary.
 ---
 
 ## Dashboard-Inhalt (morning-<date>.html)

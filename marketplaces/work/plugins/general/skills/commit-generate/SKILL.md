@@ -1,6 +1,10 @@
 ---
 name: commit-generate
-description: Nutze wenn eine Conventional-Commit-Nachricht aus dem aktuellen Staged-Diff generiert werden soll.
+description: >-
+  Nutze wenn eine Conventional-Commit-Nachricht aus dem aktuell gestagten Git-Diff generiert werden soll.
+  Leitet type(scope): subject aus den Änderungen ab, kennzeichnet Breaking Changes (! / BREAKING
+  CHANGE-Footer) und schlägt einen optionalen Body vor. Read-only bis zum Commit — schreibt nichts ohne
+  Bestätigung.
 ---
 
 ## Schema

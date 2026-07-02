@@ -1,6 +1,9 @@
 ---
 name: efcore-migration-revert-plan
-description: Nutze um einen sicheren Rollback-Plan für eine EF-Core-Migration zu erstellen (mit Datenverlust-Risiken).
+description: >-
+  Nutze um einen sicheren Rollback-Plan für eine EF-Core-Migration zu erstellen, BEVOR sie produktiv geht —
+  inkl. Datenverlust-Risiken und Reihenfolge. Migration erstellen → efcore-migration-add; Forward-SQL →
+  efcore-migration-script.
 ---
 
 ## Scope

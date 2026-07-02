@@ -1,6 +1,9 @@
 ---
 name: efcore-compiled-query-suggest
-description: Nutze um Hot-Path-EF-Core-Queries als Kandidaten für EF.CompileAsyncQuery zu identifizieren.
+description: >-
+  Nutze um wiederkehrende Hot-Path-EF-Core-Queries zu identifizieren, die von EF.CompileAsyncQuery profitieren
+  (sparen den Expression-Tree-Aufbau pro Aufruf). Liefert Kandidaten + Vorher/Nachher-Snippet.
+  Query-Übersetzung selbst → efcore-query-explain; Indizes → efcore-index-suggest.
 ---
 
 ## Scope
