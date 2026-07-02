@@ -25,6 +25,8 @@ import {
   classifyFrontmatterField, classifyCommandField, classifyAgentField, classifyAgentTool,
   SKILL_OK_FIELDS,
 } from './lib/field-taxonomy.mjs';
+import { scoreMarketplace, renderHistogram, renderMarkdown } from './lib/maturity.mjs';
+import { writeFileSync } from 'fs';
 
 const REQUIRED_PLUGIN_FIELDS = ['name', 'description', 'version', 'author', 'license'];
 const REQUIRED_MARKETPLACE_FIELDS = ['name', 'plugins'];
@@ -279,7 +281,7 @@ function validateChanged(base, ctx) {
 
 // ---------- CLI ----------
 function parseArgs(argv) {
-  const o = { mode: 'marketplace', target: null, strict: false, hints: true, format: 'text' };
+  const o = { mode: 'marketplace', target: null, strict: false, hints: true, format: 'text', maturity: false, maturityMd: null };
   for (let i = 2; i < argv.length; i++) {
     const a = argv[i];
     if (a === '--plugin')       { o.mode = 'plugin';  o.target = argv[++i]; }
@@ -287,6 +289,8 @@ function parseArgs(argv) {
     else if (a === '--agent')   { o.mode = 'agent';   o.target = argv[++i]; }
     else if (a === '--command') { o.mode = 'command'; o.target = argv[++i]; }
     else if (a === '--changed-only') { o.mode = 'changed'; if (argv[i + 1] && !argv[i + 1].startsWith('--')) o.target = argv[++i]; }
+    else if (a === '--maturity') o.maturity = true;
+    else if (a === '--maturity-md') o.maturityMd = argv[++i];
     else if (a === '--strict')  o.strict = true;
     else if (a === '--no-hints') o.hints = false;
     else if (a === '--format')  o.format = argv[++i];
@@ -296,6 +300,36 @@ function parseArgs(argv) {
 }
 
 const opt = parseArgs(process.argv);
+
+// discover marketplaces under ./marketplaces (dirs with a marketplace.json)
+function allMarketplaces() {
+  const root = resolve('marketplaces');
+  if (!existsSync(root)) return [];
+  return readdirSync(root)
+    .map(d => join(root, d))
+    .filter(d => existsSync(join(d, '.github', 'plugin', 'marketplace.json')));
+}
+
+// ---- maturity mode (reporting only; no exit-code impact) ----
+if (opt.maturity || opt.maturityMd) {
+  const mps = (opt.target && existsSync(join(resolve(opt.target), '.github', 'plugin', 'marketplace.json')))
+    ? [resolve(opt.target)] : allMarketplaces();
+  const all = [];
+  for (const mp of mps) {
+    const rows = scoreMarketplace(mp);
+    all.push(...rows);
+    if (opt.maturity) console.log(renderHistogram(rows, basename(mp)));
+  }
+  if (opt.maturity) {
+    const avg = all.length ? Math.round(all.reduce((a, r) => a + r.pct, 0) / all.length) : 0;
+    console.log(`\nGesamt: ${all.length} Skills · ⌀ ${avg}% · <3★: ${all.filter(r => r.stars < 3).length}\n`);
+  }
+  if (opt.maturityMd) {
+    writeFileSync(opt.maturityMd, renderMarkdown(all));
+    console.log(`✓  ${opt.maturityMd} geschrieben (${all.length} Skills).`);
+  }
+  process.exit(0);
+}
 if (opt.mode !== 'changed' && !opt.target) {
   console.error('Usage: node tools/validate-plugins.mjs <marketplace-path> | --skill|--plugin|--agent|--command <path> | --changed-only [base]');
   console.error('       flags: --strict  --no-hints  --format json');

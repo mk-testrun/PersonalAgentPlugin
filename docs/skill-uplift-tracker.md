@@ -1,5 +1,12 @@
 # Skill-Uplift-Tracker (voller Sweep auf den Authoring-Standard)
 
+> **Diese Datei ist die *Absicht* (manuell gepflegt): Wellenplan, Prioritäten, bewusste Anti-Ziele.**
+> Der *Ist-Stand* wird automatisch gemessen: **`docs/skill-maturity.md`** (regenerieren mit
+> `node tools/validate-plugins.mjs --maturity-md docs/skill-maturity.md`). Der Wert liegt im Abgleich:
+> wenn der Tracker „Skill X soll 4★" sagt und die Maturity „2★" misst → offener Action-Item.
+> Skills, die **bewusst** niedrig bleiben (reine Wissens-Konventionen ohne Skript), hier als Anti-Ziel
+> notieren, damit ihr niedriger Auto-Score kein Alarm ist.
+
 Ziel: **jeden** Skill auf `docs/skill-authoring-guide.md` heben — substanzielle, konkrete SKILL.md,
 `references/` bei Tiefe, `scripts/`/`templates/`/`examples.md` wo wertvoll, Evals bei Flaggschiffen.
 Gate je Skill: `validate-plugins.mjs` + (falls Evals) `run-evals.mjs` grün **und** DoD-Checkliste erfüllt.
