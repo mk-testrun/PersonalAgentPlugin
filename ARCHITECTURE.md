@@ -149,12 +149,12 @@ Plugins: `general`, `visual`, `reviewer`, `meta`, `lab`, `morning`, `orchestrati
 Stack: GitHub, Python/C#/Go/TypeScript, Excalidraw, Cloud-Bild-Gen, Home Assistant
 Sicherheit: Tool-Guardian **warn**, Git-Guardrails **warn** (force-push main/master bleibt **block**), secret-scan **block**, Playwright darf Internet
 
-- `general`: story-author, grill-me, tdd-loop; /story /grill /tdd; Profile-System; Git-Guardrails
+- `general`: story-author, grill-me, tdd-loop, **loop** (Agent-Loop-Protokoll); /story /grill /tdd /loop; Profile-System; Git-Guardrails
 - `visual`: render-artifact + /view; artifact-viewer in .mcp.json
-- `orchestration`: **loop** (Agent-Loop-Protokoll, aus dem früheren loop-Plugin)
+- `orchestration`: workflow-router (Router-Skill + kodierte Workflows + State, §9/ADR-0009)
 
 > **loop** war früher ein eigenes Plugin in beiden Marketplaces; es wurde in `experimental` (Work) bzw.
-> `orchestration` (Home) integriert — kein Ein-Skill-Plugin mehr.
+> `general` (Home) integriert — kein Ein-Skill-Plugin mehr.
 
 ---
 

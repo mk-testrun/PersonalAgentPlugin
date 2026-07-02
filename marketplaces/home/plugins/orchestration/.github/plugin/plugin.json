@@ -1,6 +1,6 @@
 {
   "name": "orchestration",
-  "description": "GitHub-Workflows: /feature, /bugfix, /review-flow + Agent-Loop — kein /ship, kein Workitem-Zwang.",
+  "description": "GitHub-Workflows: /feature, /bugfix, /review-flow — kein /ship, kein Workitem-Zwang.",
   "version": "1.0.0",
   "author": {
     "name": "mkrueer"
@@ -12,21 +12,17 @@
     "workflow",
     "feature",
     "bugfix",
-    "github",
-    "loop"
+    "github"
   ],
   "agents": [
-    "./agents/orchestrator.agent.md",
-    "./agents/loop.agent.md"
+    "./agents/orchestrator.agent.md"
   ],
   "commands": [
     "./commands/feature.md",
     "./commands/bugfix.md",
-    "./commands/review-flow.md",
-    "./commands/loop.md"
+    "./commands/review-flow.md"
   ],
   "skills": [
-    "./skills/workflow-router/",
-    "./skills/loop/"
+    "./skills/workflow-router/"
   ]
 }

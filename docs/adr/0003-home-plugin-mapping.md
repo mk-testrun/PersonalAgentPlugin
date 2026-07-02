@@ -1,7 +1,7 @@
 # ADR-0003 — Home-Marketplace: Plugin-Mapping
 
 ## Status
-Accepted · 2026-06-23 · Aktualisiert 2026-07-02 (loop→orchestration, fun entfernt) · Ersetzt durch: —
+Accepted · 2026-06-23 · Aktualisiert 2026-07-02 (loop→general, fun entfernt) · Ersetzt durch: —
 
 ## Kontext
 Der Home-Marketplace soll experimentierfreudig, visual-first und mehrsprachig sein: GitHub statt ADO,
@@ -40,7 +40,7 @@ Umschaltung wäre ein Config-Overlay/Neustart — bewusst offen gelassen.
 ## Konsequenzen
 - **Positiv:** visual-first als klare Home-Identität; warn-Regime erlaubt Experimente, secret-scan +
   force-push-main-Schutz bleiben hart.
-- **Änderungen ggü. v1:** `loop` ist jetzt in `orchestration` (Home hat kein `experimental`); das
+- **Änderungen ggü. v1:** `loop` ist jetzt in `general` (Home hat kein `experimental`; general ist das Fundament-Plugin); das
   `fun`-Plugin wurde entfernt.
 - Wiring: `reviewer/.mcp.json` setzt Playwright **ohne** localhost-Einschränkung;
   `audio/hooks/scripts/notify-with-sound.*` braucht plattformunabhängige Sound-Logik.

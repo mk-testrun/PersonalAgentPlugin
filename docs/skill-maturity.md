@@ -117,11 +117,11 @@
 | 1★ | 25 | `visual/mind-map` | reference(.md|references/) fehlt; examples.md fehlt; evals/cases.json fehlt |
 | 1★ | 25 | `visual/table-as-grid` | reference(.md|references/) fehlt; examples.md fehlt; evals/cases.json fehlt |
 | 1★ | 25 | `visual/timeline` | reference(.md|references/) fehlt; examples.md fehlt; evals/cases.json fehlt |
+| 1★ | 23 | `general/loop` | description: zu dünn (Länge/Trigger/Tool-Nennung); reference(.md|references/) fehlt; examples.md fehlt; evals/cases.json fehlt |
 | 1★ | 23 | `general/tdd-loop` | reference(.md|references/) fehlt; examples.md fehlt; evals/cases.json fehlt |
 | 1★ | 23 | `general/triage` | reference(.md|references/) fehlt; examples.md fehlt; evals/cases.json fehlt |
 | 1★ | 23 | `meta/mcp-app-author` | reference(.md|references/) fehlt; examples.md fehlt; evals/cases.json fehlt |
 | 1★ | 23 | `meta/mcp-app-author` | reference(.md|references/) fehlt; examples.md fehlt; evals/cases.json fehlt |
-| 1★ | 23 | `orchestration/loop` | description: zu dünn (Länge/Trigger/Tool-Nennung); reference(.md|references/) fehlt; examples.md fehlt; evals/cases.json fehlt |
 | 1★ | 22 | `blazor/sql-conventions` | SKILL.md-Body zu dünn; reference(.md|references/) fehlt; examples.md fehlt; evals/cases.json fehlt |
 | 1★ | 22 | `doku/doc-from-code` | SKILL.md-Body zu dünn; reference(.md|references/) fehlt; examples.md fehlt; evals/cases.json fehlt |
 | 1★ | 22 | `general/github-issues` | SKILL.md-Body zu dünn; reference(.md|references/) fehlt; examples.md fehlt; evals/cases.json fehlt |
