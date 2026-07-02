@@ -36,8 +36,9 @@ for pattern in "${DENY_PATTERNS[@]}"; do
 done
 
 # Git-Guardrails (policy/git-guardrails.json)
-# Force-push auf protected branches — immer block
-if printf '%s' "$TOOL_ARGS" | grep -qE 'git push.*(--force|-f)'; then
+# Force-push auf protected branches — immer block. --force-with-lease ist bewusst erlaubt (ADR-0004):
+# verliert keine fremden Commits. Deshalb NUR greifen, wenn KEIN force-with-lease vorliegt.
+if printf '%s' "$TOOL_ARGS" | grep -qE 'git push.*(--force|-f)' && ! printf '%s' "$TOOL_ARGS" | grep -q 'force-with-lease'; then
   if printf '%s' "$TOOL_ARGS" | grep -qE '(main|master|develop|release/)'; then
     echo '{"permissionDecision":"deny","permissionDecisionReason":"Git-Guardrail: force-push auf protected branch verboten"}'
     exit 0
