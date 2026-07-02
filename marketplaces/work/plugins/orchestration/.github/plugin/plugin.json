@@ -24,5 +24,8 @@
     "./commands/bugfix.md",
     "./commands/review-flow.md",
     "./commands/ship.md"
+  ],
+  "skills": [
+    "./skills/workflow-router/"
   ]
 }

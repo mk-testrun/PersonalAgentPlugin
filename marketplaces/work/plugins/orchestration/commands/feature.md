@@ -2,7 +2,9 @@
 description: Issue → Feature-Branch → Implementierung → Tests → Review → PR. Mit Dry-run und [CONFIRM] je Schritt.
 ---
 
-**Dry-run zuerst:** Vollständigen Plan ausgeben.
+Treiber: **`workflow-router`**-Skill — `node scripts/run-state.mjs init --workflow feature` erzeugt den
+Dry-run-Plan + resumebaren State; `resume`/`advance` fahren die Schritte. Die Choreografie ist im Skript
+kodiert (kein Improvisieren). Die folgende Liste spiegelt sie:
 
 1. Issue auflösen (read-only) — **[CONFIRM]** „Issue #X als Feature bestätigen?"
 2. Idempotenz-Check (Branch existiert?) → Branch `feature/AB-<id>-<slug>` — **[CONFIRM]**

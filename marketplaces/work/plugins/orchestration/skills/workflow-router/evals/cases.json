@@ -1,0 +1,40 @@
+[
+  {
+    "skill": "workflow-router",
+    "query": "Bau das Feature aus Issue #1234.",
+    "expected_behavior": [
+      "Routet auf den feature-Workflow",
+      "Läuft run-state.mjs init --workflow feature und zeigt den vollständigen Dry-run-Plan mit [CONFIRM]/[GATE] vor Schritt 1",
+      "Delegiert Schritt 1 (resolve) an general, holt [CONFIRM] vor dem Branch",
+      "Implementiert nichts selbst — delegiert an blazor/testing/review/general",
+      "Schreibt Fortschritt in die State-Datei (advance nach jedem Schritt)"
+    ]
+  },
+  {
+    "skill": "workflow-router",
+    "query": "Der Review-Schritt hat eine kritische SQL-Injection gefunden.",
+    "expected_behavior": [
+      "Behandelt den review-Schritt als [GATE]: bei critical/high hart stoppen",
+      "advance wird NICHT auf done gesetzt — der Schritt bleibt pending",
+      "Meldet den Befund + wo der Workflow angehalten hat, statt zum PR weiterzugehen"
+    ]
+  },
+  {
+    "skill": "workflow-router",
+    "query": "Setz den abgebrochenen Orchestrator-Lauf von gestern fort.",
+    "expected_behavior": [
+      "Liest die State-Datei via run-state.mjs resume",
+      "Springt zum ersten pending-Schritt, ohne erledigte Schritte zu wiederholen",
+      "Nennt Delegat + Gate des nächsten Schritts"
+    ]
+  },
+  {
+    "skill": "workflow-router",
+    "query": "Kannst du mir schnell was deployen? (kein klarer Workflow)",
+    "expected_behavior": [
+      "Rät keinen Workflow, wenn der Wunsch unklar ist",
+      "Stellt eine Rückfrage bzw. schlägt ship vor und erklärt dessen Preflight/Gate",
+      "Weist darauf hin, dass ship nur merge-bereite, grüne PRs annimmt"
+    ]
+  }
+]
