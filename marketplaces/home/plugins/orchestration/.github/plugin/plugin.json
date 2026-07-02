@@ -26,6 +26,7 @@
     "./commands/loop.md"
   ],
   "skills": [
+    "./skills/workflow-router/",
     "./skills/loop/"
   ]
 }

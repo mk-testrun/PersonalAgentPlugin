@@ -1,0 +1,30 @@
+[
+  {
+    "skill": "workflow-router",
+    "query": "Bau das Feature aus GitHub-Issue #42.",
+    "expected_behavior": [
+      "Routet auf feature und läuft run-state.mjs init --workflow feature",
+      "Zeigt den Dry-run-Plan mit [CONFIRM]/[GATE] vor Schritt 1",
+      "Delegiert an general (GitHub/git) und reviewer; implementiert nichts selbst",
+      "Schreibt Fortschritt in die State-Datei (advance je Schritt)"
+    ]
+  },
+  {
+    "skill": "workflow-router",
+    "query": "Der Review fand eine kritische Schwachstelle.",
+    "expected_behavior": [
+      "Behandelt den review-Schritt als [GATE]: bei critical/high hart stoppen",
+      "advance NICHT auf done — Schritt bleibt pending",
+      "Meldet Befund + Haltepunkt statt zum PR weiterzugehen"
+    ]
+  },
+  {
+    "skill": "workflow-router",
+    "query": "Setz den Orchestrator-Lauf fort.",
+    "expected_behavior": [
+      "run-state.mjs resume liest den nächsten pending-Schritt",
+      "Wiederholt keine erledigten Schritte",
+      "Nennt Delegat + Gate des nächsten Schritts"
+    ]
+  }
+]

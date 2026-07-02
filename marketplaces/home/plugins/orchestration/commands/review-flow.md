@@ -1,4 +1,5 @@
 ---
 description: Reiner Review-Lauf — kein Write, kein Branch.
 ---
-reviewer/review: ganze Matrix → Aggregate. Kein [CONFIRM]/[GATE] — nur Output.
+Treiber: **`workflow-router`** — `run-state.mjs init --workflow review-flow`.
+reviewer/review: ganze Matrix → Aggregate → [GATE] bei critical/high. Output: MD/HTML.
