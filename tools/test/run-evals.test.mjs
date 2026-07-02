@@ -55,3 +55,18 @@ test('invalid JSON → exit 1', () => {
 test('marketplace with no evals at all → exit 0 (nothing to fail)', () => {
   assert.equal(runExit(marketplaceWithCases(null)), 0);
 });
+
+test('valid optional contract fields (expected_tools/gates/confirmations) → exit 0', () => {
+  const withContract = JSON.stringify(Array.from({ length: 3 }, (_, i) => ({
+    skill: 's', query: `q${i}`, expected_behavior: ['x'],
+    expected_tools: ['execute'], expected_gates: ['review'], expected_confirmations: 2,
+  })));
+  assert.equal(runExit(marketplaceWithCases(withContract)), 0);
+});
+
+test('malformed contract field (expected_confirmations as string) → exit 1', () => {
+  const bad = JSON.stringify(Array.from({ length: 3 }, (_, i) => ({
+    skill: 's', query: `q${i}`, expected_behavior: ['x'], expected_confirmations: 'two',
+  })));
+  assert.equal(runExit(marketplaceWithCases(bad)), 1);
+});

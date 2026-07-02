@@ -5,6 +5,9 @@
  *   - an array of >= 3 cases
  *   - each case has: query (string), expected_behavior (>=1 strings), and a skill ref
  *   - referenced fixture files (if any) exist
+ *   - optional behavioural-contract fields (type-checked only): expected_tools[], blocked_tools[],
+ *     expected_gates[] (arrays of strings), expected_confirmations (int). These document what a skill
+ *     may/may not do and how many [CONFIRM]/[GATE] it should hit — a future behaviour-runner consumes them.
  * Token-free: this checks eval *definitions*. Actual behavioral runs require the Copilot/Claude
  * runtime; this gate guarantees every flagship skill ships valid, non-empty evals.
  *
@@ -40,6 +43,13 @@ function checkCasesFile(file, label) {
       const fixture = join(file, '..', f);
       if (!existsSync(fixture)) errors.push(`[${label}] case ${i}: fixture not found: ${f}`);
     }
+    // optional behavioural-contract fields (structural check only; a future behaviour-runner uses them)
+    for (const arrField of ['expected_tools', 'blocked_tools', 'expected_gates']) {
+      if (c[arrField] !== undefined && (!Array.isArray(c[arrField]) || c[arrField].some(x => typeof x !== 'string')))
+        errors.push(`[${label}] case ${i}: "${arrField}" must be an array of strings`);
+    }
+    if (c.expected_confirmations !== undefined && (!Number.isInteger(c.expected_confirmations) || c.expected_confirmations < 0))
+      errors.push(`[${label}] case ${i}: "expected_confirmations" must be a non-negative integer`);
   });
   evalFilesFound++; casesTotal += data.length;
 }

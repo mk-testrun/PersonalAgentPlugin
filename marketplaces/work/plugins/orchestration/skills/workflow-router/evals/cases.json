@@ -8,7 +8,10 @@
       "Delegiert Schritt 1 (resolve) an general, holt [CONFIRM] vor dem Branch",
       "Implementiert nichts selbst — delegiert an blazor/testing/review/general",
       "Schreibt Fortschritt in die State-Datei (advance nach jedem Schritt)"
-    ]
+    ],
+    "expected_tools": ["execute", "agent"],
+    "expected_gates": ["e2e", "review"],
+    "expected_confirmations": 4
   },
   {
     "skill": "workflow-router",
