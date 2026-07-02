@@ -1,25 +1,77 @@
 #!/usr/bin/env node
 /**
- * Validates a marketplace against the GitHub Copilot CLI plugin spec.
- * Canonical plugin manifest location: plugins/<name>/.github/plugin/plugin.json
- * Usage: node tools/validate-plugins.mjs <marketplace-path>
- * Exit 0 = valid, Exit 1 = errors found.
+ * Validates plugins/skills/agents/commands against the GitHub Copilot CLI spec (First-Party).
+ *
+ * Findings are tiered:
+ *   error   → Copilot CLI cannot load it (missing field, broken schema, missing referenced file)
+ *   warning → only works in another AI product (Claude/ChatGPT/Gemini) or nowhere
+ *   hint    → works in a sibling IDE (VS Code / Visual Studio), just not the CLI  (informational)
+ *
+ * Usage:
+ *   node tools/validate-plugins.mjs <marketplace-path>       # whole marketplace (default)
+ *   node tools/validate-plugins.mjs --plugin  <plugin-dir>
+ *   node tools/validate-plugins.mjs --skill   <skill-dir|SKILL.md>
+ *   node tools/validate-plugins.mjs --agent   <file.agent.md>
+ *   node tools/validate-plugins.mjs --command <file.md>
+ *   node tools/validate-plugins.mjs --changed-only [base]     # only git-changed items (default base: HEAD)
+ *   flags: --strict (warnings→errors) · --no-hints · --format json
+ * Exit 0 = no errors (warnings ok unless --strict), Exit 1 = errors (or warnings under --strict).
  */
 import { readFileSync, readdirSync, statSync, existsSync } from 'fs';
-import { join, resolve } from 'path';
+import { join, resolve, basename, dirname } from 'path';
+import { execSync } from 'child_process';
+import {
+  ENV_LABELS, envList,
+  classifyFrontmatterField, classifyCommandField, classifyAgentField, classifyAgentTool,
+  SKILL_OK_FIELDS,
+} from './lib/field-taxonomy.mjs';
 
 const REQUIRED_PLUGIN_FIELDS = ['name', 'description', 'version', 'author', 'license'];
-// Copilot CLI SKILL.md frontmatter fields (issue github/copilot-cli#3095). Not: mcp_tools, applyTo (VS Code).
-const ALLOWED_SKILL_KEYS = new Set(['name', 'description', 'license', 'argument-hint', 'user-invocable', 'disable-model-invocation']);
 const REQUIRED_MARKETPLACE_FIELDS = ['name', 'plugins'];
 const RESERVED_NAME_WORDS = ['anthropic', 'claude'];
+const VALID_HOOK_EVENTS = new Set([
+  'sessionStart', 'sessionEnd', 'userPromptSubmitted', 'preToolUse', 'postToolUse',
+  'errorOccurred', 'subagentStart', 'PermissionRequest',
+]);
 
+// ---------- findings ----------
+const mkCtx = () => ({ errors: [], warnings: [], hints: [] });
+const err  = (ctx, m) => ctx.errors.push(m);
+const warn = (ctx, m) => ctx.warnings.push(m);
+const hint = (ctx, m) => ctx.hints.push(m);
+
+const CLI = ENV_LABELS['copilot-cli'];
+// Turn a taxonomy classification into a tiered finding.
+function reportClassified(ctx, label, kind, name, cls) {
+  if (cls.level === 'ok') return;
+  const note = cls.note ? ` ${cls.note}` : '';
+  if (cls.level === 'hint') {
+    hint(ctx, `${label}: ${kind} "${name}" wird von ${envList(cls.supportedIn)} interpretiert, nicht von ${CLI}.${note}`);
+  } else {
+    const where = cls.supportedIn.length ? `wirkt nur in ${envList(cls.supportedIn)}` : 'wird von keiner bekannten Umgebung interpretiert';
+    warn(ctx, `${label}: ${kind} "${name}" ${where} — ${CLI} (First-Party) ignoriert es.${note}`);
+  }
+}
+
+// ---------- helpers ----------
 function readJson(filePath) {
   try { return JSON.parse(readFileSync(filePath, 'utf8')); }
   catch (e) { return { __error: e.message }; }
 }
 
-/** Parse YAML frontmatter (name/description) — handles inline, quoted, and block scalars (>-, |). */
+/** Top-level frontmatter keys, in document order. */
+function frontmatterKeys(file) {
+  const m = readFileSync(file, 'utf8').match(/^---\r?\n([\s\S]*?)\r?\n---/);
+  if (!m) return null;
+  const keys = [];
+  for (const line of m[1].split(/\r?\n/)) {
+    const km = line.match(/^([a-zA-Z_][\w-]*):/);
+    if (km) keys.push(km[1]);
+  }
+  return keys;
+}
+
+/** name/description values — handles inline, quoted, and block scalars (>-, |). */
 function parseFrontmatter(file) {
   const raw = readFileSync(file, 'utf8');
   const m = raw.match(/^---\r?\n([\s\S]*?)\r?\n---/);
@@ -47,159 +99,240 @@ function parseFrontmatter(file) {
   return fm;
 }
 
-function validateSkillDir(skillDir, pluginName, ref, errors, warnings) {
-  if (!existsSync(skillDir) || !statSync(skillDir).isDirectory()) {
-    errors.push(`[${pluginName}] Skill directory not found: ${ref}`);
-    return;
-  }
+// ---------- skill ----------
+function validateSkillDir(skillDir, pluginName, ref, ctx) {
+  const label = `[${pluginName}] ${ref}`;
+  if (!existsSync(skillDir) || !statSync(skillDir).isDirectory()) { err(ctx, `${label} Skill directory not found`); return; }
   const skillMd = join(skillDir, 'SKILL.md');
-  if (!existsSync(skillMd)) {
-    errors.push(`[${pluginName}] SKILL.md missing in ${ref}`);
-    return;
-  }
+  if (!existsSync(skillMd)) { err(ctx, `${label} SKILL.md missing`); return; }
   const fm = parseFrontmatter(skillMd);
-  if (!fm) { errors.push(`[${pluginName}] ${ref}SKILL.md missing YAML frontmatter`); return; }
-  if (!fm.name) errors.push(`[${pluginName}] ${ref}SKILL.md frontmatter missing "name"`);
+  if (!fm) { err(ctx, `${label}SKILL.md missing YAML frontmatter`); return; }
+  if (!fm.name) err(ctx, `${label}SKILL.md frontmatter missing "name"`);
   else {
-    if (fm.name.length > 64) errors.push(`[${pluginName}] ${ref} name >64 chars`);
-    if (!/^[a-z0-9-]+$/.test(fm.name)) errors.push(`[${pluginName}] ${ref} name must be lowercase/digits/hyphen: "${fm.name}"`);
-    if (RESERVED_NAME_WORDS.some(w => fm.name.includes(w))) errors.push(`[${pluginName}] ${ref} name uses reserved word: "${fm.name}"`);
+    if (fm.name.length > 64) err(ctx, `${label} name >64 chars`);
+    if (!/^[a-z0-9-]+$/.test(fm.name)) err(ctx, `${label} name must be lowercase/digits/hyphen: "${fm.name}"`);
+    if (RESERVED_NAME_WORDS.some(w => fm.name.includes(w))) err(ctx, `${label} name uses reserved word: "${fm.name}"`);
   }
-  if (!fm.description) errors.push(`[${pluginName}] ${ref}SKILL.md frontmatter missing "description"`);
-  else if (fm.description.length > 1024) errors.push(`[${pluginName}] ${ref} description >1024 chars`);
+  if (!fm.description) err(ctx, `${label}SKILL.md frontmatter missing "description"`);
+  else if (fm.description.length > 1024) err(ctx, `${label} description >1024 chars`);
 
-  // reject unsupported frontmatter fields (e.g. mcp_tools/applyTo — inert VS Code syntax)
-  const fmRaw = readFileSync(skillMd, 'utf8').match(/^---\r?\n([\s\S]*?)\r?\n---/);
-  if (fmRaw) for (const line of fmRaw[1].split(/\r?\n/)) {
-    const km = line.match(/^([a-zA-Z_][\w-]*):/);
-    if (km && !ALLOWED_SKILL_KEYS.has(km[1])) {
-      errors.push(`[${pluginName}] ${ref} SKILL.md: unsupported frontmatter field "${km[1]}" (Copilot CLI reads only: ${[...ALLOWED_SKILL_KEYS].join(', ')})`);
+  // classify every frontmatter field (tiered — no longer a hard error)
+  for (const key of frontmatterKeys(skillMd) ?? []) {
+    reportClassified(ctx, `${label}SKILL.md`, 'Feld', key, classifyFrontmatterField(key));
+  }
+}
+
+// ---------- agent ----------
+function validateAgent(file, pluginName, ref, ctx) {
+  const label = `[${pluginName}] ${ref}`;
+  if (!existsSync(file)) { err(ctx, `${label} Agent file not found`); return; }
+  const raw = readFileSync(file, 'utf8');
+  const fm = raw.match(/^---\r?\n([\s\S]*?)\r?\n---/);
+  if (!fm) { err(ctx, `${label} agent missing YAML frontmatter`); return; }
+
+  // frontmatter fields
+  for (const key of frontmatterKeys(file) ?? []) {
+    reportClassified(ctx, label, 'Agent-Feld', key, classifyAgentField(key));
+  }
+  // tools list
+  const lines = fm[1].split(/\r?\n/);
+  const ti = lines.findIndex(l => /^tools:\s*$/.test(l));
+  if (ti !== -1) {
+    for (let j = ti + 1; j < lines.length; j++) {
+      const m = lines[j].match(/^\s+-\s+(.+?)\s*$/);
+      if (!m) break;
+      const tool = m[1].replace(/^['"]|['"]$/g, '');
+      reportClassified(ctx, label, 'Agent-Tool', tool, classifyAgentTool(tool));
     }
   }
 }
 
-// Valid Copilot CLI agent tool identifiers: built-in aliases, "*", or an MCP reference "server/..." .
-// VS Code names (editFiles/runCommands/problems/usages/…) and dot-namespacing (github.issues) are NOT valid.
-const VALID_AGENT_TOOLS = new Set(['execute', 'read', 'edit', 'search', 'agent', 'web', 'todo']);
-function validateAgentTools(file, pluginName, ref, errors) {
-  const raw = readFileSync(file, 'utf8');
-  const fm = raw.match(/^---\r?\n([\s\S]*?)\r?\n---/);
-  if (!fm) return;
-  const lines = fm[1].split(/\r?\n/);
-  const ti = lines.findIndex(l => /^tools:\s*$/.test(l));
-  if (ti === -1) return; // no block tools list (omitted or inline) — nothing to check here
-  for (let j = ti + 1; j < lines.length; j++) {
-    const m = lines[j].match(/^\s+-\s+(.+?)\s*$/);
-    if (!m) break;
-    const tool = m[1].replace(/^['"]|['"]$/g, '');
-    const ok = tool === '*' || VALID_AGENT_TOOLS.has(tool) || tool.includes('/');
-    if (!ok) errors.push(`[${pluginName}] ${ref}: invalid agent tool "${tool}" (use ${[...VALID_AGENT_TOOLS].join('/')}, "*", or "server/*")`);
+// ---------- command ----------
+function validateCommand(file, pluginName, ref, ctx) {
+  const label = `[${pluginName}] ${ref}`;
+  if (!existsSync(file)) { err(ctx, `${label} Command file not found`); return; }
+  for (const key of frontmatterKeys(file) ?? []) {
+    reportClassified(ctx, label, 'Command-Feld', key, classifyCommandField(key));
   }
 }
 
-function validatePlugin(pluginDir, pluginName, errors, warnings) {
-  const manifestPath = join(pluginDir, '.github', 'plugin', 'plugin.json');
-  if (!existsSync(manifestPath)) {
-    errors.push(`[${pluginName}] Missing canonical manifest: .github/plugin/plugin.json`);
-    return;
+// ---------- hooks ----------
+function validateHooks(hooksPath, pluginDir, pluginName, ctx) {
+  const label = `[${pluginName}] hooks.json`;
+  const h = readJson(hooksPath);
+  if (h.__error) { err(ctx, `${label}: Invalid JSON: ${h.__error}`); return; }
+  if (h.version !== 1) err(ctx, `${label}: missing "version": 1`);
+  if (Array.isArray(h.hooks) || typeof h.hooks !== 'object' || h.hooks === null) {
+    err(ctx, `${label}: "hooks" must be an object keyed by event name (not an array)`); return;
   }
-  const m = readJson(manifestPath);
-  if (m.__error) { errors.push(`[${pluginName}] Invalid JSON in plugin.json: ${m.__error}`); return; }
+  for (const [event, entries] of Object.entries(h.hooks)) {
+    if (!VALID_HOOK_EVENTS.has(event)) err(ctx, `${label}: unknown event "${event}"`);
+    if (!Array.isArray(entries)) { err(ctx, `${label}: "${event}" must map to an array`); continue; }
+    for (const e of entries) {
+      if (!e || e.type !== 'command') err(ctx, `${label}: "${event}" entry needs "type": "command"`);
+      if (!e || (!e.bash && !e.powershell)) err(ctx, `${label}: "${event}" entry needs "bash" and/or "powershell"`);
+      for (const cmd of [e?.bash, e?.powershell]) {
+        const m = typeof cmd === 'string' && cmd.match(/\{\{plugin_data_dir\}\}\/(\S+?\.(?:sh|ps1))/);
+        if (m && !existsSync(join(pluginDir, m[1]))) err(ctx, `${label}: referenced script not found: ${m[1]}`);
+      }
+    }
+  }
+}
 
-  for (const f of REQUIRED_PLUGIN_FIELDS) {
-    if (m[f] === undefined) errors.push(`[${pluginName}] plugin.json missing required field: "${f}"`);
-  }
-  if (m.author && typeof m.author !== 'object') errors.push(`[${pluginName}] "author" must be an object { name }`);
-  if (m.author && typeof m.author === 'object' && !m.author.name) errors.push(`[${pluginName}] "author.name" required`);
-  if (!m.repository) errors.push(`[${pluginName}] missing "repository"`);
+// ---------- plugin ----------
+function validatePlugin(pluginDir, pluginName, ctx) {
+  const label = `[${pluginName}]`;
+  const manifestPath = join(pluginDir, '.github', 'plugin', 'plugin.json');
+  if (!existsSync(manifestPath)) { err(ctx, `${label} Missing canonical manifest: .github/plugin/plugin.json`); return; }
+  const m = readJson(manifestPath);
+  if (m.__error) { err(ctx, `${label} Invalid JSON in plugin.json: ${m.__error}`); return; }
+
+  for (const f of REQUIRED_PLUGIN_FIELDS) if (m[f] === undefined) err(ctx, `${label} plugin.json missing required field: "${f}"`);
+  if (m.author && typeof m.author !== 'object') err(ctx, `${label} "author" must be an object { name }`);
+  if (m.author && typeof m.author === 'object' && !m.author.name) err(ctx, `${label} "author.name" required`);
+  if (!m.repository) err(ctx, `${label} missing "repository"`);
 
   const refExists = (ref, isDir) => {
     const full = join(pluginDir, ref);
     return existsSync(full) && (isDir ? statSync(full).isDirectory() : statSync(full).isFile());
   };
   for (const ref of m.agents ?? []) {
-    if (!refExists(ref, false)) { errors.push(`[${pluginName}] Agent not found: ${ref}`); continue; }
-    validateAgentTools(join(pluginDir, ref), pluginName, ref, errors);
+    if (!refExists(ref, false)) { err(ctx, `${label} Agent not found: ${ref}`); continue; }
+    validateAgent(join(pluginDir, ref), pluginName, ref, ctx);
   }
-  for (const ref of m.commands ?? []) if (!refExists(ref, false)) errors.push(`[${pluginName}] Command not found: ${ref}`);
-  for (const ref of m.skills ?? []) validateSkillDir(join(pluginDir, ref), pluginName, ref, errors, warnings);
+  for (const ref of m.commands ?? []) {
+    if (!refExists(ref, false)) { err(ctx, `${label} Command not found: ${ref}`); continue; }
+    validateCommand(join(pluginDir, ref), pluginName, ref, ctx);
+  }
+  for (const ref of m.skills ?? []) validateSkillDir(join(pluginDir, ref), pluginName, ref, ctx);
 
-  // .mcp.json / hooks.json sanity
   const mcpPath = join(pluginDir, '.mcp.json');
   if (existsSync(mcpPath)) {
     const mcp = readJson(mcpPath);
-    if (mcp.__error) errors.push(`[${pluginName}] Invalid JSON in .mcp.json: ${mcp.__error}`);
-    else if (!mcp.mcpServers) errors.push(`[${pluginName}] .mcp.json missing "mcpServers"`);
+    if (mcp.__error) err(ctx, `${label} Invalid JSON in .mcp.json: ${mcp.__error}`);
+    else if (!mcp.mcpServers) err(ctx, `${label} .mcp.json missing "mcpServers"`);
   }
   const hooksPath = join(pluginDir, 'hooks.json');
-  if (existsSync(hooksPath)) validateHooks(hooksPath, pluginDir, pluginName, errors);
+  if (existsSync(hooksPath)) validateHooks(hooksPath, pluginDir, pluginName, ctx);
 }
 
-// Real GitHub Copilot CLI hooks schema: { version: 1, hooks: { <event>: [ {type, bash|powershell, ...} ] } }.
-const VALID_HOOK_EVENTS = new Set([
-  'sessionStart', 'sessionEnd', 'userPromptSubmitted', 'preToolUse', 'postToolUse',
-  'errorOccurred', 'subagentStart', 'PermissionRequest',
-]);
-function validateHooks(hooksPath, pluginDir, pluginName, errors) {
-  const h = readJson(hooksPath);
-  if (h.__error) { errors.push(`[${pluginName}] Invalid JSON in hooks.json: ${h.__error}`); return; }
-  if (h.version !== 1) errors.push(`[${pluginName}] hooks.json: missing "version": 1`);
-  if (Array.isArray(h.hooks) || typeof h.hooks !== 'object' || h.hooks === null) {
-    errors.push(`[${pluginName}] hooks.json: "hooks" must be an object keyed by event name (not an array)`);
-    return;
-  }
-  for (const [event, entries] of Object.entries(h.hooks)) {
-    if (!VALID_HOOK_EVENTS.has(event)) errors.push(`[${pluginName}] hooks.json: unknown event "${event}"`);
-    if (!Array.isArray(entries)) { errors.push(`[${pluginName}] hooks.json: "${event}" must map to an array`); continue; }
-    for (const e of entries) {
-      if (!e || e.type !== 'command') errors.push(`[${pluginName}] hooks.json: "${event}" entry needs "type": "command"`);
-      if (!e || (!e.bash && !e.powershell)) errors.push(`[${pluginName}] hooks.json: "${event}" entry needs "bash" and/or "powershell"`);
-      // any {{plugin_data_dir}}-referenced bundled script must actually exist
-      for (const cmd of [e?.bash, e?.powershell]) {
-        const m = typeof cmd === 'string' && cmd.match(/\{\{plugin_data_dir\}\}\/(\S+?\.(?:sh|ps1))/);
-        if (m && !existsSync(join(pluginDir, m[1]))) errors.push(`[${pluginName}] hooks.json: referenced script not found: ${m[1]}`);
-      }
-    }
-  }
-}
-
-function validateMarketplace(marketplacePath) {
-  const errors = [], warnings = [];
+// ---------- marketplace ----------
+function validateMarketplace(marketplacePath, ctx) {
   const abs = resolve(marketplacePath);
-  if (!existsSync(abs)) { console.error(`ERROR: not found: ${abs}`); process.exit(1); }
-
+  if (!existsSync(abs)) { err(ctx, `not found: ${abs}`); return; }
   const mpJson = join(abs, '.github', 'plugin', 'marketplace.json');
-  if (!existsSync(mpJson)) { errors.push(`Missing .github/plugin/marketplace.json`); return { errors, warnings }; }
+  if (!existsSync(mpJson)) { err(ctx, `Missing .github/plugin/marketplace.json`); return; }
   const market = readJson(mpJson);
-  if (market.__error) { errors.push(`Invalid marketplace.json: ${market.__error}`); return { errors, warnings }; }
-  for (const f of REQUIRED_MARKETPLACE_FIELDS) if (!market[f]) errors.push(`marketplace.json missing "${f}"`);
+  if (market.__error) { err(ctx, `Invalid marketplace.json: ${market.__error}`); return; }
+  for (const f of REQUIRED_MARKETPLACE_FIELDS) if (!market[f]) err(ctx, `marketplace.json missing "${f}"`);
 
   const pluginsDir = join(abs, market.metadata?.pluginRoot ?? 'plugins');
-  if (!existsSync(pluginsDir)) { errors.push(`Plugin root not found: ${pluginsDir}`); return { errors, warnings }; }
+  if (!existsSync(pluginsDir)) { err(ctx, `Plugin root not found: ${pluginsDir}`); return; }
 
   const listed = new Set();
   for (const p of market.plugins ?? []) {
-    if (!p.source) { errors.push(`Marketplace plugin entry missing "source": ${JSON.stringify(p)}`); continue; }
+    if (!p.source) { err(ctx, `Marketplace plugin entry missing "source": ${JSON.stringify(p)}`); continue; }
     listed.add(p.source);
-    validatePlugin(join(abs, p.source), p.name ?? p.source, errors, warnings);
+    validatePlugin(join(abs, p.source), p.name ?? p.source, ctx);
   }
-  // unlisted plugin dirs
   for (const d of readdirSync(pluginsDir).filter(x => statSync(join(pluginsDir, x)).isDirectory())) {
     if (!listed.has(`plugins/${d}`) && existsSync(join(pluginsDir, d, '.github', 'plugin', 'plugin.json')))
-      warnings.push(`Plugin "${d}" has a manifest but is not listed in marketplace.json`);
+      warn(ctx, `Plugin "${d}" has a manifest but is not listed in marketplace.json`);
   }
-  return { errors, warnings };
 }
 
-const mp = process.argv[2];
-if (!mp) { console.error('Usage: node tools/validate-plugins.mjs <marketplace-path>'); process.exit(1); }
-console.log(`\nValidating marketplace: ${mp}\n`);
-const { errors, warnings } = validateMarketplace(mp);
-if (warnings.length) { console.warn('Warnings:'); warnings.forEach(w => console.warn(`  ⚠  ${w}`)); console.log(); }
-if (errors.length) {
-  console.error('Errors:'); errors.forEach(e => console.error(`  ✗  ${e}`));
-  console.error(`\n${errors.length} error(s) found. Validation FAILED.`);
+// ---------- scoped helpers ----------
+// derive a readable plugin label from any path inside a plugin
+function pluginNameFor(p) {
+  const parts = resolve(p).split('/');
+  const i = parts.lastIndexOf('plugins');
+  return i >= 0 && parts[i + 1] ? parts[i + 1] : basename(dirname(p));
+}
+function validateSkillScoped(p, ctx) {
+  const dir = p.endsWith('SKILL.md') ? dirname(p) : p;
+  validateSkillDir(resolve(dir), pluginNameFor(dir), `./${basename(dir)}/`, ctx);
+}
+function validatePluginScoped(p, ctx) { validatePlugin(resolve(p), basename(resolve(p)), ctx); }
+function validateAgentScoped(p, ctx) { validateAgent(resolve(p), pluginNameFor(p), `./${basename(p)}`, ctx); }
+function validateCommandScoped(p, ctx) { validateCommand(resolve(p), pluginNameFor(p), `./${basename(p)}`, ctx); }
+
+// map git-changed files → scoped validations (dedup by target)
+function validateChanged(base, ctx) {
+  let files = [];
+  try {
+    const out = execSync(`git diff --name-only ${base} -- 'marketplaces/**'`, { encoding: 'utf8' });
+    files = out.split('\n').map(s => s.trim()).filter(Boolean);
+  } catch (e) { err(ctx, `--changed-only: git diff failed (${e.message})`); return; }
+  const skills = new Set(), agents = new Set(), commands = new Set();
+  for (const f of files) {
+    if (!existsSync(f)) continue;
+    const mSkill = f.match(/^(.*\/skills\/[^/]+)\//);
+    if (mSkill) { skills.add(mSkill[1]); continue; }
+    if (f.endsWith('.agent.md')) { agents.add(f); continue; }
+    if (/\/commands\/[^/]+\.md$/.test(f)) { commands.add(f); continue; }
+  }
+  if (!skills.size && !agents.size && !commands.size) { console.log('(--changed-only: keine relevanten Änderungen)'); return; }
+  for (const s of skills) validateSkillScoped(s, ctx);
+  for (const a of agents) validateAgentScoped(a, ctx);
+  for (const c of commands) validateCommandScoped(c, ctx);
+}
+
+// ---------- CLI ----------
+function parseArgs(argv) {
+  const o = { mode: 'marketplace', target: null, strict: false, hints: true, format: 'text' };
+  for (let i = 2; i < argv.length; i++) {
+    const a = argv[i];
+    if (a === '--plugin')       { o.mode = 'plugin';  o.target = argv[++i]; }
+    else if (a === '--skill')   { o.mode = 'skill';   o.target = argv[++i]; }
+    else if (a === '--agent')   { o.mode = 'agent';   o.target = argv[++i]; }
+    else if (a === '--command') { o.mode = 'command'; o.target = argv[++i]; }
+    else if (a === '--changed-only') { o.mode = 'changed'; if (argv[i + 1] && !argv[i + 1].startsWith('--')) o.target = argv[++i]; }
+    else if (a === '--strict')  o.strict = true;
+    else if (a === '--no-hints') o.hints = false;
+    else if (a === '--format')  o.format = argv[++i];
+    else if (!a.startsWith('--') && o.mode === 'marketplace' && !o.target) o.target = a;
+  }
+  return o;
+}
+
+const opt = parseArgs(process.argv);
+if (opt.mode !== 'changed' && !opt.target) {
+  console.error('Usage: node tools/validate-plugins.mjs <marketplace-path> | --skill|--plugin|--agent|--command <path> | --changed-only [base]');
+  console.error('       flags: --strict  --no-hints  --format json');
   process.exit(1);
 }
-console.log(`✓  Validation passed (${warnings.length} warning(s)).`);
+
+const ctx = mkCtx();
+const scopeLabel = {
+  marketplace: `marketplace ${opt.target}`, plugin: `plugin ${opt.target}`, skill: `skill ${opt.target}`,
+  agent: `agent ${opt.target}`, command: `command ${opt.target}`, changed: `changed (${opt.target ?? 'HEAD'})`,
+}[opt.mode];
+
+switch (opt.mode) {
+  case 'marketplace': validateMarketplace(opt.target, ctx); break;
+  case 'plugin':      validatePluginScoped(opt.target, ctx); break;
+  case 'skill':       validateSkillScoped(opt.target, ctx); break;
+  case 'agent':       validateAgentScoped(opt.target, ctx); break;
+  case 'command':     validateCommandScoped(opt.target, ctx); break;
+  case 'changed':     validateChanged(opt.target ?? 'HEAD', ctx); break;
+}
+
+// under --strict, warnings are promoted to errors for the exit code
+const hardErrors = opt.strict ? [...ctx.errors, ...ctx.warnings] : ctx.errors;
+
+if (opt.format === 'json') {
+  console.log(JSON.stringify({ scope: scopeLabel, ...ctx, strict: opt.strict, failed: hardErrors.length > 0 }, null, 2));
+  process.exit(hardErrors.length ? 1 : 0);
+}
+
+console.log(`\nValidating ${scopeLabel}\n`);
+if (opt.hints && ctx.hints.length) { console.log('Hints:'); ctx.hints.forEach(h => console.log(`  ℹ  ${h}`)); console.log(); }
+if (ctx.warnings.length) { console.warn(`Warnings${opt.strict ? ' (strict → errors)' : ''}:`); ctx.warnings.forEach(w => console.warn(`  ⚠  ${w}`)); console.log(); }
+if (ctx.errors.length) { console.error('Errors:'); ctx.errors.forEach(e => console.error(`  ✗  ${e}`)); }
+
+if (hardErrors.length) {
+  console.error(`\n${hardErrors.length} problem(s). Validation FAILED.`);
+  process.exit(1);
+}
+console.log(`✓  Validation passed (${ctx.warnings.length} warning(s), ${ctx.hints.length} hint(s)).`);
 process.exit(0);

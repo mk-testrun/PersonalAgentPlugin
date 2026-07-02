@@ -88,9 +88,31 @@ description: >-
    ≤1024 Zeichen. Das ist die Discovery-Schicht — sei spezifisch.>
 ---
 ```
-> Copilot CLI liest im SKILL.md-Frontmatter **nur `name` und `description`**. Felder wie `applyTo`
-> oder `mcp_tools` gibt es hier nicht (VS-Code-Instructions-Syntax) — welche MCP-Server ein Skill nutzt
-> und wann er greift, gehört in die `description` bzw. den Body, nicht in ein ignoriertes Feld.
+> Copilot CLI liest im SKILL.md-Frontmatter **nur `name` und `description`** (+ optional `license`,
+> `argument-hint`, `user-invocable`, `disable-model-invocation`). Welche MCP-Server ein Skill nutzt und
+> wann er greift, gehört in die `description` bzw. den Body, nicht in ein ignoriertes Feld.
+
+#### Feld-Kompatibilitäts-Matrix (SKILL.md-Frontmatter)
+
+Der Validator (`tools/validate-plugins.mjs`) stuft Felder dreistufig ein — **er blockt IDE-/Fremd-Felder
+nicht hart**, sondern meldet, wo sie wirken. Quelle: `tools/lib/field-taxonomy.mjs` (dort pflegbar).
+
+| Feld | Stufe | Wirkt in |
+|---|---|---|
+| `name`, `description` | ✓ ok | Copilot CLI + VS Code + Visual Studio + Claude |
+| `license` | ✓ ok | Copilot CLI + Claude |
+| `argument-hint` | ✓ ok | Copilot CLI + VS Code |
+| `user-invocable`, `disable-model-invocation` | ✓ ok | Copilot CLI |
+| `applyTo` | ℹ hint | **nur** VS Code (Instructions-Dateien) — nicht CLI |
+| `allowed-tools` | ⚠ warning | **nur** Claude Code / Anthropic Agent Skills |
+| `mcp_tools`, `model` (auf Skill) | ⚠ warning | keine bekannte Umgebung |
+| `tools`, `mcp-servers` | ⚠ warning | für CLI **vorgeschlagen** (#3095), noch nicht aktiv |
+
+- **ℹ hint** = gültig in einer Schwester-IDE (VS Code / Visual Studio), stört Copilot CLI nicht — mit
+  `--no-hints` unterdrückbar.
+- **⚠ warning** = wirkt nur in einem anderen KI-Produkt oder nirgends. Kein harter Fehler, aber
+  `--strict` macht Warnungen zu Fehlern (für CI).
+- Jede Meldung nennt die **genaue Zielumgebung** — so bleibt klar, wo ein Feld tatsächlich etwas tut.
 
 **Gut:** „Scans a codebase for security vulnerabilities by tracing data flows … Use when asked to
 check for SQL injection, XSS, exposed secrets, insecure dependencies, or 'is my code secure?'."
