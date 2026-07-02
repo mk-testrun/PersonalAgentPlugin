@@ -25,7 +25,9 @@ mcp-servers/<name>/
 }
 ```
 
-**.NET-Template (via dotnet-mcpserver-starter):**
+**.NET-Template:** lauffähiger Starter liegt gebündelt in `templates/dotnet-starter/` (net8.0,
+`ModelContextProtocol`-NuGet, drei Beispiel-Tools: Password, NewGuid, WorkItemBranchName). Kopieren nach
+`mcp-servers/<name>/` und anpassen — oder alternativ `dotnet new mcpserver` (offizielles Template).
 ```
 mcp-servers/<name>/
 ├── <Name>.csproj     # net8.0, ModelContextProtocol

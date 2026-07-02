@@ -1,6 +1,6 @@
 {
   "name": "experimental",
-  "description": "Output-Studio: Mermaid, C4, ER, Sequence, Charts, Dashboards, Slides, TTS, Universal-Viewer. CDN-gesichert.",
+  "description": "Output-Studio: Mermaid, C4, ER, Sequence, Charts, Dashboards, Slides, TTS, Universal-Viewer, Agent-Loop. CDN-gesichert.",
   "version": "1.1.0",
   "author": {
     "name": "mkrueer"
@@ -17,9 +17,11 @@
     "artifact-viewer"
   ],
   "agents": [
-    "./agents/visualizer.agent.md"
+    "./agents/visualizer.agent.md",
+    "./agents/loop.agent.md"
   ],
   "commands": [
+    "./commands/loop.md",
     "./commands/visualize.md",
     "./commands/slides.md",
     "./commands/explain.md",
@@ -30,6 +32,7 @@
     "./commands/adr.md"
   ],
   "skills": [
+    "./skills/loop/",
     "./skills/adr-write/",
     "./skills/mermaid-diagram/",
     "./skills/architecture-diagram/",

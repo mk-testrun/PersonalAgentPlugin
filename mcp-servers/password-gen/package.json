@@ -1,7 +1,7 @@
 {
   "name": "@mkrueer/password-gen",
-  "version": "1.0.0",
-  "description": "Cryptographically secure password and passphrase generator MCP server.",
+  "version": "1.1.0",
+  "description": "Cryptographically secure password, passphrase, GUID (v4/v7), ULID, timestamp and hash generator MCP server.",
   "type": "module",
   "license": "MIT",
   "main": "./dist/index.js",
@@ -11,7 +11,7 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
-    "test": "node test/entropy.test.mjs"
+    "test": "node test/entropy.test.mjs && node test/generators.test.mjs"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.12.0",

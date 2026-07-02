@@ -65,16 +65,9 @@
     {
       "name": "experimental",
       "source": "plugins/experimental",
-      "description": "Output-Studio: Diagramme, Dashboards, Slides, TTS, ADR (CDN-gesichert).",
-      "version": "1.0.0",
-      "keywords": ["diagrams", "charts", "slides", "dashboard", "visual"]
-    },
-    {
-      "name": "loop",
-      "source": "plugins/loop",
-      "description": "Agent-Loop-Protokoll: iterativ auf ein prüfbares Ziel, Hard-Limit, State, [CONFIRM].",
-      "version": "1.0.0",
-      "keywords": ["loop", "agent-loop", "iteration", "workflow"]
+      "description": "Output-Studio: Diagramme, Dashboards, Slides, TTS, ADR, Agent-Loop (CDN-gesichert).",
+      "version": "1.1.0",
+      "keywords": ["diagrams", "charts", "slides", "dashboard", "visual", "loop"]
     }
   ]
 }
