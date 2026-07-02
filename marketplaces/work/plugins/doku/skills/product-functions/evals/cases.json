@@ -1,0 +1,40 @@
+[
+  {
+    "skill": "product-functions",
+    "query": "Erweitere die Confluence-Funktionsseite unseres Projekts um die neu abgenommenen ADO-Features.",
+    "expected_behavior": [
+      "Zieht Features + orphan User Stories via ado/* MCP (Tasks/Bugs werden ignoriert)",
+      "Normalisiert via scripts/extract-ado.mjs zu einem stabilen Katalog mit Ankern fn-<adoId>",
+      "Verdichtet je Eintrag eine 1-Satz Nutzer-Beschreibung (nutzt sourceStories[])",
+      "Läuft merge-functions.mjs im Default-Modus extend gegen die aktuelle Seite (via confluence/* MCP)",
+      "Zeigt den Diff-Report (added/preserved/orphaned) vor Publish und wartet auf [CONFIRM]"
+    ]
+  },
+  {
+    "skill": "product-functions",
+    "query": "Ich habe eine Beschreibung in Confluence handverfeinert — bleibt die beim Re-Sync?",
+    "expected_behavior": [
+      "Erklärt dass extend die Handschrift preserviert (Merge über den stabilen Anker fn-<adoId>)",
+      "Warnt: nur bei explizitem --mode regenerate wird die Beschreibung überschrieben",
+      "Weist darauf hin, Anker niemals händisch aus der Seite zu entfernen (führt zu Duplikaten)"
+    ]
+  },
+  {
+    "skill": "product-functions",
+    "query": "Was passiert wenn ein Feature in ADO gelöscht wird?",
+    "expected_behavior": [
+      "Der Eintrag bleibt in Confluence stehen, wird im Diff-Report als orphaned markiert",
+      "Extend löscht nie — orphan-Umgang ist eine bewusste Nutzer-Entscheidung",
+      "Kommentar `<!-- orphaned: not in ADO catalog anymore -->` markiert die betroffenen Absätze"
+    ]
+  },
+  {
+    "skill": "product-functions",
+    "query": "Setup: die Seite hat noch keine Marker.",
+    "expected_behavior": [
+      "Weist auf templates/confluence-section.xml hin und lässt es einmalig einfügen",
+      "Merge-Skript exit 3 solange Marker fehlen — kein Halb-Update",
+      "Marker sind zwei anchor-Makros (ado-functions-begin / -end), keine HTML-Kommentare"
+    ]
+  }
+]

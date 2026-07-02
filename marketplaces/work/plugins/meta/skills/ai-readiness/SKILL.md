@@ -1,6 +1,9 @@
 ---
 name: ai-readiness
-description: Nutze um den AI-Readiness-Score eines Projekts zu messen (0–100).
+description: >-
+  Nutze um den AI-Readiness-Score dieses Repos als Copilot-Marketplace zu messen (0–100): bewertet
+  Manifest-Konformität, Skill-Paket-Reife, Evals, Hooks und Doku und liefert eine priorisierte Lückenliste.
+  Misst die Marketplace-Reife, nicht die AI-Readiness eines beliebigen Code-Repos.
 ---
 
 ## Scope

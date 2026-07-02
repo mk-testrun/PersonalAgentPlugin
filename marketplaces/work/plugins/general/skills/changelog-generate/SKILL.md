@@ -1,6 +1,9 @@
 ---
 name: changelog-generate
-description: Nutze wenn ein Keep-a-Changelog-Eintrag seit dem letzten Git-Tag generiert werden soll.
+description: >-
+  Nutze wenn ein Keep-a-Changelog-Eintrag seit dem letzten Git-Tag generiert werden soll. Liest git describe
+  --tags und git log <tag>..HEAD, gruppiert die Conventional-Commit-Typen (feat/fix/…) in
+  Added/Changed/Fixed/Removed-Abschnitte und erzeugt einen CHANGELOG.md-Diff — Übernahme erst nach [CONFIRM].
 ---
 
 ## Schritte

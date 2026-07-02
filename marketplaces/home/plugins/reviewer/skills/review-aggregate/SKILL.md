@@ -1,6 +1,9 @@
 ---
 name: review-aggregate
-description: Nutze um findings[] mehrerer Review-Skills zu einem Gesamtbericht zu verdichten — dedupliziert, sortiert, mit Gate und HTML-Filter-UI.
+description: >-
+  Nutze um die findings[] mehrerer einzeln aufgerufener Reviewer-Skills zu einem Gesamtbericht zu verdichten:
+  dedupliziert nach ruleId+file+line, sortiert nach Severity, setzt das Gate (critical/high) und rendert
+  Markdown + interaktive HTML-Filter-UI. Findet nichts selbst — konsolidiert.
 ---
 
 ## Scope

@@ -1,6 +1,9 @@
 ---
 name: first-task-pick
-description: Nutze um eine geeignete erste Aufgabe aus ADO für neue Teammitglieder zu finden.
+description: >-
+  Nutze um eine geeignete erste Aufgabe aus Azure DevOps für neue Teammitglieder zu finden: filtert nach Typ
+  (Task/kleines Bug), keinen externen Abhängigkeiten und klarer Akzeptanz, und schlägt begründet 1–3
+  Kandidaten vor. Läuft über den ADO-MCP (anonymisiert), read-only.
 ---
 
 ## Kriterien für eine gute erste Aufgabe

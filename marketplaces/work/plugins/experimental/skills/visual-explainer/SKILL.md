@@ -1,6 +1,9 @@
 ---
 name: visual-explainer
-description: Nutze um einen technischen Sachverhalt visuell als Diagramm + Text zu erklären — wählt die passende Form.
+description: >-
+  Nutze um einen technischen Sachverhalt visuell als Diagramm + Text zu erklären: wählt die passende Form
+  (flow/sequence/ER/C4/chart), delegiert an das passende Render-Skill und erläutert kurz. Meta-Skill über den
+  anderen experimental-Visuals; Output nach state/artifacts/.
 ---
 
 ## Zweck

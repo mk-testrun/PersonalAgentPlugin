@@ -1,6 +1,9 @@
 ---
 name: architecture-review
-description: Nutze für Schicht-, Abhängigkeits- und Design-Prüfung auf Modulebene (inkl. .NET-spezifischer Muster, via sharplens).
+description: >-
+  Nutze für Schicht-, Abhängigkeits- und Design-Prüfung auf Modulebene: Schichtung, Abhängigkeitsrichtung,
+  Kopplung und Modulgrenzen — plus .NET/Blazor-spezifische Muster via sharplens (Roslyn). Liefert findings[]
+  (area: design). Allgemeine Code-Qualität → code-review; Performance → performance-review.
 ---
 
 ## Scope

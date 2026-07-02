@@ -1,8 +1,9 @@
 ---
 name: image-generate
-description: Nutze um ein Bild via Cloud-Bild-Generierung zu erzeugen (Home erlaubt Cloud — Tokens/Kosten beachten).
-mcp_tools:
-  - imagegen
+description: >-
+  Nutze um ein Bild via Cloud-Bild-Generierung zu erzeugen (Home erlaubt Cloud — Tokens/Kosten beachten): für
+  fotorealistische/kreative Bilder, die sich nicht deterministisch als SVG/Diagramm bauen lassen. Läuft über
+  den imagegen-MCP; Output nach state/artifacts/. Vektor/Schema → svg-illustration.
 ---
 
 ## Zweck

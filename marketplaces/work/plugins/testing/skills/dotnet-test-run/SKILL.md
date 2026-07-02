@@ -1,6 +1,9 @@
 ---
 name: dotnet-test-run
-description: Nutze wenn .NET-Tests ausgeführt, Fehler analysiert oder Fix-Vorschläge gemacht werden sollen.
+description: >-
+  Nutze wenn .NET-Tests ausgeführt, Fehler analysiert oder Fix-Vorschläge gemacht werden sollen: führt `dotnet
+  test --filter` aus, identifiziert fehlgeschlagene Tests, analysiert den Stack-Trace, benennt die Root-Cause
+  und liefert einen konkreten Fix mit Code-Snippet, dann Re-Run. Basis für tdd-loop.
 ---
 
 ## Schritte

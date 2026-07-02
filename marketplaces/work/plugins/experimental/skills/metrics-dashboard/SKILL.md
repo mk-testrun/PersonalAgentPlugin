@@ -1,6 +1,9 @@
 ---
 name: metrics-dashboard
-description: Nutze um ein Metriken-Dashboard aus CI-/Coverage-Artefakten zu erstellen.
+description: >-
+  Nutze um ein Metriken-Dashboard aus CI-/Coverage-Artefakten (Coverage, Test-Ergebnisse, Build-Trends) auf
+  einer Seite zu bündeln: Single-File-HTML über die CDN-Allowlist, Output nach state/artifacts/ mit Fallback.
+  Allgemeine Widgets → html-dashboard.
 ---
 
 ## Zweck

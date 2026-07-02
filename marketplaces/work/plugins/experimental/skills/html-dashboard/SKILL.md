@@ -1,6 +1,9 @@
 ---
 name: html-dashboard
-description: Nutze um ein HTML-Dashboard mit mehreren Widgets (KPIs, Charts, Tabellen) zu erstellen.
+description: >-
+  Nutze um ein HTML-Dashboard mit mehreren Widgets (KPIs, Charts, Tabellen) auf einer Seite zu bündeln:
+  Single-File-HTML über die CDN-Allowlist, Output nach state/artifacts/ mit Fallback. CI-/Coverage-Kennzahlen
+  speziell → metrics-dashboard.
 ---
 
 ## Zweck

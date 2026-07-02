@@ -1,7 +1,9 @@
 ---
 name: env-lint
-description: Nutze proaktiv beim Prüfen von Umgebungskonfigurationen — toleranter: echte .env OK, solange nicht committed.
-applyTo: ["**/.env*", "**/*.config.*", "**/settings*.json"]
+description: >-
+  Nutze proaktiv beim Prüfen von Umgebungskonfigurationen (Multi-Lang) — toleranter als Work: eine lokale .env
+  mit echten Werten ist OK, solange sie nicht committed wird. Prüft Key-Konsistenz und Platzhalter in
+  .env.example; liefert findings[] (area: env). Committetes Secret → [GATE].
 ---
 
 ## Scope

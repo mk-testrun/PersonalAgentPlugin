@@ -2,11 +2,10 @@
 name: morning
 description: Tagesstart-Agent — visuelles Briefing-Dashboard, Energy-Tracking, Audio-Begrüßung.
 tools:
-  - github.issues
-  - github.actions
-  - notion
-  - fetch
-  - filesystem
+  - github/*
+  - notion/*
+  - fetch/*
+  - filesystem/*
 model: gpt-5
 ---
 

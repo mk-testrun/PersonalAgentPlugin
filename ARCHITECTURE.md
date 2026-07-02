@@ -1,7 +1,7 @@
 # ARCHITECTURE.md — mkrueer-copilot Monorepo (Lebende Referenz)
 
 > Diese Datei ist die kanonische Architektur-Spezifikation.
-> Vollständige Spec: siehe [PLAN.md](PLAN.md) und [docs/](docs/) für ADRs und Konzepte.
+> ADRs und Konzepte: siehe [docs/](docs/). Historische Planung: git log.
 
 ---
 
@@ -20,18 +20,18 @@ Das **einzige** Geteilte sind die Custom-MCP-Server unter `mcp-servers/`.
 mkrueer-copilot/
 ├── mcp-servers/              # Geteilte Custom-MCPs (npm-Workspaces)
 │   ├── anonymizer-proxy/     # PII-Proxy für Work/ADO
-│   ├── password-gen/         # Kryptografischer Passwort-Generator
+│   ├── password-gen/         # Passwort/Passphrase/GUID/ULID/Zeit/Hash-Generator
 │   ├── alarm-mcp/            # Alarm/Timer (Home)
 │   ├── artifact-viewer/      # Universal-Renderer (rich/fallback, §3.5)
-│   ├── supertonic/           # On-device TTS (wraps `supertonic serve`)
-│   └── dotnet-mcpserver-starter/  # .NET-Template
+│   └── supertonic/           # On-device TTS (wraps `supertonic serve`)
 ├── marketplaces/
-│   ├── work/                 # 10 Plugins
-│   └── home/                 # 9 Plugins
+│   ├── work/                 # 9 Plugins
+│   └── home/                 # 8 Plugins
 ├── tools/
-│   ├── validate-plugins.mjs
-│   └── relocate-manifests.mjs
-└── docs/                     # ADRs, Konzepte, findings-Schema
+│   ├── validate-plugins.mjs  # tiered validation + scoped runs + maturity
+│   ├── validate-findings.mjs · run-evals.mjs
+│   └── lib/                  # field-taxonomy.mjs, maturity.mjs
+└── docs/                     # ADRs, Konzepte, findings-Schema, Authoring-Guide, skill-maturity
 ```
 
 ---
@@ -54,7 +54,7 @@ mkrueer-copilot/
 | devops/devops-home | Write mit [CONFIRM] |
 | documenter | nur Drafts; publish mit [CONFIRM] |
 | onboarder | read-mostly; Confluence read-only |
-| tester | editFiles+runCommands; Playwright nur localhost (Work) |
+| tester | edit+execute; Playwright nur localhost (Work) |
 | blazor | normaler Dev-Write; [CONFIRM] destruktiv |
 | visualizer/morning | Output nur nach `state/artifacts/` |
 
@@ -112,11 +112,13 @@ Gesperrte Operationen: `git push --force/-f`, `git reset --hard`, `git clean -fd
 | Server | Typ | Zweck |
 |---|---|---|
 | anonymizer-proxy | Node ESM | PII-Proxy für ADO (Work) |
-| password-gen | TypeScript | Kryptografischer Passwort-Generator |
+| password-gen | TypeScript | Passwort/Passphrase + GUID (v4/v7) + ULID + Zeit + Hash |
 | alarm-mcp | TypeScript | Alarme/Timer (Home) |
 | artifact-viewer | TypeScript | Universal-Renderer (rich + fallback, §3.5) |
 | supertonic | Node ESM | On-device TTS via `supertonic serve` (OpenAI-kompatibel, kein API-Key) |
-| dotnet-mcpserver-starter | .NET 8 | Template für eigene .NET-MCPs |
+
+> Das .NET-MCP-Template (`dotnet-starter`) liegt als Kopiervorlage in
+> `work/meta/skills/mcp-author/templates/` — es ist ein Scaffold, kein laufender Server.
 
 ### §3.5 artifact-viewer
 
@@ -130,29 +132,33 @@ Wiring: Work `experimental` + Home `visual` → `{"command":"artifact-viewer","e
 
 ---
 
-## 4. Work-Marketplace (10 Plugins)
+## 4. Work-Marketplace (9 Plugins)
 
+Plugins: `general`, `blazor`, `experimental`, `review`, `onboarding`, `meta`, `testing`, `doku`, `orchestration`.
 Stack: Azure DevOps, Blazor/.NET, sharplens (Roslyn), EF-Core, xUnit, Playwright (localhost)
 Sicherheit: Tool-Guardian **block**, Git-Guardrails **block**, PII über anonymizer-proxy, CDN-Allowlist
 
-**Addendum v2-Erweiterungen:**
-- `general`: +story-author, +grill-me, +tdd-loop, +triage Skills; +/story /grill /tdd /triage Commands; Git-Guardrails; labels.json
-- `meta`: +agent-author, +command-author, +mcp-author, +mcp-app-author, +marketplace-author; +/new-agent /new-command /new-mcp /new-mcp-app /new-marketplace
-- `experimental`: +render-artifact Skill; +/view Command; artifact-viewer in .mcp.json
+- `general`: story-author, grill-me, tdd-loop, triage; /story /grill /tdd /triage; Git-Guardrails; labels.json
+- `meta`: agent-/command-/mcp-/mcp-app-/marketplace-author; dotnet-Starter-Template in `mcp-author/templates/`
+- `experimental`: render-artifact + /view; **loop** (Agent-Loop-Protokoll, aus dem früheren loop-Plugin)
+- `doku`: **product-functions** + /functions-sync (Confluence-Funktionskatalog aus ADO, extend-Merge)
 
-## 5. Home-Marketplace (9 Plugins)
+## 5. Home-Marketplace (8 Plugins)
 
+Plugins: `general`, `visual`, `reviewer`, `meta`, `lab`, `morning`, `orchestration`, `audio`.
 Stack: GitHub, Python/C#/Go/TypeScript, Excalidraw, Cloud-Bild-Gen, Home Assistant
 Sicherheit: Tool-Guardian **warn**, Git-Guardrails **warn** (force-push main/master bleibt **block**), secret-scan **block**, Playwright darf Internet
 
-**Addendum v2-Erweiterungen:**
-- `general`: +story-author, +grill-me, +tdd-loop; +/story /grill /tdd Commands; Git-Guardrails; labels.json
-- `meta`: identisch zu Work-meta (5 neue Skills + 5 neue Commands)
-- `visual`: +render-artifact Skill; +/view Command; artifact-viewer in .mcp.json
+- `general`: story-author, grill-me, tdd-loop, **loop** (Agent-Loop-Protokoll); /story /grill /tdd /loop; Profile-System; Git-Guardrails
+- `visual`: render-artifact + /view; artifact-viewer in .mcp.json
+- `orchestration`: workflow-router (Router-Skill + kodierte Workflows + State, §9/ADR-0009)
+
+> **loop** war früher ein eigenes Plugin in beiden Marketplaces; es wurde in `experimental` (Work) bzw.
+> `general` (Home) integriert — kein Ein-Skill-Plugin mehr.
 
 ---
 
-## §7 Format-Härtungs-Ergebnisse
+## §7 Format-Härtungs-Ergebnisse (historischer Snapshot, 2026-06)
 
 | Punkt | Ergebnis |
 |---|---|
@@ -164,3 +170,23 @@ Sicherheit: Tool-Guardian **warn**, Git-Guardrails **warn** (force-push main/mas
 | openai-images-mcp | NICHT gefunden → ersetzt durch `imagegen-mcp` |
 | .mcp.json _note/_disabled | Entfernt (Notizen in README) |
 | MCP-UI-Resources inline | Rich als progressive enhancement |
+
+---
+
+## §8 Validierung & Reifegrad
+
+`tools/validate-plugins.mjs` prüft gegen die **echte Copilot-CLI-Spec** (First-Party):
+Manifest-Struktur, SKILL.md-/Agent-/Command-Frontmatter, Agent-Tool-IDs, `.mcp.json`, und das reale
+`hooks.json`-Schema (inkl. Existenz der via `{{plugin_data_dir}}` referenzierten Skripte).
+
+- **Tiered Findings:** `error` (CLI lädt nicht) · `warning` (nur Fremd-KI-Produkt oder nirgends) ·
+  `hint` (Schwester-IDE VS Code/Visual Studio). Taxonomie in `tools/lib/field-taxonomy.mjs`. `--strict`
+  für CI. Siehe [ADR-0007](docs/adr/0007-validation-tiers.md).
+- **Scoped Runs:** `--skill` / `--plugin` / `--agent` / `--command` / `--changed-only`.
+- **Maturity:** `--maturity` (Histogramm) / `--maturity-md` generiert `docs/skill-maturity.md`
+  (Ist-Stand, auto). Absicht/Wellenplan bleibt manuell in `docs/skill-uplift-tracker.md`. 6 gewichtete
+  Achsen, siehe [ADR-0008](docs/adr/0008-maturity-score.md).
+- **Evals:** `tools/run-evals.mjs` prüft die `evals/cases.json` strukturell (Token-frei).
+
+MCP-Server-Konventionen: [ADR-0005](docs/adr/0005-mcp-server-conventions.md) ·
+Skill-Paket-Layout: [ADR-0006](docs/adr/0006-skill-package-layout.md).

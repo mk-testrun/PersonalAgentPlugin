@@ -24,8 +24,9 @@ if printf '%s' "$TOOL_ARGS" | grep -qF ':(){' || printf '%s' "$TOOL_ARGS" | grep
   exit 0
 fi
 
-# Force-Push auf main/master: BLOCK (auch im warn-Modus)
-if printf '%s' "$TOOL_ARGS" | grep -qE 'git push.*(--force|-f)'; then
+# Force-Push auf main/master: BLOCK (auch im warn-Modus). --force-with-lease ist erlaubt (ADR-0004):
+# der sichere Variant clobbert keine fremden Commits, steht nicht auf der Deny-Liste.
+if printf '%s' "$TOOL_ARGS" | grep -qE 'git push.*(--force|-f)' && ! printf '%s' "$TOOL_ARGS" | grep -q 'force-with-lease'; then
   if printf '%s' "$TOOL_ARGS" | grep -qE '(main|master)'; then
     echo '{"permissionDecision":"deny","permissionDecisionReason":"Git-Guardrail: force-push auf main/master verboten"}'
     exit 0
@@ -37,7 +38,7 @@ WARN=""
 if printf '%s' "$TOOL_ARGS" | grep -qiE 'curl http://|wget http://'; then
   WARN="Tool-Guardian (warn): unencrypted HTTP detected"
 fi
-if printf '%s' "$TOOL_ARGS" | grep -qE 'git push.*(--force|-f)'; then
+if printf '%s' "$TOOL_ARGS" | grep -qE 'git push.*(--force|-f)' && ! printf '%s' "$TOOL_ARGS" | grep -q 'force-with-lease'; then
   WARN="Git-Guardrail (warn): git push --force ohne --force-with-lease"
 fi
 GIT_WARN=("git reset --hard" "git clean -fd" "git clean -fdx" "git branch -D" "git filter-branch" "git filter-repo")

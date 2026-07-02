@@ -1,7 +1,9 @@
 ---
 name: env-lint
-description: Nutze proaktiv beim Prüfen von Umgebungskonfigurations-Dateien.
-applyTo: ["**/.env*", "**/appsettings*.json", "**/launchSettings.json", "**/azure-pipelines*.yml"]
+description: >-
+  Nutze proaktiv beim Prüfen von Umgebungskonfigurations-Dateien (.env, appsettings, compose): prüft
+  Key-Konsistenz über alle Dateien, keine echten Secrets in .env.example (nur Platzhalter) und
+  fehlende/überflüssige Keys. Liefert findings[] (area: env); echtes Secret → [GATE].
 ---
 
 ## Regeln

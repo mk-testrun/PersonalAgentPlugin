@@ -5,8 +5,6 @@ description: >-
   localhost, then maps and triages the alerts to the Top 10 categories with concrete fixes. Use when
   asked for an OWASP scan, a dynamic/DAST security test, or to check a running app for the Top 10.
   Localhost only; complements the static security-review. Produces findings[] (area:security, OWASP-A0*).
-mcp_tools:
-  - playwright
 ---
 
 # OWASP Top 10 Scan (dynamic)

@@ -1,8 +1,9 @@
 ---
 name: responsive-view
-description: Nutze für visuelle Responsiveness-Prüfung einer Web-App über Breakpoints — auch Internet-Targets erlaubt.
-mcp_tools:
-  - playwright
+description: >-
+  Nutze für die visuelle Responsiveness-Prüfung einer Web-App über Breakpoints (Desktop/Tablet/Mobile) mit
+  Playwright — im Home-Marketplace auch gegen Internet-Targets. Erkennt Überlauf/abgeschnittene Elemente und
+  liefert Screenshots + findings[] je Breakpoint.
 ---
 
 ## Schritte

@@ -1,6 +1,6 @@
 {
   "name": "doku",
-  "description": "Confluence-Dokumentation: Draft, Storage-Format, Code→Doc, README, Diagramm-Embed.",
+  "description": "Confluence-Dokumentation: Draft, Storage-Format, Code→Doc, README, Diagramm-Embed, Funktionskatalog aus ADO.",
   "version": "1.0.0",
   "author": {
     "name": "mkrueer"
@@ -16,11 +16,15 @@
   "agents": [
     "./agents/documenter.agent.md"
   ],
+  "commands": [
+    "./commands/functions-sync.md"
+  ],
   "skills": [
     "./skills/confluence-draft/",
     "./skills/confluence-format/",
     "./skills/doc-from-code/",
     "./skills/diagram-embed/",
-    "./skills/readme-generate/"
+    "./skills/readme-generate/",
+    "./skills/product-functions/"
   ]
 }

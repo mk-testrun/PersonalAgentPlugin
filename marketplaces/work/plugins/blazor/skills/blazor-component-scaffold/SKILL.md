@@ -1,6 +1,10 @@
 ---
 name: blazor-component-scaffold
-description: Nutze wenn eine neue Blazor-Komponente (Razor + Code-Behind + Test + CSS) erstellt werden soll.
+description: >-
+  Nutze wenn eine neue Blazor-Komponente erstellt werden soll: erzeugt Razor-Markup (mit @rendermode),
+  Code-Behind als partial class, bUnit-Test und scoped CSS als einen konsistenten Satz. Folgt
+  blazor-conventions (Render-Mode explizit, IStateContainer statt Component-State). Output: vier
+  zusammengehörige Dateien im Komponenten-Ordner.
 ---
 
 ## Erzeugt

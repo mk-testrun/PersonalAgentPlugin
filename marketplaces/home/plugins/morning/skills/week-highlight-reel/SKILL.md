@@ -1,6 +1,9 @@
 ---
 name: week-highlight-reel
-description: Nutze sonntags für den wöchentlichen "Spotify-Wrapped"-Rückblick.
+description: >-
+  Nutze um sonntags einen wöchentlichen "Spotify-Wrapped"-Rückblick zu erzeugen: fasst Mood-Trend
+  (state/mood.jsonl), Commits/PRs (github-MCP) und die Highlights der Woche als week-<KW>.html zusammen.
+  Leichtgewichtiges Home-Ritual, read-mostly; Output nach state/artifacts/.
 ---
 
 ## Inhalt (week-<KW>.html)

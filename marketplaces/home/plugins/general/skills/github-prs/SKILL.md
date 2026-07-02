@@ -1,8 +1,9 @@
 ---
 name: github-prs
-description: Nutze wenn GitHub-PRs aufgelistet, geöffnet oder reviewt werden sollen.
-mcp_tools:
-  - github.pulls
+description: >-
+  Nutze wenn GitHub-Pull-Requests aufgelistet, geöffnet oder gereviewt werden sollen: eigene PRs + solche, wo
+  man Reviewer ist; PRs mit Titel/Body aus dem Branch öffnen — über den offiziellen github-MCP. Merge/Review
+  nach Bestätigung.
 ---
 
 ## Aktionen

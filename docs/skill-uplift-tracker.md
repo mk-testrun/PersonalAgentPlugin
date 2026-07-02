@@ -1,5 +1,12 @@
 # Skill-Uplift-Tracker (voller Sweep auf den Authoring-Standard)
 
+> **Diese Datei ist die *Absicht* (manuell gepflegt): Wellenplan, Prioritäten, bewusste Anti-Ziele.**
+> Der *Ist-Stand* wird automatisch gemessen: **`docs/skill-maturity.md`** (regenerieren mit
+> `node tools/validate-plugins.mjs --maturity-md docs/skill-maturity.md`). Der Wert liegt im Abgleich:
+> wenn der Tracker „Skill X soll 4★" sagt und die Maturity „2★" misst → offener Action-Item.
+> Skills, die **bewusst** niedrig bleiben (reine Wissens-Konventionen ohne Skript), hier als Anti-Ziel
+> notieren, damit ihr niedriger Auto-Score kein Alarm ist.
+
 Ziel: **jeden** Skill auf `docs/skill-authoring-guide.md` heben — substanzielle, konkrete SKILL.md,
 `references/` bei Tiefe, `scripts/`/`templates/`/`examples.md` wo wertvoll, Evals bei Flaggschiffen.
 Gate je Skill: `validate-plugins.mjs` + (falls Evals) `run-evals.mjs` grün **und** DoD-Checkliste erfüllt.
@@ -62,3 +69,28 @@ efcore-query-explain, loop · home: security-review.
 
 > Jede Welle endet grün (Validator + Evals) und wird committet. Kein Skill gilt als fertig,
 > solange er nur eine Checkliste ist (siehe Guide §6).
+
+---
+
+## Maturity-getriebene Wellen (ab 2026-07)
+
+Ab jetzt priorisiert nach dem **gemessenen** Score in `docs/skill-maturity.md`
+(`node tools/validate-plugins.mjs --maturity-md docs/skill-maturity.md`). Ziel: die wichtigsten Skills
+auf ≥4★, breite Masse auf ≥2★. Reihenfolge nach Hebel (Nutzungshäufigkeit × Score-Lücke).
+
+**Welle 2a (✅ erledigt):** Flaggschiffe auf 5★.
+- `doku/product-functions` (5★), `review/review-aggregate` (5★), `review/secrets-scan` (5★, reference+examples),
+  `orchestration/workflow-router` (Work, examples) — plus fairer Scorer (references/-Ordner, EN-Trigger, body-Achse).
+
+**Welle 2b/2c (✅ erledigt): Description-Sweep über ALLE ~150 Skills.**
+Jede Skill-`description` ist jetzt reich (3. Person, „was + wie + wann" + Trigger + genutztes Tool/MCP/Output)
+— die Discovery-Schicht ist durchgängig scharf. **0★-Stubs: 0.** Verteilung ~ 3×5★ · 2×4★ · 14×3★ · 24×2★ · Rest 1★.
+
+**Der 1★-Tier ist bewusstes Anti-Ziel, kein offener TODO** (ADR-0006): schlanke, vollständige Skills —
+`*-conventions`, kurze Single-Purpose-Aktionen — brauchen **kein** reference/examples/scripts/evals-Paket.
+Sie haben eine scharfe Description + klaren Body; ein erzwungenes Paket wäre genau die „flapsige Boilerplate",
+die wir vermeiden. Der Score misst „Paket-Tiefe", nicht „ist der Skill gut" — für diese Skills ist 1–2★ korrekt.
+
+**Künftige ★-Promotion (Kür, kein Gate):** einzelne Aktions-Skills mit echtem deterministischem Schritt
+(z. B. `github-issues/prs`, `energy-tracking`) können bei Bedarf reference/examples/Skript bekommen → 3★+.
+Priorität steuert der Abgleich Tracker ↔ `skill-maturity.md`. Nicht auf Vorrat.

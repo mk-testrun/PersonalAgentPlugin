@@ -1,6 +1,6 @@
 {
   "name": "general",
-  "description": "GitHub Issues/PRs, Profile (MCP-Sets wechseln), Multi-Lang-Conventions, warn-Hooks, Git-Guardrails, Story/Grill/TDD.",
+  "description": "GitHub Issues/PRs, Profile (MCP-Sets wechseln), Multi-Lang-Conventions, warn-Hooks, Git-Guardrails, Story/Grill/TDD, Agent-Loop.",
   "version": "1.1.0",
   "author": {
     "name": "mkrueer"
@@ -16,10 +16,12 @@
     "python",
     "go",
     "tdd",
-    "story"
+    "story",
+    "loop"
   ],
   "agents": [
-    "./agents/devops-home.agent.md"
+    "./agents/devops-home.agent.md",
+    "./agents/loop.agent.md"
   ],
   "commands": [
     "./commands/moin.md",
@@ -30,9 +32,11 @@
     "./commands/changelog.md",
     "./commands/story.md",
     "./commands/grill.md",
-    "./commands/tdd.md"
+    "./commands/tdd.md",
+    "./commands/loop.md"
   ],
   "skills": [
+    "./skills/profile-switch/",
     "./skills/github-issues/",
     "./skills/github-prs/",
     "./skills/commit-generate/",

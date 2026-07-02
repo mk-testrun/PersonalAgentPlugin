@@ -2,11 +2,11 @@
 name: lab
 description: Lab-Agent — experimentiert mit neuen MCPs und Tools. Mehr Logging, warn-Modus.
 tools:
-  - runCommands
-  - playwright
-  - chrome-devtools
-  - homeassistant
-  - filesystem
+  - execute
+  - playwright/*
+  - chrome-devtools/*
+  - homeassistant/*
+  - filesystem/*
 model: gpt-5
 ---
 

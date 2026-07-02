@@ -1,6 +1,9 @@
 ---
 name: dependency-graph
-description: Nutze um einen Abhängigkeitsgraphen (Projektreferenzen + NuGet) der Solution zu erstellen.
+description: >-
+  Nutze um einen Abhängigkeitsgraphen der Solution (Projekt→Projekt-Referenzen + NuGet) zu erstellen und
+  Zyklen sichtbar zu machen: Quelle sharplens, gerendert als Mermaid. Output nach state/artifacts/ mit
+  Fallback. Schichten/Design → architecture-diagram.
 ---
 
 ## Zweck

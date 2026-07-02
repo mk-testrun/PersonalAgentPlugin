@@ -1,0 +1,32 @@
+[
+  {
+    "skill": "profile-switch",
+    "query": "Wechsle ins lab-Profil.",
+    "expected_behavior": [
+      "Läuft scripts/profile-apply.mjs lab und liest den Server-Satz aus policy/profiles.json",
+      "Führt die ausgegebenen `/mcp disable` (bzw. copilot mcp disable) für alle Nicht-Profil-Server aus",
+      "Führt `/mcp enable` für playwright, chrome-devtools, homeassistant aus",
+      "Persistiert das aktive Profil in state/profile.json",
+      "Rät die Server-Menge nicht — nimmt sie aus dem Skript-Output"
+    ],
+    "expected_tools": ["execute"]
+  },
+  {
+    "skill": "profile-switch",
+    "query": "Welches MCP-Profil ist gerade aktiv?",
+    "expected_behavior": [
+      "Liest state/profile.json und nennt das aktive Profil + enable/disable-Sets",
+      "Optional /mcp show zur Verifikation der tatsächlichen Server-Status",
+      "Schaltet nichts um — reine Anzeige"
+    ]
+  },
+  {
+    "skill": "profile-switch",
+    "query": "Ich brauche ein neues Profil 'research' mit brave-search und fetch.",
+    "expected_behavior": [
+      "Ergänzt einen Eintrag in policy/profiles.json (kein Code nötig)",
+      "Weist darauf hin, dass die Servernamen den in .mcp.json konfigurierten entsprechen müssen",
+      "Danach profile-apply.mjs research zum Anwenden"
+    ]
+  }
+]

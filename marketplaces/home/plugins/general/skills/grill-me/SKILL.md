@@ -1,6 +1,10 @@
 ---
 name: grill-me
-description: Nutze wenn du harsche Rückfragen zu Ziel/Scope/Edge-Cases stellen willst, bevor Code entsteht. Read-only. Variante grill-on-design für Architekturentscheidungen. Inspiriert von mattpocock/skills.
+description: >-
+  Nutze wenn du harsche, präzise Rückfragen zu Ziel/Scope/Edge-Cases stellen willst, bevor Code oder Stories
+  entstehen — deckt Annahmen, Lücken und Widersprüche auf. Read-only, schreibt nichts (keine MCP-Writes).
+  Variante grill-on-design für Architekturentscheidungen; danach an story-author/tdd-loop übergeben.
+  Inspiriert von mattpocock/skills.
 ---
 
 Stell gezielte, harte Fragen zum vorliegenden Vorhaben. Ziel: Annahmen aufdecken, Lücken finden.

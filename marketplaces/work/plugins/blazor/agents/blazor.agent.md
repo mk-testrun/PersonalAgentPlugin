@@ -2,12 +2,10 @@
 name: blazor
 description: .NET/Blazor-Entwicklungsagent mit Roslyn-Unterstützung und EF-Core-Expertise.
 tools:
-  - editFiles
-  - runCommands
+  - edit
+  - execute
   - search
-  - problems
-  - usages
-  - sharplens
+  - sharplens/*
 model: gpt-5
 ---
 

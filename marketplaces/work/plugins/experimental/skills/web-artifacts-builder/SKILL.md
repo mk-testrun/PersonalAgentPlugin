@@ -1,6 +1,9 @@
 ---
 name: web-artifacts-builder
-description: Nutze um ein portables Single-File-HTML-Artefakt zu erstellen (CDN-Allowlist erzwungen).
+description: >-
+  Nutze um ein portables Single-File-HTML-Artefakt zu erstellen (Styles/Scripts/Daten inline, läuft offline):
+  erzwingt die CDN-Allowlist, Output nach state/artifacts/. Basis-Baustein für die anderen html-Render-Skills;
+  Rich-Vorschau via artifact-viewer.
 ---
 
 ## Zweck

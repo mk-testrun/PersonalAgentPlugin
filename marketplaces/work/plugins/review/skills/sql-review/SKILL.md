@@ -5,7 +5,6 @@ description: >-
   indexes, transaction boundaries, and migration safety. Use when reviewing SQL/migrations or a
   DbContext, when asked about query safety/performance at the data layer, or to check a migration before
   applying it. Produces findings[] (area:sql) with concrete before/after fixes; [GATE] on critical/high.
-applyTo: ["**/*.sql", "**/Migrations/**", "**/*DbContext*.cs"]
 ---
 
 # SQL & EF-Core Review

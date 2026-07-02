@@ -1,8 +1,9 @@
 ---
 name: github-issues
-description: Nutze wenn GitHub-Issues aufgelistet, erstellt, geschlossen oder reviewt werden sollen.
-mcp_tools:
-  - github.issues
+description: >-
+  Nutze wenn GitHub-Issues aufgelistet, erstellt, geschlossen oder gereviewt werden sollen: unassignte/offene
+  Issues auflisten, neue anlegen, schließen (mit state_reason) — über den offiziellen github-MCP. Schreibende
+  Aktionen nach Bestätigung; kein Workitem-Zwang.
 ---
 
 ## Aktionen

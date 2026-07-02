@@ -57,3 +57,6 @@ value slipped in).
 ## Output
 
 `findings[]` (`area: security`, `SECR-*`, **redacted**). Any real find → **[GATE]** (critical).
+
+Tief: [`reference.md`](reference.md) (betterleaks-Flags, SECR-Mapping, Redaktions-Garantie, rotate→purge).
+Beispiel: [`examples.md`](examples.md) (Report → redigierte findings[]).

@@ -1,6 +1,8 @@
 ---
 name: timeline
-description: Nutze um eine interaktive Timeline mit vis-timeline zu erstellen (Events/Zeiträume).
+description: >-
+  Nutze um eine interaktive Timeline mit vis-timeline zu erstellen (Events/Zeiträume, Projektverlauf,
+  Historie): Single-File-HTML über die CDN-Allowlist, Output nach state/artifacts/ mit Fallback (§2.7).
 ---
 
 ## Zweck

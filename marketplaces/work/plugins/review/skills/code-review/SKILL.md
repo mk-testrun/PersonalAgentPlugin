@@ -1,6 +1,9 @@
 ---
 name: code-review
-description: Nutze wenn Code auf allgemeine Qualität zu prüfen ist — SOLID, DRY, Lesbarkeit, Naming, Fehlerbehandlung.
+description: >-
+  Nutze wenn Code auf allgemeine Qualität zu prüfen ist — SOLID, DRY, Lesbarkeit, Naming, Fehlerbehandlung,
+  tote Pfade. Sprachneutral, rein statisch. Liefert findings[] (area: design) mit Fundort + konkretem Fix.
+  Nicht hier: Security → security-review, Performance → performance-review, Tests → tests-review.
 ---
 
 ## Scope

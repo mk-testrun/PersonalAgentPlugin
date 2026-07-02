@@ -1,6 +1,9 @@
 ---
 name: mermaid-diagram
-description: Nutze um ein Mermaid-Diagramm zu erstellen (flowchart, sequenceDiagram, classDiagram, stateDiagram, gitGraph).
+description: >-
+  Nutze um ein Mermaid-Diagramm (flowchart, sequenceDiagram, classDiagram, stateDiagram, gitGraph) als
+  textbasiertes, versionierbares Diagramm zu erstellen: Single-File-HTML über die CDN-Allowlist, Output nach
+  state/artifacts/ mit Fallback. Spezifische Formen → architecture-/er-/sequence-diagram.
 ---
 
 ## Zweck

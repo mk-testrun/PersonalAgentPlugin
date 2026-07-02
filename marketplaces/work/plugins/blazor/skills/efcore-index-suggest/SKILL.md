@@ -1,6 +1,9 @@
 ---
 name: efcore-index-suggest
-description: Nutze um fehlende Datenbankindizes für EF-Core-Queries vorzuschlagen (FK, Filter-, Sort-, Join-Spalten).
+description: >-
+  Nutze um fehlende Datenbankindizes für EF-Core-Queries vorzuschlagen — FK-, Filter-, Sort- und Join-Spalten
+  aus dem Query-/Modell-Code ableiten. Gibt Empfehlungen als Fluent-API (HasIndex) + Migration-Hinweis aus.
+  Query-Übersetzung selbst → efcore-query-explain.
 ---
 
 ## Scope

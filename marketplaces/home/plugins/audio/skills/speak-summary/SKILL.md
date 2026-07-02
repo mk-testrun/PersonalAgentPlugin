@@ -1,8 +1,9 @@
 ---
 name: speak-summary
-description: Nutze wenn eine Zusammenfassung als Audio (TTS) ausgegeben werden soll.
-mcp_tools:
-  - supertonic
+description: >-
+  Nutze wenn eine Zusammenfassung als Audio (TTS) ausgegeben werden soll (max. 4000 Zeichen): erzeugt Sprache
+  über den supertonic-MCP (on-device), MP3 nach state/audio/, plus Transkript. Verweigert bei
+  findings[]/Security-Antworten/Secrets/PII — nur nicht-sensible Inhalte.
 ---
 
 ## Verhalten

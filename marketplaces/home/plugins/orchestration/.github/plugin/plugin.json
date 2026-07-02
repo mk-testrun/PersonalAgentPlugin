@@ -21,5 +21,8 @@
     "./commands/feature.md",
     "./commands/bugfix.md",
     "./commands/review-flow.md"
+  ],
+  "skills": [
+    "./skills/workflow-router/"
   ]
 }

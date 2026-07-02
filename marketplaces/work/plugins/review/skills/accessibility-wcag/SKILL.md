@@ -6,8 +6,6 @@ description: >-
   text, error identification). Use when asked to check accessibility, run a WCAG/a11y audit, fix
   contrast/keyboard/ARIA issues, or prepare for BFSG. Produces findings[] (area:wcag) with per-criterion
   pass/fail and concrete fixes; localhost only.
-mcp_tools:
-  - playwright
 ---
 
 # WCAG 2.2 Audit

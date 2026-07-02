@@ -1,7 +1,9 @@
 ---
 name: web-conventions
-description: Nutze proaktiv bei TypeScript/JavaScript-Webprojekten.
-applyTo: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"]
+description: >-
+  Nutze proaktiv bei TypeScript/JavaScript-Webprojekten: strict mode, keine any-Flucht, moderne ES-Module,
+  klare Fehlerbehandlung und Lint/Format-Konsistenz. Regel-/Wissens-Skill — meldet Verstöße mit idiomatischer
+  Web-Alternative.
 ---
 
 ## Regeln

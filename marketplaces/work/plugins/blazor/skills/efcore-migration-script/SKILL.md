@@ -1,6 +1,9 @@
 ---
 name: efcore-migration-script
-description: Nutze um ein idempotentes SQL-Migrationsskript aus EF-Core-Migrationen zu erzeugen (für Pipeline-Deploys).
+description: >-
+  Nutze um ein idempotentes, versionierbares SQL-Migrationsskript aus EF-Core-Migrationen zu erzeugen — für
+  kontrollierte Pipeline-Deploys statt `database update` zur Laufzeit. Migration erstellen →
+  efcore-migration-add; Rollback → efcore-migration-revert-plan.
 ---
 
 ## Scope

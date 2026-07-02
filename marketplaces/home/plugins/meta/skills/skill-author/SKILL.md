@@ -1,11 +1,14 @@
 ---
 name: skill-author
-description: Nutze um einen neuen Skill nach dem Marketplace-Pattern zu erstellen — echte Inhalte, keine leere Boilerplate.
+description: >-
+  Nutze um einen neuen Skill als Paket nach docs/skill-authoring-guide.md zu erstellen — echte Inhalte, keine
+  leere Boilerplate: SKILL.md-Hub (name + reiche description) plus reference/examples/templates/scripts/evals
+  wo sinnvoll. Copilot CLI liest nur name + description im Frontmatter.
 ---
 
 ## Eingaben
 
-- `name` (kebab-case) · `description` („Nutze wenn …") · optional `applyTo` (Globs) · optional `mcp_tools`.
+- `name` (kebab-case) · `description` (3. Person, „Nutze wenn …", nennt Trigger **und** genutzte MCP-Server im Text). Copilot CLI liest nur diese zwei Frontmatter-Felder.
 
 ## Pflicht-Pattern (Body)
 
@@ -14,9 +17,7 @@ Jeder Skill hat **echten, recherchierten Inhalt** in dieser Struktur:
 ```markdown
 ---
 name: <name>
-description: Nutze wenn …
-applyTo: [...]      # falls proaktiv
-mcp_tools: [...]    # falls MCP genutzt
+description: Nutze wenn … (Trigger + genutzte MCP-Server im Text)
 ---
 
 ## Scope        – was abgedeckt ist / was nicht (Abgrenzung zu Nachbar-Skills)

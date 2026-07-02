@@ -1,6 +1,9 @@
 ---
 name: presentation-from-adr
-description: Nutze um aus ADR-Dateien in docs/adr/ eine reveal.js-Präsentation zu erzeugen.
+description: >-
+  Nutze um aus ADR-Dateien in docs/adr/ eine reveal.js-Präsentation zu erzeugen — Architektur-Entscheidungen
+  für Reviews/Stakeholder aufbereitet. Single-File-HTML über die CDN-Allowlist, Output nach state/artifacts/.
+  ADR schreiben → experimental/adr-write.
 ---
 
 ## Zweck

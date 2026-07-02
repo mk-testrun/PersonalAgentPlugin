@@ -1,6 +1,6 @@
 # mkrueer-copilot — Monorepo
 
-Zwei GitHub-Copilot-CLI-Marketplaces (**Work** und **Home**) mit vier geteilten Custom-MCP-Servern.
+Zwei GitHub-Copilot-CLI-Marketplaces (**Work** und **Home**) mit fünf geteilten Custom-MCP-Servern.
 
 ## Struktur
 
@@ -8,18 +8,23 @@ Zwei GitHub-Copilot-CLI-Marketplaces (**Work** und **Home**) mit vier geteilten 
 mkrueer-copilot/
 ├── mcp-servers/          # Geteilte Custom-MCPs (npm-Workspaces)
 │   ├── anonymizer-proxy/ # PII-Proxy für Work/ADO
-│   ├── password-gen/     # Kryptografischer Passwort-Generator
+│   ├── password-gen/     # Passwort/Passphrase/GUID/ULID/Zeit/Hash-Generator
 │   ├── alarm-mcp/        # Alarm/Timer-Server (Home)
-│   ├── supertonic/       # On-device TTS (wraps `supertonic serve`)
-│   └── dotnet-mcpserver-starter/  # .NET-MCP-Template
+│   ├── artifact-viewer/  # Universal-Renderer (rich + Fallback)
+│   └── supertonic/       # On-Device-TTS (wraps `supertonic serve`)
 ├── marketplaces/
-│   ├── work/             # Work-Marketplace (10 Plugins, ADO/Blazor/.NET)
-│   └── home/             # Home-Marketplace (9 Plugins, GitHub/Multi-Lang)
+│   ├── work/             # Work-Marketplace (9 Plugins, ADO/Blazor/.NET)
+│   └── home/             # Home-Marketplace (8 Plugins, GitHub/Multi-Lang)
 ├── tools/
-│   ├── validate-plugins.mjs    # Validiert plugin.json-Struktur
-│   └── relocate-manifests.mjs  # Fallback: kopiert manifests nach .github/plugin/
-└── docs/                 # ADRs, Konzepte, Schemata
+│   ├── validate-plugins.mjs   # Spec-Validierung (tiered) + Scoped Runs + Maturity
+│   ├── validate-findings.mjs  # findings[]-Schema-Check der Review-Skills
+│   ├── run-evals.mjs          # Struktur-Check der evals/cases.json
+│   └── lib/                   # field-taxonomy.mjs, maturity.mjs
+└── docs/                 # ADRs, Konzepte, Schemata, Authoring-Guide, Maturity
 ```
+
+> Das .NET-MCP-Template liegt als Kopiervorlage in `work/meta/skills/mcp-author/templates/dotnet-starter/`
+> (kein laufender Server → nicht unter `mcp-servers/`).
 
 ## Zwei-Welten-Prinzip
 
@@ -32,28 +37,42 @@ Das **einzige** Geteilte sind die Custom-MCP-Server unter `mcp-servers/`.
 ## Schnellstart
 
 ```bash
-# Abhängigkeiten installieren (alle Workspaces)
-npm install
-
-# Beide Marketplaces validieren
+npm install                                   # alle Workspaces
 node tools/validate-plugins.mjs marketplaces/work
 node tools/validate-plugins.mjs marketplaces/home
-
-# MCP-Tests ausführen
-npm test --workspaces
+npm test --workspaces                         # MCP-Server-Tests
 ```
+
+## Validieren
+
+```bash
+# ganzer Marketplace (Default)
+node tools/validate-plugins.mjs marketplaces/work
+
+# nur ein Skill/Plugin/Agent/Command (z. B. nach Neuanlage via meta)
+node tools/validate-plugins.mjs --skill marketplaces/work/plugins/doku/skills/product-functions
+node tools/validate-plugins.mjs --changed-only origin/main   # nur git-geänderte Items
+
+# Reifegrad messen (reines Reporting)
+node tools/validate-plugins.mjs --maturity
+node tools/validate-plugins.mjs --maturity-md docs/skill-maturity.md
+```
+
+Findings sind **dreistufig**: `error` (CLI lädt nicht) · `warning` (nur Fremd-KI-Produkt) ·
+`hint` (Schwester-IDE VS Code/Visual Studio). `--strict` macht Warnungen zu Fehlern (CI). Details:
+[ADR-0007](docs/adr/0007-validation-tiers.md).
+
+- Ist-Stand der Skills: **`docs/skill-maturity.md`** (auto-generiert)
+- Absicht/Wellenplan: **`docs/skill-uplift-tracker.md`** (manuell)
 
 ## Installation der Marketplaces
 
 ```bash
-# Work
 copilot plugin marketplace add ./marketplaces/work
-
-# Home
 copilot plugin marketplace add ./marketplaces/home
 ```
 
-Details siehe:
+Details:
 - [Work-Marketplace README](marketplaces/work/README.md)
 - [Home-Marketplace README](marketplaces/home/README.md)
-- [Architektur-Spezifikation](ARCHITECTURE.md)
+- [Architektur-Spezifikation](ARCHITECTURE.md) · [Authoring-Guide](docs/skill-authoring-guide.md)

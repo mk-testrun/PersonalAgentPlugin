@@ -1,6 +1,8 @@
 ---
 name: kanban-render
-description: Nutze um Aufgaben als Kanban-HTML-Board (Spalten/Karten) zu rendern.
+description: >-
+  Nutze um Aufgaben als Kanban-HTML-Board mit Spalten/Karten (To-Do/Doing/Done) zu rendern: Single-File-HTML
+  über die CDN-Allowlist, Output nach state/artifacts/ mit Fallback (§2.7).
 ---
 
 ## Zweck

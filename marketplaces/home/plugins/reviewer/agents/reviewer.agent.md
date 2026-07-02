@@ -3,10 +3,9 @@ name: reviewer
 description: Multi-Domain-Reviewer für private Projekte — read-only außer state/reports/, Internet-Playwright erlaubt.
 tools:
   - search
-  - problems
-  - runCommands
-  - editFiles
-  - playwright
+  - execute
+  - edit
+  - playwright/*
 model: gpt-5
 ---
 
@@ -24,7 +23,7 @@ Einzelne Domänen-Skills auf Abruf oder die ganze Matrix via `review-aggregate` 
 
 ## Tool- & Write-Scope
 
-- **Read-only** — `editFiles` ausschließlich für `state/reports/`. Kein Schreiben in Produktionscode/Tests/Config.
+- **Read-only** — `edit` ausschließlich für `state/reports/`. Kein Schreiben in Produktionscode/Tests/Config.
 - Playwright darf Internet-Targets (eigene Seiten/GitHub Pages/Allowlist pro Repo).
 
 ## Verboten

@@ -1,7 +1,9 @@
 ---
 name: test-conventions
-description: Nutze proaktiv beim Schreiben von Tests für .NET-Projekte.
-applyTo: ["**/*Tests.cs", "**/*Test.cs", "**/Tests/**"]
+description: >-
+  Nutze proaktiv beim Schreiben von Tests für .NET: erzwingt den Stack (xUnit, FluentAssertions, NSubstitute,
+  bUnit für Blazor, Testcontainers für Integration), Arrange-Act-Assert mit einem Act, sprechende Namen und
+  deterministische Tests. Regel-Skill — meldet Test-Smells mit Korrektur.
 ---
 
 ## Stack

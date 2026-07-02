@@ -1,8 +1,9 @@
 ---
 name: homeassistant-control
-description: Nutze um Home-Assistant-Entitäten zu lesen oder zu schalten.
-mcp_tools:
-  - homeassistant
+description: >-
+  Nutze um Home-Assistant-Entitäten zu lesen oder zu schalten: Status von Sensoren/Switches/Lichtern lesen und
+  Aktionen auslösen — über den homeassistant-MCP (HASS_URL/HASS_TOKEN). Warn-Modus; bestätigt schaltende
+  Aktionen.
 ---
 
 ## Aktionen

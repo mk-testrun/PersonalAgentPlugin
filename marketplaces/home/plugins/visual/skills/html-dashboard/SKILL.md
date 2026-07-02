@@ -1,6 +1,9 @@
 ---
 name: html-dashboard
-description: Nutze um ein HTML-Dashboard aus mehreren Widgets (KPIs, Charts, Tabellen) zu bauen.
+description: >-
+  Nutze um mehrere Widgets (KPIs, Charts, Tabellen) als Status-Übersicht auf einer Seite zu bündeln:
+  Single-File-HTML über die CDN-Allowlist, Output nach state/artifacts/ mit Fallback. Einzel-Chart →
+  chartjs-data; Tabelle → table-as-grid.
 ---
 
 ## Zweck

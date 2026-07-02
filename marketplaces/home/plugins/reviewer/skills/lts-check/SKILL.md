@@ -1,6 +1,9 @@
 ---
 name: lts-check
-description: Nutze um Runtimes/Frameworks auf LTS-/Support-Status zu prüfen — Hobby-Stacks hängen oft hinter LTS.
+description: >-
+  Nutze um Runtimes/Frameworks (Node, Python, .NET, Go, große Libs) auf LTS-/Support-Status zu prüfen —
+  Hobby-Stacks hängen oft hinter LTS. Gleicht Versionen gegen Support-Zeitpläne ab und meldet EOL-Risiken als
+  findings[] (area: deps). CVEs → dependency-vuln.
 ---
 
 ## Scope

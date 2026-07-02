@@ -1,8 +1,9 @@
 ---
 name: e2e-playwright
-description: Nutze für End-to-End-Tests der lokalen App mit Playwright.
-mcp_tools:
-  - playwright
+description: >-
+  Nutze für End-to-End-Tests der lokalen App mit Playwright — ausschließlich gegen localhost:* (kein Internet,
+  Work-Guardrail). Startet die App (dotnet run), fährt stabile, selektor-robuste Flows und meldet Fehler mit
+  Trace. Test-Generierung aus einer URL → e2e-codegen; CI-Anbindung → e2e-pipeline-wire.
 ---
 
 ## Voraussetzungen

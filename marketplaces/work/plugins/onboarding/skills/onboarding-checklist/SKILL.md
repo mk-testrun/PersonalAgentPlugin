@@ -1,6 +1,9 @@
 ---
 name: onboarding-checklist
-description: Nutze um den Onboarding-Fortschritt zu tracken und anzuzeigen.
+description: >-
+  Nutze um den Onboarding-Fortschritt zu tracken und anzuzeigen: liest/aktualisiert state/onboarding.json
+  (Profil gesetzt, Track Tool/Host, Marketplace, Projekt) und zeigt die offene/erledigte Checkliste. Steuert,
+  welcher Track als Nächstes sinnvoll ist.
 ---
 
 ## Checklistenpunkte

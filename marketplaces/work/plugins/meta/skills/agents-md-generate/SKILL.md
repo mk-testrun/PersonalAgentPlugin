@@ -1,6 +1,9 @@
 ---
 name: agents-md-generate
-description: Nutze um AGENTS.md, copilot-instructions und applyTo-Instructions-Dateien zu generieren.
+description: >-
+  Nutze um AGENTS.md, .github/copilot-instructions.md und applyTo-Instructions-Dateien zu generieren: erzeugt
+  eine Agenten-Übersicht mit Write-Scope-Tabelle und globale Copilot-Anweisungen aus den vorhandenen
+  Plugins/Agenten. Schreibt Entwürfe; Übernahme nach Prüfung.
 ---
 
 ## Erzeugt

@@ -1,0 +1,14 @@
+<!--
+  Paste this once into the target Confluence page (Storage Format).
+  Everything between the two anchor macros is auto-managed by merge-functions.mjs;
+  everything OUTSIDE the anchors stays yours. Never delete the anchors — they are
+  how the merge script locates the block.
+-->
+<h2>Funktionen (aus Azure DevOps)</h2>
+<p><em>Automatisch aus Features und User Stories abgeleitet. Manuell nachgeschärfte Beschreibungen bleiben beim Re-Merge im Modus <code>extend</code> erhalten.</em></p>
+
+<ac:structured-macro ac:name="anchor" ac:schema-version="1"><ac:parameter ac:name="">ado-functions-begin</ac:parameter></ac:structured-macro>
+
+<p><em>Noch keine Einträge — führe den <code>product-functions</code>-Skill aus.</em></p>
+
+<ac:structured-macro ac:name="anchor" ac:schema-version="1"><ac:parameter ac:name="">ado-functions-end</ac:parameter></ac:structured-macro>

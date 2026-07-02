@@ -1,6 +1,9 @@
 ---
 name: command-author
-description: Nutze wenn du eine neue commands/*.md-Datei erstellen willst. Verhindert Doppel-Indirektion (§2.1): Command → Skill → Skill ist verboten.
+description: >-
+  Nutze wenn du eine neue commands/*.md-Datei (Prompt-File) erstellen willst: erzeugt einen Workflow-Command
+  oder einen dünnen Skill-Wrapper nach §2.1 und verhindert Doppel-Indirektion (Command → Skill → Skill ist
+  verboten). Frontmatter nur mit description; Usage-Zeile im Body. Danach mit marketplace-validate prüfen.
 ---
 
 Erzeuge eine korrekte `commands/<name>.md` nach §2.1-Konvention.

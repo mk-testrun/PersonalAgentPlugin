@@ -1,8 +1,9 @@
 ---
 name: confluence-draft
-description: Nutze für Confluence-Drafts, -Suche, -Lesen und -Verlinken mit Work-Items.
-mcp_tools:
-  - confluence
+description: >-
+  Nutze für Confluence-Drafts, -Suche, -Lesen und -Verlinken mit Work-Items: durchsucht Seiten in der
+  Space-Allowlist, liest und erklärt Inhalte, bereitet neuen Seiteninhalt als lokalen Draft vor und schlägt
+  Kommentare vor. Läuft über den confluence-MCP (mcp-atlassian); Publish nur nach [CONFIRM], PII anonymisiert.
 ---
 
 ## Aktionen

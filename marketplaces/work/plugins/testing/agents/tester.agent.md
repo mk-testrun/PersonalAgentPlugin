@@ -2,12 +2,9 @@
 name: tester
 description: Test-Agent für .NET — führt Tests aus, wertet Coverage gegen Gates aus, generiert und fährt Playwright-E2E (nur localhost). Liefert Fehler-Root-Cause und Fix-Vorschläge.
 tools:
-  - editFiles
-  - runCommands
-  - runTasks
-  - problems
-  - findTestFiles
-  - playwright
+  - edit
+  - execute
+  - playwright/*
 model: gpt-5
 ---
 
@@ -26,7 +23,7 @@ erzeugen — deterministisch, lokal, reproduzierbar.
 
 ## Tool- & Write-Scope
 
-- `editFiles` für Test-Dateien; `runCommands` für `dotnet test`/Coverage/Playwright.
+- `edit` für Test-Dateien; `execute` für `dotnet test`/Coverage/Playwright.
 - Playwright **nur** `localhost:*` — kein Internet (Tool-Guardian).
 
 ## Regeln

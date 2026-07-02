@@ -1,6 +1,10 @@
 ---
 name: doc-from-code
-description: Nutze um aus XML-Doc-Comments und öffentlicher API eine Confluence-Dokumentation zu generieren.
+description: >-
+  Nutze um aus XML-Doc-Comments und öffentlicher .NET-API eine Confluence-Dokumentation zu generieren:
+  sharplens (Roslyn) enumeriert public Typen/Member + Signaturen, liest <summary>/<param>/<returns>, und
+  erzeugt einen Storage-Format-Draft (Namespaces als h2, Member als Tabelle). Publish via confluence-draft,
+  [CONFIRM].
 ---
 
 ## Schritte

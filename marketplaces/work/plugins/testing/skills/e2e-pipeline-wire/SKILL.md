@@ -1,6 +1,9 @@
 ---
 name: e2e-pipeline-wire
-description: Nutze um eine ADO-Pipeline-Stage für E2E-Tests zu generieren.
+description: >-
+  Nutze um eine ADO-Pipeline-Stage für E2E-Tests zu generieren: startet die App im Hintergrund (dotnet run),
+  wartet auf Readiness, fährt die Playwright-Suite (localhost) und veröffentlicht Ergebnisse/Traces als
+  Artefakt. Ergänzt e2e-playwright/e2e-codegen um die CI-Integration.
 ---
 
 ## Generiert
