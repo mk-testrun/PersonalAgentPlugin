@@ -61,13 +61,6 @@
       "description": "Tooling über Tooling: Skill/Plugin-Author, Validator, AI-Readiness.",
       "version": "1.0.0",
       "keywords": ["meta", "tooling", "skill-author", "validate"]
-    },
-    {
-      "name": "loop",
-      "source": "plugins/loop",
-      "description": "Agent-Loop-Protokoll: iterativ auf ein prüfbares Ziel, Hard-Limit, State, warn-Modus.",
-      "version": "1.0.0",
-      "keywords": ["loop", "agent-loop", "iteration", "workflow"]
     }
   ]
 }
