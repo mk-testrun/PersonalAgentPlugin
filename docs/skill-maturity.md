@@ -1,7 +1,7 @@
 # Skill-Maturity (auto-generiert)
 
 > **DO NOT EDIT** — regenerieren mit `node tools/validate-plugins.mjs <mp> --maturity-md docs/skill-maturity.md`.
-> Erzeugt: 2026-07-02 · 151 Skills · ⌀ 34% · Verteilung: 5★: 3 · 4★: 3 · 3★: 14 · 2★: 24 · 1★: 107 · 0★: 0
+> 151 Skills · ⌀ 34% · Verteilung: 5★: 3 · 4★: 3 · 3★: 14 · 2★: 24 · 1★: 107 · 0★: 0
 >
 > Gegenstück: `docs/skill-uplift-tracker.md` (manuell — *Absicht/Wellenplan*). Diese Datei = *Ist-Stand*.
 

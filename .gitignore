@@ -33,5 +33,3 @@ secrets/
 .DS_Store
 Thumbs.db
 
-# npm
-package-lock.json

@@ -170,7 +170,6 @@ export function renderHistogram(rows, mpName) {
 
 export function renderMarkdown(rows) {
   const allRows = [...rows].sort((a, b) => b.pct - a.pct || `${a.plugin}/${a.skill}`.localeCompare(`${b.plugin}/${b.skill}`));
-  const now = new Date().toISOString().slice(0, 10);
   const total = allRows.length;
   const avg = total ? Math.round(allRows.reduce((a, r) => a + r.pct, 0) / total) : 0;
   const dist = [5, 4, 3, 2, 1, 0].map(s => `${s}★: ${allRows.filter(r => r.stars === s).length}`).join(' · ');
@@ -178,7 +177,7 @@ export function renderMarkdown(rows) {
     '# Skill-Maturity (auto-generiert)',
     '',
     '> **DO NOT EDIT** — regenerieren mit `node tools/validate-plugins.mjs <mp> --maturity-md docs/skill-maturity.md`.',
-    `> Erzeugt: ${now} · ${total} Skills · ⌀ ${avg}% · Verteilung: ${dist}`,
+    `> ${total} Skills · ⌀ ${avg}% · Verteilung: ${dist}`,
     '>',
     '> Gegenstück: `docs/skill-uplift-tracker.md` (manuell — *Absicht/Wellenplan*). Diese Datei = *Ist-Stand*.',
     '',

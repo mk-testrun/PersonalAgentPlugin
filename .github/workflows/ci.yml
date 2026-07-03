@@ -8,21 +8,36 @@ on:
 
 jobs:
   validate:
-    name: Validate Plugins
+    name: Validate Marketplaces (strict) + Evals + Tool-Tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
-      - name: Validate Work Marketplace
-        run: node tools/validate-plugins.mjs marketplaces/work
-      - name: Validate Home Marketplace
-        run: node tools/validate-plugins.mjs marketplaces/home
-      - name: Validate Skill Evals (Work)
-        run: node tools/run-evals.mjs marketplaces/work
-      - name: Validate Skill Evals (Home)
-        run: node tools/run-evals.mjs marketplaces/home
+      - name: Validate (strict — warnings fail CI, ADR-0007)
+        run: npm run validate:strict
+      - name: Validate skill evals
+        run: npm run evals
+      - name: Tool & hook tests
+        run: npm run test:tools
+      - name: Maturity drift check (docs/skill-maturity.md must be regenerated on change)
+        run: |
+          npm run maturity
+          git diff --exit-code docs/skill-maturity.md || {
+            echo "::error::docs/skill-maturity.md ist nicht aktuell — 'npm run maturity' ausführen und committen."; exit 1; }
+      - name: PowerShell hook scripts syntax check
+        run: |
+          if command -v pwsh >/dev/null; then
+            fail=0
+            while IFS= read -r f; do
+              pwsh -NoProfile -Command "[void][System.Management.Automation.PSParser]::Tokenize((Get-Content -Raw '$f'), [ref]\$null)" \
+                || { echo "::error file=$f::ps1 syntax error"; fail=1; }
+            done < <(find marketplaces -name '*.ps1')
+            exit $fail
+          else
+            echo "pwsh not available — skipping ps1 syntax check"
+          fi
 
   mcp:
     name: Build & Test MCP Servers
@@ -32,43 +47,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
-      - name: Install Workspaces
-        run: npm ci || npm install
-      - name: Syntax Check anonymizer-proxy
-        working-directory: mcp-servers/anonymizer-proxy
-        run: |
-          node --check src/masker.mjs
-          node --check src/server.mjs
-      - name: Test anonymizer-proxy roundtrip
-        working-directory: mcp-servers/anonymizer-proxy
-        run: node test/roundtrip.mjs
-      - name: Build password-gen
-        working-directory: mcp-servers/password-gen
-        run: npm run build
-      - name: Test password-gen entropy
-        working-directory: mcp-servers/password-gen
-        run: node test/entropy.test.mjs
-      - name: Build alarm-mcp
-        working-directory: mcp-servers/alarm-mcp
-        run: npm run build
-      - name: Test alarm-mcp scheduler
-        working-directory: mcp-servers/alarm-mcp
-        run: node test/scheduler.test.mjs
-      - name: Build artifact-viewer
-        working-directory: mcp-servers/artifact-viewer
-        run: npm run build
-      - name: Test artifact-viewer fallback
-        working-directory: mcp-servers/artifact-viewer
-        run: node test/fallback.test.mjs
-      - name: Test artifact-viewer textfile
-        working-directory: mcp-servers/artifact-viewer
-        run: node test/textfile.test.mjs
-      - name: Build dotnet-mcpserver-starter
-        working-directory: mcp-servers/dotnet-mcpserver-starter
-        run: |
-          if command -v dotnet &>/dev/null; then
-            dotnet build
-          else
-            echo "No .NET SDK found — skipping dotnet build (optional step)"
-          fi
-        continue-on-error: true
+          cache: npm
+      - name: Install (npm ci — lockfile is committed; prepare builds the TS servers)
+        run: npm ci
+      - name: Test all servers (workspaces)
+        run: npm run test:servers
