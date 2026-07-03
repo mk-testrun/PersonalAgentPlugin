@@ -235,6 +235,10 @@ function validateMarketplace(marketplacePath, ctx) {
   for (const p of market.plugins ?? []) {
     if (!p.source) { err(ctx, `Marketplace plugin entry missing "source": ${JSON.stringify(p)}`); continue; }
     listed.add(p.source);
+    // version drift: plugin.json ist Quelle der Wahrheit; marketplace.json muss folgen
+    const manifest = readJson(join(abs, p.source, '.github', 'plugin', 'plugin.json'));
+    if (!manifest.__error && p.version && manifest.version && p.version !== manifest.version)
+      warn(ctx, `Version drift "${p.name ?? p.source}": marketplace.json ${p.version} ≠ plugin.json ${manifest.version}`);
     validatePlugin(join(abs, p.source), p.name ?? p.source, ctx);
   }
   for (const d of readdirSync(pluginsDir).filter(x => statSync(join(pluginsDir, x)).isDirectory())) {

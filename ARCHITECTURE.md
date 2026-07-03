@@ -86,7 +86,8 @@ Jeder Visual-Skill implementiert **selbst**:
 
 ### 2.9 Hook-Events
 
-Events: `sessionStart`, `userPromptSubmitted`, `preToolUse`, `postToolUse`, `sessionEnd`
+Alle 8 Events der Copilot-CLI: `sessionStart`, `sessionEnd`, `userPromptSubmitted`, `preToolUse`, `postToolUse`, `errorOccurred`, `subagentStart`, `PermissionRequest`.
+Dieses Repo nutzt davon: `sessionStart`, `userPromptSubmitted`, `preToolUse`, `postToolUse`, `sessionEnd`.
 
 `preToolUse` gibt JSON aus: `{"permissionDecision":"allow"|"deny","permissionDecisionReason":"…"}`
 

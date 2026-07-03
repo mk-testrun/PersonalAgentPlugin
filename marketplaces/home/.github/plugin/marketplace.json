@@ -10,57 +10,100 @@
       "name": "general",
       "source": "plugins/general",
       "description": "GitHub Issues/PRs, Profile (MCP-Sets), Multi-Lang-Conventions, warn-Hooks.",
-      "version": "1.0.0",
-      "keywords": ["github", "profile", "git", "conventions", "hooks"]
+      "version": "1.1.0",
+      "keywords": [
+        "github",
+        "profile",
+        "git",
+        "conventions",
+        "hooks"
+      ]
     },
     {
       "name": "visual",
       "source": "plugins/visual",
       "description": "Visual-first: Charts, Excalidraw, Cloud-Bild-Gen, SVG, Timeline, Mindmap.",
-      "version": "1.0.0",
-      "keywords": ["visual", "charts", "excalidraw", "diagrams", "image-gen"]
+      "version": "1.1.0",
+      "keywords": [
+        "visual",
+        "charts",
+        "excalidraw",
+        "diagrams",
+        "image-gen"
+      ]
     },
     {
       "name": "audio",
       "source": "plugins/audio",
       "description": "TTS/speak via SuperTonic, Sound-Notifications (kein STT).",
       "version": "1.0.0",
-      "keywords": ["audio", "tts", "speak", "notifications"]
+      "keywords": [
+        "audio",
+        "tts",
+        "speak",
+        "notifications"
+      ]
     },
     {
       "name": "morning",
       "source": "plugins/morning",
       "description": "Angereichertes Tagesstart-Briefing, Energy-Tracking, Week-Highlight-Reel.",
       "version": "1.0.0",
-      "keywords": ["morning", "briefing", "energy", "dashboard"]
+      "keywords": [
+        "morning",
+        "briefing",
+        "energy",
+        "dashboard"
+      ]
     },
     {
       "name": "reviewer",
       "source": "plugins/reviewer",
       "description": "Entspannter Home-Reviewer: WCAG, BFSG, Security, Performance, Internet-Playwright.",
       "version": "1.0.0",
-      "keywords": ["review", "wcag", "security", "accessibility", "performance"]
+      "keywords": [
+        "review",
+        "wcag",
+        "security",
+        "accessibility",
+        "performance"
+      ]
     },
     {
       "name": "lab",
       "source": "plugins/lab",
       "description": "Spielwiese: neue MCPs ausprobieren, Playwright codegen, Home Assistant.",
       "version": "1.0.0",
-      "keywords": ["lab", "playwright", "homeassistant", "exploration"]
+      "keywords": [
+        "lab",
+        "playwright",
+        "homeassistant",
+        "exploration"
+      ]
     },
     {
       "name": "orchestration",
       "source": "plugins/orchestration",
       "description": "GitHub-Workflows: /feature, /bugfix, /review-flow (kein /ship).",
       "version": "1.0.0",
-      "keywords": ["orchestration", "workflow", "feature", "bugfix"]
+      "keywords": [
+        "orchestration",
+        "workflow",
+        "feature",
+        "bugfix"
+      ]
     },
     {
       "name": "meta",
       "source": "plugins/meta",
       "description": "Tooling über Tooling: Skill/Plugin-Author, Validator, AI-Readiness.",
-      "version": "1.0.0",
-      "keywords": ["meta", "tooling", "skill-author", "validate"]
+      "version": "1.1.0",
+      "keywords": [
+        "meta",
+        "tooling",
+        "skill-author",
+        "validate"
+      ]
     }
   ]
 }

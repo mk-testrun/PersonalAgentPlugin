@@ -79,6 +79,21 @@ test('--strict promotes warnings to failure', () => {
   assert.equal(code, 1);
 });
 
+test('marketplace/plugin version drift → warning', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'vp-mp-'));
+  mkdirSync(join(dir, '.github', 'plugin'), { recursive: true });
+  mkdirSync(join(dir, 'plugins', 'p', '.github', 'plugin'), { recursive: true });
+  writeFileSync(join(dir, '.github', 'plugin', 'marketplace.json'), JSON.stringify({
+    name: 'mp', metadata: { description: 'd', version: '1.0.0' }, owner: { name: 'o' },
+    plugins: [{ name: 'p', source: 'plugins/p', description: 'd', version: '1.0.0' }],
+  }));
+  writeFileSync(join(dir, 'plugins', 'p', '.github', 'plugin', 'plugin.json'),
+    JSON.stringify({ name: 'p', description: 'd', version: '1.1.0', author: { name: 'a' }, license: 'MIT', repository: 'r' }));
+  const r = run([dir]);
+  assert.ok(r.warnings.some(w => /Version drift/.test(w) && /1\.0\.0/.test(w) && /1\.1\.0/.test(w)), r.warnings.join('|'));
+  rmSync(dir, { recursive: true, force: true });
+});
+
 test('hooks.json old array shape → error (via plugin scope)', () => {
   const dir = mkdtempSync(join(tmpdir(), 'vp-plugin-'));
   mkdirSync(join(dir, '.github', 'plugin'), { recursive: true });

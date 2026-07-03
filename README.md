@@ -19,6 +19,7 @@ mkrueer-copilot/
 │   ├── validate-plugins.mjs   # Spec-Validierung (tiered) + Scoped Runs + Maturity
 │   ├── validate-findings.mjs  # findings[]-Schema-Check der Review-Skills
 │   ├── run-evals.mjs          # Struktur-Check der evals/cases.json
+│   ├── setup-mcp-servers.sh   # install + build + npm link aller MCP-Server
 │   └── lib/                   # field-taxonomy.mjs, maturity.mjs
 └── docs/                 # ADRs, Konzepte, Schemata, Authoring-Guide, Maturity
 ```
@@ -37,7 +38,7 @@ Das **einzige** Geteilte sind die Custom-MCP-Server unter `mcp-servers/`.
 ## Schnellstart
 
 ```bash
-npm install                                   # alle Workspaces
+npm install                                   # alle Workspaces ('prepare: tsc' baut die TS-Server)
 node tools/validate-plugins.mjs marketplaces/work
 node tools/validate-plugins.mjs marketplaces/home
 npm test --workspaces                         # MCP-Server-Tests
@@ -65,7 +66,18 @@ Findings sind **dreistufig**: `error` (CLI lädt nicht) · `warning` (nur Fremd-
 - Ist-Stand der Skills: **`docs/skill-maturity.md`** (auto-generiert)
 - Absicht/Wellenplan: **`docs/skill-uplift-tracker.md`** (manuell)
 
-## Installation der Marketplaces
+## Installation
+
+**1. MCP-Server lauffähig machen** — die Plugin-`.mcp.json` referenzieren die Server über ihre
+bin-Namen (`anonymizer-proxy`, `password-gen-mcp`, `alarm-mcp`, `artifact-viewer`,
+`supertonic3-mcp`); die müssen auf dem PATH liegen:
+
+```bash
+./tools/setup-mcp-servers.sh          # npm install + build (prepare: tsc) + npm link je Server
+./tools/setup-mcp-servers.sh --check  # prüft nur, ob alle bins auffindbar sind
+```
+
+**2. Marketplaces registrieren:**
 
 ```bash
 copilot plugin marketplace add ./marketplaces/work
