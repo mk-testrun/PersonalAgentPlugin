@@ -156,13 +156,15 @@
 
 ### W4 — Marketplace-Shared (README/CONTRIBUTING/AGENTS/marketplace.json)
 
-- **🟠 W4-1 Beide `AGENTS.md` lehren veraltete Konventionen:** (a) `applyTo`/`mcp_tools` als
-  optionale Skill-Frontmatter — genau die Felder, die als inert entfernt wurden (Validator warnt);
-  (b) beide listen den **loop-Agenten unter Plugin „loop"** — das Plugin existiert nicht mehr
-  (Work→experimental, Home→general); (c) Work-Tabelle: tester mit „editFiles+runCommands"
-  (VS-Code-Namen statt edit/execute). → AGENTS.md sind Governance-Einstiegspunkte — auf den Stand
-  von Guide/ADR-0006/0007 ziehen. (Hinweis: `meta/agents-md-generate` sollte diese Datei künftig
-  **generieren** — dann kann sie nicht mehr driften.)
+- **🟠 W4-1 Beide `AGENTS.md` sind nicht auf dem Stand der Tiering-Philosophie** *(präzisiert nach
+  User-Feedback: `applyTo`/`mcp_tools` sind nicht „veraltet" — sie sind schlicht nicht in allen
+  Umgebungen implementiert; der Validator zeigt deshalb bewusst nur eine informative Warnung/Hint)*:
+  (a) AGENTS.md stellt die Felder als universell-optional dar, ohne den Umgebungs-Kontext („wirkt in
+  VS Code, nicht in Copilot CLI") — genau diese Einordnung fehlt; (b) beide listen den **loop-Agenten
+  unter Plugin „loop"** — das Plugin existiert nicht mehr (Work→experimental, Home→general);
+  (c) Work-Tabelle: tester mit „editFiles+runCommands" (VS-Code-Namen statt edit/execute).
+  → AGENTS.md auf die Feld-Kompatibilitäts-Matrix des Guides verweisen statt Felder kommentarlos zu
+  listen; Agenten-Tabelle korrigieren. (Perspektivisch via `agents-md-generate` generieren.)
 
 - **🟠 W4-2 `CONTRIBUTING.md` (beide) lehrt den alten Flachdatei-Stil:** „SKILL.md anlegen mit
   name/description + optional applyTo/mcp_tools" — kein Wort zu Paket-Standard (reference/examples/
@@ -293,23 +295,71 @@
 
 ---
 
-## Fazit & Auswirkung auf den Plan (Teil 1)
+## FINALER PLAN (Beschluss 2026-07-02: **alle** Funde aufgenommen, mit User-Korrekturen)
 
-**Zwei Funde ändern bestehende Plan-Punkte:**
-1. **W1-1/W1-2 → A2 und C1 anpassen:** `dist/` ist gitignored (nicht committet, wie ADR-0005 behauptet)
-   → C1 („dist-Drift via git diff") ist hinfällig; stattdessen `prepare`-Scripts + CI-Build.
-   Lockfile committen, `npm ci` ohne Fallback (in A2).
-2. **W2-3 → A2:** artifact-viewer-test-Script erweitern, sonst verliert die CI-Umstellung Tests.
+**User-Entscheidungen eingearbeitet:**
+- W4-1: Felder sind umgebungsspezifisch, nicht „veraltet" — AGENTS.md ordnet ein statt zu verbieten.
+- W4-3: Cross-Marketplace-Verweis **entfernen + Validator-Regel** dagegen.
+- W5-1: dependency-vuln bleibt **on-demand**; der postToolUse-Automatismus fliegt raus
+  (Automatik-Schiene ist betterleaks/pre-push + CI).
+- **Zurückgestellt:** W7-5 (Sprachmix — erstmal so lassen), W7-10 (promptfoo — erstmal zu viel).
 
-**Empfohlene Priorisierung der neuen Funde** (nach Entscheidung einzeln in Blöcke einsortieren):
-- **Sofort-Kandidaten (funktional kaputt / Falschaussage):** W1-1 (prepare/dist), W1-2 (Lockfile),
-  W2-1 (error-Leak im PII-Proxy), W2-2 (PATH-Install-Story), W6-1 (Home-CDN-Allowlist),
-  W5-1 (dotnet-vuln-Kosten), **W7-1 (28-bit-Passphrasen → EFF-Wordlist)**.
-- **Mit A/B/C mitnehmen (gleiche Baustellen, teils als bessere Umsetzung):** W1-3 (.gitignore state/),
-  W2-3 (test-Script), W3-1 (Konzept-Docs), W4-1/W4-2 (AGENTS/CONTRIBUTING), W1-4 (area design/api),
-  **W7-3 (B2 liest betterleaks.toml statt Hardcode)**, **W7-4 (B1 nutzt Presidio-Patterns)**,
-  **W7-6/W7-7 (C4: docs-from-code + workflows.json)**, **W7-8 (SRI zu W5-2)**, **W7-14 (C5-Satz)**.
-- **Backlog (einzeln entscheiden):** W1-5/6/7, W2-4..8, W3-2/3, W4-3, W5-2, W6-2,
-  W7-2 (SARIF-Adapter), W7-5 (Sprachkonsistenz), W7-9 (JSON Schemas), W7-10 (promptfoo statt
-  Eigenbau-Runner), W7-11 (Benchmark-Prozess), W7-12 (agents.md-Standard-Kollision),
-  W7-13 (eigene Repo-Instructions), W7-15 (Tracker-Archiv).
+### Block A — Sofort (kaputt/Falschaussage)
+| # | Inhalt | Funde |
+|---|---|---|
+| A1 | Guardians lesen `git-guardrails.json` real (+`allowExceptions`, Builtin-Fallback, Tests, ADR-0004) | P1 |
+| A2 | `ci.yml` neu (Root-Scripts `--strict`, Maturity-Drift-Step, toter dotnet-Step raus) + Lockfile committen (`npm ci` ohne Fallback) + artifact-viewer-test-Script komplettieren | P2, W1-2, W2-3 |
+| A3 | Version-Drift fixen (7 Plugins) + Validator-Warning + Test | P3 |
+| A4 | ARCHITECTURE §2.9: 8 Hook-Events | P5 |
+| A5 | `prepare: tsc` in den 3 TS-Servern (frischer Clone lauffähig); ADR-0005 korrigieren (ersetzt altes C1) | W1-1 |
+| A6 | anonymizer-proxy maskiert auch `msg.error` | W2-1 |
+| A7 | EFF-Large-Wordlist (7776) für Passphrasen + Entropie-Test | W7-1 |
+| A8 | blazor: postToolUse-vuln-Hook entfernen (Skill bleibt on-demand) | W5-1 |
+| A9 | `home/visual/policy/cdn-allowlist.json` anlegen (inkl. markmap/vis-timeline/excalidraw) | W6-1 |
+| A10 | MCP-Install-Story: README-Setup + `tools/setup-mcp-servers.sh` (build + npm link) | W2-2 |
+
+### Block B — Danach (Sicherheits-Substanz)
+| # | Inhalt | Funde |
+|---|---|---|
+| B1 | PII: Checksum-Validatoren (iban/luhn/steuerid) + Presidio-Patterns/-Vektoren als Daten + Testvektor-Suite; IPv6/Adressen = Anti-Ziel | P6, W7-4 |
+| B2 | Guardian-Token-Scan liest die gebündelte `betterleaks.toml` (eine Quelle statt Hardcode) + Tests | P7, W7-3 |
+| B3 | Fail-closed bei nicht-leerem unparsebarem Hook-Input (Work+Home) + Tests | P8 |
+| B4 | Hook-Tests komplett (audit-*, notify via PATH-Shim, dotnet-vuln-Skript-Test) + ps1-Syntax-Check in CI | P9 |
+| B5 | `.gitignore`: pauschal `.copilot/state/` | W1-3 |
+| B6 | alarm-mcp: async `spawn` statt `spawnSync`; Store-Default home-basiert (`~/.copilot/state/`) | W2-4, W2-5 |
+| B7 | Masker-Perf (Persist-Debounce, unmask-Early-out) + Proxy-Integrationstest (Echo-Downstream) | W2-6, W2-7 |
+
+### Block C — Dann (Prozess/Robustheit)
+| # | Inhalt | Funde |
+|---|---|---|
+| C2 | Dogfooding: `.githooks/pre-push` + **eigenes Root-AGENTS.md/.github/copilot-instructions.md** | P13, W7-13 |
+| C3 | `--maturity-gaps` (Regressionen + optionale skill-targets.json) | P14 |
+| C4 | workflow-router: optional-Steps, list/prune, atomares advance, `--resume`-Doku, `describe --markdown` (docs-from-code), `workflows.json` + Code-Gleichheits-Check Work/Home, run-state-Tests | P18, W7-6, W7-7 |
+| C5 | profile-switch: sessionStart-Erinnerung + Slash-vs-CLI-Präzisierung | P19, W7-14 |
+
+### Block D — Doku-Konsistenz
+| # | Inhalt | Funde |
+|---|---|---|
+| D1 | Konzept-Docs auf Realität (fun raus, Zahlen, Hook-Einordnung); tote Env-Vars (ONENOTE, ADO_TEAM_ID) streichen; Env-Tabellen: eine Quelle (README) + Verweise | W3-1, W3-3 |
+| D2 | AGENTS.md: Umgebungs-Einordnung der Felder (Matrix-Verweis), loop-Zeilen + Toolnamen fixen; **Kollision mit agents.md-Standard lösen** (Umbenennung `CONVENTIONS.md` o. ä.) | W4-1, W7-12 |
+| D3 | CONTRIBUTING neu: Paket-Standard-Flow (skill-author → `--skill`-Validate → evals → maturity) | W4-2 |
+| D4 | Guide ↔ ADR-0006: Referenz-Layout einheitlich (`reference.md` ∨ `references/` ab 2 Dateien) | W3-2 |
+| D5 | `area design/api`-Description fixen; findings-schema: Pflicht/optional kennzeichnen | W1-4, W1-5 |
+| D6 | uplift-tracker: erledigte Wellen archivieren | W7-15 |
+| D7 | Benchmark-Prozess (anthropics/skills + awesome-copilot Vergleich) in den Guide | W7-11 |
+
+### Block E — Interop/Qualität
+| # | Inhalt | Funde |
+|---|---|---|
+| E1 | SARIF-2.1-Adapter `tools/findings-to-sarif.mjs` + Export in review-aggregate | W7-2 |
+| E2 | JSON Schemas (`docs/schemas/*.schema.json`) für findings/eval-cases/profiles/guardrails/labels | W7-9 |
+| E3 | CDN: Major-Pins + SRI-Hashes in Renderern/Allowlists | W5-2, W7-8 |
+| E4 | Cross-MP-Verweis (pw-explore) entfernen + Validator-Regel „Skill-Verweise nur im eigenen Marketplace" | W4-3 |
+| E5 | test-Glob statt Datei-Liste; Root-`engines`+`.nvmrc` | W1-6, W1-7 |
+| E6 | Renderer: `escapeHtml(title)`; Docker-Voraussetzung (Home github-MCP) dokumentieren | W2-8, W6-2 |
+
+### Zurückgestellt (bewusst NICHT im Plan)
+W7-5 (Sprachmix) · W7-10 (promptfoo/Behaviour-Runner) · P15/P16/P17/P20 (strategisch) ·
+P11 (realer Install-Test — liegt beim User).
+
+**Reihenfolge:** A → B → C → D → E, Commit je kohärentem Schritt, `npm test` grün vor jedem Push.
