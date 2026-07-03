@@ -1,0 +1,30 @@
+# betterleaks.toml — Token-Pattern-Quelle für den Home-Guardian (pre-tool-guardian-warn.sh).
+# Der Hook liest die [[rules]]-Regexe hier als Secret-Scan Stufe 2 (Rule-ID wird gemeldet,
+# nie der Treffer). Liegt im Nutzer-Repo eine .betterleaks.toml an der Wurzel, hat DIE Vorrang —
+# dann ist das Repo-File die Single Source für pre-push-Scan UND Guardian.
+# Format: https://github.com/betterleaks/betterleaks
+title = "betterleaks (home guardian token patterns)"
+
+[[rules]]
+id = "github-pat"
+description = "GitHub Personal Access Token"
+regex = '''ghp_[0-9A-Za-z]{36}'''
+keywords = ["ghp_"]
+
+[[rules]]
+id = "github-fine-grained-pat"
+description = "GitHub fine-grained PAT"
+regex = '''github_pat_[0-9A-Za-z_]{82}'''
+keywords = ["github_pat_"]
+
+[[rules]]
+id = "aws-access-key"
+description = "AWS Access Key ID"
+regex = '''AKIA[0-9A-Z]{16}'''
+keywords = ["AKIA"]
+
+[[rules]]
+id = "private-key"
+description = "Private key block (RSA/EC/OPENSSH/PGP)"
+regex = '''-----BEGIN (?:RSA |EC |OPENSSH |PGP )?PRIVATE KEY-----'''
+keywords = ["PRIVATE KEY"]

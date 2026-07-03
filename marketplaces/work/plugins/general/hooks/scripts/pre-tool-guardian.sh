@@ -31,6 +31,34 @@ if printf '%s' "$TOOL_ARGS" | grep -qiE '(password|secret|token|api[_-]?key|pat)
   exit 0
 fi
 
+# Secret-Scan Stufe 2: konkrete Token-Regexe aus betterleaks.toml (Single Source — dieselben
+# Rules wie der pre-push-Hook). Reihenfolge: $BETTERLEAKS_CONFIG (Tests/Override) →
+# ./.betterleaks.toml (Nutzer-Repo) → gebündeltes Template. Ausgabe ist nur die Rule-ID,
+# nie der Treffer selbst (Secrets erscheinen niemals im Klartext).
+BL_BUNDLED="$SCRIPT_DIR/../../skills/secrets-prepush-hook/templates/betterleaks.toml"
+BL_HIT=$(TOOL_ARGS="$TOOL_ARGS" BL_BUNDLED="$BL_BUNDLED" node -e '
+  const fs = require("fs");
+  const args = process.env.TOOL_ARGS || "";
+  const candidates = [process.env.BETTERLEAKS_CONFIG, ".betterleaks.toml", process.env.BL_BUNDLED].filter(Boolean);
+  let toml = "";
+  for (const f of candidates) { try { toml = fs.readFileSync(f, "utf8"); break; } catch {} }
+  // TOML-Minimalparser: id + regex je [[rules]]-Block (Triple-Quote via \x27, kein Dep noetig)
+  const ruleRe = new RegExp("\\[\\[rules\\]\\][\\s\\S]*?id\\s*=\\s*\"([^\"]+)\"[\\s\\S]*?regex\\s*=\\s*\\x27{3}([\\s\\S]*?)\\x27{3}", "g");
+  let m;
+  while ((m = ruleRe.exec(toml))) {
+    try {
+      if (new RegExp(m[2].trim()).test(args)) {
+        process.stdout.write(m[1].replace(/[^A-Za-z0-9_-]/g, ""));
+        break;
+      }
+    } catch {}
+  }
+' 2>/dev/null || printf '')
+if [ -n "$BL_HIT" ]; then
+  echo "{\"permissionDecision\":\"deny\",\"permissionDecisionReason\":\"Secret-Scan (betterleaks): ${BL_HIT} pattern detected in tool arguments\"}"
+  exit 0
+fi
+
 # Tool-guardian deny list (block)
 DENY_PATTERNS=("rm -rf" "curl http://" "wget http://" "Invoke-WebRequest")
 for pattern in "${DENY_PATTERNS[@]}"; do

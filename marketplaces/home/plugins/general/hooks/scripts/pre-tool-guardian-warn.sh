@@ -23,6 +23,32 @@ if printf '%s' "$TOOL_ARGS" | grep -qiE '(password|secret|token|api[_-]?key|pat)
   exit 0
 fi
 
+# Secret-Scan Stufe 2: konkrete Token-Regexe aus betterleaks.toml — BLOCK auch im warn-Modus.
+# Reihenfolge: $BETTERLEAKS_CONFIG (Tests/Override) → ./.betterleaks.toml (Nutzer-Repo) →
+# gebündelte policy/betterleaks.toml. Ausgabe nur die Rule-ID, nie der Treffer.
+BL_BUNDLED="$SCRIPT_DIR/../../policy/betterleaks.toml"
+BL_HIT=$(TOOL_ARGS="$TOOL_ARGS" BL_BUNDLED="$BL_BUNDLED" node -e '
+  const fs = require("fs");
+  const args = process.env.TOOL_ARGS || "";
+  const candidates = [process.env.BETTERLEAKS_CONFIG, ".betterleaks.toml", process.env.BL_BUNDLED].filter(Boolean);
+  let toml = "";
+  for (const f of candidates) { try { toml = fs.readFileSync(f, "utf8"); break; } catch {} }
+  const ruleRe = new RegExp("\\[\\[rules\\]\\][\\s\\S]*?id\\s*=\\s*\"([^\"]+)\"[\\s\\S]*?regex\\s*=\\s*\\x27{3}([\\s\\S]*?)\\x27{3}", "g");
+  let m;
+  while ((m = ruleRe.exec(toml))) {
+    try {
+      if (new RegExp(m[2].trim()).test(args)) {
+        process.stdout.write(m[1].replace(/[^A-Za-z0-9_-]/g, ""));
+        break;
+      }
+    } catch {}
+  }
+' 2>/dev/null || printf '')
+if [ -n "$BL_HIT" ]; then
+  echo "{\"permissionDecision\":\"deny\",\"permissionDecisionReason\":\"Secret-Scan (betterleaks): ${BL_HIT} pattern detected in tool arguments\"}"
+  exit 0
+fi
+
 # Forkbomb-Signatur oder rm -rf /: BLOCK
 if printf '%s' "$TOOL_ARGS" | grep -qF ':(){' || printf '%s' "$TOOL_ARGS" | grep -qE 'rm -rf /'; then
   echo '{"permissionDecision":"deny","permissionDecisionReason":"Tool-Guardian: destructive system command blocked"}'
