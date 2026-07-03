@@ -93,6 +93,16 @@ test('policy missing → builtin fallback still guards (fail-safe)', () => {
   assert.equal(decideWithPolicy(WORK_GUARDIAN, 'git status', '/nonexistent/p.json'), 'allow');
 });
 
+// --- B3: fail-closed bei unparsbarem Hook-Input ---
+test('unparseable non-empty input → deny (fail-closed), leerer Input → allow', () => {
+  for (const script of [WORK_GUARDIAN, HOME_GUARDIAN]) {
+    const bad = execFileSync('bash', [script], { input: 'not json{{{', encoding: 'utf8' });
+    assert.equal(JSON.parse(bad).permissionDecision, 'deny', `${script} muss Garbage blocken`);
+    const empty = execFileSync('bash', [script], { input: '', encoding: 'utf8' });
+    assert.equal(JSON.parse(empty).permissionDecision, 'allow', `${script} muss leeren Input erlauben`);
+  }
+});
+
 // --- B2: Secret-Scan Stufe 2 liest Token-Patterns aus betterleaks.toml (Single Source) ---
 const GHP = 'ghp_' + 'A1b2C3d4E5f6G7h8I9j0K1l2M3n4O5p6Q7r8'; // 36 alnum, kein echtes Token
 

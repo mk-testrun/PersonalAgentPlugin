@@ -8,6 +8,15 @@ INPUT=$(cat)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 POLICY="${GIT_GUARDRAILS_POLICY:-$SCRIPT_DIR/../../policy/git-guardrails.json}"
 
+# Fail-closed: nicht-leerer Input, der kein JSON ist, wird geblockt (auch im warn-Modus) —
+# ein Guardian, der seinen Input nicht versteht, darf nichts durchwinken. Leer → allow.
+if [[ "$INPUT" =~ [^[:space:]] ]]; then
+  if ! printf '%s' "$INPUT" | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{try{JSON.parse(s)}catch{process.exit(1)}})' 2>/dev/null; then
+    echo '{"permissionDecision":"deny","permissionDecisionReason":"Guardian: unparseable hook input (fail-closed)"}'
+    exit 0
+  fi
+fi
+
 TOOL_ARGS=$(printf '%s' "$INPUT" | node -e '
   let s = "";
   process.stdin.on("data", d => s += d).on("end", () => {
