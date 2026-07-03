@@ -36,6 +36,15 @@ Marketplaces; Konfiguration als `policy/git-guardrails.json` im jeweiligen `gene
 `--force-with-lease` bleibt bewusst **erlaubt** (verliert keine fremden Commits — der sichere Weg, einen
 rebasten Branch zu pushen).
 
+## Update 2026-07-02 — Policy wird jetzt real gelesen
+
+Ursprünglich waren die Patterns im Shell-Skript hart kodiert und `policy/git-guardrails.json` war
+dekorativ. Jetzt lesen beide Guardians die Policy-Datei (Pfad relativ zum Skript; Override für Tests:
+`GIT_GUARDRAILS_POLICY`). Die `force-with-lease`-Ausnahme steht als `allowExceptions` in der Policy.
+**Fail-safe:** ist die Policy unlesbar, greift eine eingebaute Minimal-Liste (force-push, reset --hard,
+filter-branch/-repo) — Guardrails verschwinden nie stillschweigend. Home: `blockAlways` sind Regex,
+`warn` sind Substrings.
+
 ## Konsequenzen
 - **Positiv:** die teuersten Fehler (force-push main, hard reset) sind in Work unmöglich, in Home beim
   main geschützt; die Liste ist als JSON pflegbar.

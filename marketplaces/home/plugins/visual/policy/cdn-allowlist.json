@@ -1,0 +1,13 @@
+{
+  "note": "Erlaubte CDN-Quellen für generierte HTML-Artefakte der visual-Skills. Major-gepinnt — unversionierte URLs sind nicht erlaubt (Supply-Chain). SRI-Hashes folgen (Plan E3).",
+  "allowed": [
+    "https://cdn.jsdelivr.net/npm/chart.js@4",
+    "https://cdn.jsdelivr.net/npm/gridjs@6",
+    "https://cdn.jsdelivr.net/npm/mermaid@10",
+    "https://cdn.jsdelivr.net/npm/reveal.js@5",
+    "https://cdn.jsdelivr.net/npm/markmap-autoloader@0.16",
+    "https://cdn.jsdelivr.net/npm/vis-timeline@7",
+    "https://unpkg.com/chart.js@4",
+    "https://unpkg.com/mermaid@10"
+  ]
+}

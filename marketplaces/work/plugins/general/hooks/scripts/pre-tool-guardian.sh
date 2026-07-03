@@ -1,8 +1,13 @@
 #!/usr/bin/env bash
 # preToolUse: secret-scan (block) + tool-guardian (block) + git-guardrails (block)
 # JSON wird mit node geparst (Node ist Projekt-Voraussetzung; python3 ist es nicht).
+# Git-Guardrails kommen aus policy/git-guardrails.json (Override: GIT_GUARDRAILS_POLICY);
+# ist die Policy unlesbar, greift eine eingebaute Minimal-Liste (fail-safe: Guardrails
+# verschwinden nie stillschweigend).
 set -euo pipefail
 INPUT=$(cat)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+POLICY="${GIT_GUARDRAILS_POLICY:-$SCRIPT_DIR/../../policy/git-guardrails.json}"
 
 # --- JSON-Felder via node extrahieren (fail-open bei Parse-Fehler, wie zuvor) ---
 extract() {
@@ -35,28 +40,44 @@ for pattern in "${DENY_PATTERNS[@]}"; do
   fi
 done
 
-# Git-Guardrails (policy/git-guardrails.json)
-# Force-push auf protected branches — immer block. --force-with-lease ist bewusst erlaubt (ADR-0004):
-# verliert keine fremden Commits. Deshalb NUR greifen, wenn KEIN force-with-lease vorliegt.
-if printf '%s' "$TOOL_ARGS" | grep -qE 'git push.*(--force|-f)' && ! printf '%s' "$TOOL_ARGS" | grep -q 'force-with-lease'; then
-  if printf '%s' "$TOOL_ARGS" | grep -qE '(main|master|develop|release/)'; then
-    echo '{"permissionDecision":"deny","permissionDecisionReason":"Git-Guardrail: force-push auf protected branch verboten"}'
-    exit 0
-  fi
-  echo '{"permissionDecision":"deny","permissionDecisionReason":"Git-Guardrail: git push --force ohne --force-with-lease blockiert"}'
-  exit 0
-fi
-# Weitere gefährliche Git-Operationen — block
-GIT_DENY=("git reset --hard" "git clean -fd" "git clean -fdx" "git branch -D" "git checkout -f" "git switch -f" "git update-ref -d" "git reflog delete" "git filter-branch" "git filter-repo")
-for pattern in "${GIT_DENY[@]}"; do
-  if printf '%s' "$TOOL_ARGS" | grep -qF "$pattern"; then
-    echo '{"permissionDecision":"deny","permissionDecisionReason":"Git-Guardrail: '"$pattern"' blockiert"}'
-    exit 0
-  fi
-done
-# git rebase auf shared branches
-if printf '%s' "$TOOL_ARGS" | grep -qE 'git rebase.*(main|master|develop)'; then
-  echo '{"permissionDecision":"deny","permissionDecisionReason":"Git-Guardrail: git rebase auf shared branch blockiert"}'
+# --- Git-Guardrails: Entscheidung aus der Policy-Datei (ADR-0004) ---
+GUARD=$(TOOL_ARGS="$TOOL_ARGS" POLICY="$POLICY" node -e '
+  const fs = require("fs");
+  let args = "";
+  try { args = JSON.parse(process.env.TOOL_ARGS || "\"\""); } catch { args = process.env.TOOL_ARGS || ""; }
+  if (typeof args !== "string") args = JSON.stringify(args);
+
+  // Policy laden — Fallback auf eingebaute Minimal-Liste (fail-safe).
+  const FALLBACK = {
+    block: ["git reset --hard", "git clean -fd", "git filter-branch", "git filter-repo"],
+    blockBranches: ["main", "master", "develop", "release/"],
+    allowExceptions: ["force-with-lease"],
+  };
+  let policy;
+  try { policy = JSON.parse(fs.readFileSync(process.env.POLICY, "utf8")); }
+  catch { policy = FALLBACK; }
+
+  const deny = reason => { process.stdout.write(reason); process.exit(0); };
+  const hasException = (policy.allowExceptions ?? ["force-with-lease"]).some(e => args.includes(e));
+
+  // Force-Push: --force-with-lease ist bewusst erlaubt (ADR-0004).
+  if (/git push[^|;&]*(--force|\s-f\b)/.test(args) && !hasException) {
+    if ((policy.blockBranches ?? []).some(b => args.includes(b)))
+      deny("Git-Guardrail: force-push auf protected branch verboten");
+    deny("Git-Guardrail: git push --force ohne --force-with-lease blockiert");
+  }
+  // Übrige Block-Patterns aus der Policy (Push-Einträge oben behandelt).
+  for (const p of policy.block ?? []) {
+    if (p.startsWith("git push")) continue;
+    if (args.includes(p)) deny(`Git-Guardrail: ${p} blockiert`);
+  }
+  // Rebase auf shared branches.
+  if (/git rebase/.test(args) && (policy.blockBranches ?? []).some(b => args.includes(b)))
+    deny("Git-Guardrail: git rebase auf shared branch blockiert");
+' 2>/dev/null || printf '')
+
+if [ -n "$GUARD" ]; then
+  echo "{\"permissionDecision\":\"deny\",\"permissionDecisionReason\":\"$GUARD\"}"
   exit 0
 fi
 

@@ -24,8 +24,10 @@ Plugin bündeln. Wir brauchen eine verbindliche Grundform.
    - **Default: dependency-free Node ESM** (`.mjs`, nur Built-ins). Kein `npm install` nötig → im Plugin
      bündelbar. Beispiele: anonymizer-proxy, supertonic.
    - **TypeScript + `@modelcontextprotocol/sdk`** nur, wenn ein deklaratives Tool-Schema + Zod-Validierung
-     den Aufwand rechtfertigt (password-gen, alarm-mcp, artifact-viewer). Build via `tsc` → committetes
-     `dist/`, `bin` zeigt auf `dist/index.js`.
+     den Aufwand rechtfertigt (password-gen, alarm-mcp, artifact-viewer). Build via `tsc`; `dist/` ist
+     **gitignored** — jedes TS-Paket hat ein `"prepare": "tsc"`-Script, sodass `npm install` den Build
+     automatisch erzeugt (Korrektur 2026-07-02; ursprünglich stand hier fälschlich „committetes dist/").
+     `bin` zeigt auf `dist/index.js`.
 2. **Wiring:** immer über **Binärname** (`{"command":"<bin>"}`), nie relativer Pfad (§2.4). `package.json`
    deklariert `bin`; Root-Workspaces = `mcp-servers/*`.
 3. **Sicherheit:** fail-closed — ein Server crasht nie unkontrolliert; unerwartete Fehler werden geloggt
@@ -38,9 +40,12 @@ Plugin bündeln. Wir brauchen eine verbindliche Grundform.
 ## Konsequenzen
 - **Positiv:** dep-freie Server sind in Plugins bündelbar und sofort lauffähig; TS-Server bleiben dort, wo
   Typen zählen; einheitliches Test-Layout.
-- **Kosten:** TS-Server brauchen ein committetes `dist/` (muss nach `src`-Änderung neu gebaut werden — CI
-  sollte das prüfen); zwei Muster statt einem = eine Entscheidung mehr pro neuem Server (Regel in 1 löst sie).
+- **Kosten:** TS-Server erfordern einen Build-Schritt; `prepare` macht ihn bei `npm install`
+  automatisch, CI baut frisch — es gibt keinen committeten Build-Output, der driften könnte.
+  Zwei Muster statt einem = eine Entscheidung mehr pro neuem Server (Regel in 1 löst sie).
+- Die Binärnamen müssen auf den PATH (z. B. `npm link` je Server) — Setup siehe Root-README.
 
 ## Offene Fragen
-- Soll CI erzwingen, dass `dist/` mit `src/` übereinstimmt (rebuild + `git diff --exit-code`)?
+- ~~Soll CI dist↔src-Übereinstimmung erzwingen?~~ **Aufgelöst 2026-07-02:** dist ist nicht committet;
+  `prepare` + frischer CI-Build machen die Frage gegenstandslos.
 - Reicht der Node-native Test-Runner, oder lohnt ein gemeinsames Mini-Harness in `mcp-servers/`?

@@ -135,10 +135,14 @@ async function main() {
       return;
     }
 
-    // Mask results coming from downstream
+    // Mask results coming from downstream — and errors: JSON-RPC error objects
+    // (message/data) can carry PII too ("user john.doe@corp.com not found").
     try {
       if (msg.result !== undefined) {
         msg.result = masker.maskDeep(msg.result);
+      }
+      if (msg.error !== undefined) {
+        msg.error = masker.maskDeep(msg.error);
       }
     } catch (e) {
       if (e instanceof BlockedError) {

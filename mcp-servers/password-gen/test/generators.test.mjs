@@ -110,4 +110,13 @@ t('current_time: invalid timezone throws (server maps to isError)', () => {
   assert.throws(() => formatTime('Mars/Olympus', 'iso', new Date()));
 });
 
+// --- A7: EFF wordlist entropy floor ---
+const { WORDLIST } = await import('../dist/wordlist.js');
+t('passphrase wordlist: >=7776 unique words (>=64 bits @ 5 words)', () => {
+  assert.ok(WORDLIST.length >= 7776, `wordlist too small: ${WORDLIST.length}`);
+  assert.equal(new Set(WORDLIST).size, WORDLIST.length, 'duplicates in wordlist');
+  const bits = 5 * Math.log2(WORDLIST.length);
+  assert.ok(bits >= 64, `5-word passphrase entropy too low: ${bits.toFixed(1)} bits`);
+});
+
 console.log(`\nAll generator tests passed (${n} checks).`);

@@ -17,5 +17,6 @@
     "git filter-repo"
   ],
   "blockBranches": ["main", "master", "develop", "release/"],
-  "note": "git rebase auf shared branches (main/master/develop) ebenfalls blockiert."
+  "allowExceptions": ["force-with-lease"],
+  "note": "git rebase auf shared branches (main/master/develop) ebenfalls blockiert. allowExceptions: enthält ein Kommando eine dieser Zeichenketten, greifen die Push-Guardrails nicht (ADR-0004: --force-with-lease ist der sichere Weg)."
 }

@@ -3,19 +3,12 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
 import { randomBytes, randomUUID, createHash } from 'crypto';
+import { WORDLIST } from './wordlist.js';
 
 const LOWERCASE = 'abcdefghjkmnpqrstuvwxyz'; // ambiguity-free (no i,l,o)
 const UPPERCASE = 'ABCDEFGHJKLMNPQRSTUVWXYZ'; // no I,O
 const DIGITS    = '23456789';                  // no 0,1
 const SYMBOLS   = '!@#$%^&*-_=+?';
-
-const WORDLIST = [
-  'alpha','bravo','charlie','delta','echo','foxtrot','golf','hotel','india','juliet',
-  'kilo','lima','mike','november','oscar','papa','quebec','romeo','sierra','tango',
-  'uniform','victor','whiskey','xray','yankee','zulu','solar','lunar','river','ocean',
-  'forest','storm','ember','frost','prism','quartz','ridge','vault','nexus','orbit',
-  'pixel','cipher','token','beacon','bridge','canopy','drift','epoch','flare','grove',
-];
 
 function generatePassword(length: number, symbols: boolean, count: number): string[] {
   const charset = LOWERCASE + UPPERCASE + DIGITS + (symbols ? SYMBOLS : '');

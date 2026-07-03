@@ -11,7 +11,8 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
-    "test": "node test/fallback.test.mjs"
+    "test": "node test/fallback.test.mjs",
+    "prepare": "tsc"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.12.0",
