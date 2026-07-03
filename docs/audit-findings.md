@@ -216,6 +216,83 @@
 
 ---
 
+### W7 — KI-Experten-Pass (Kalibrierung · Upstream statt Eigenbau · bessere Techniken · Abgucken)
+
+- **🔴 W7-1 Passphrasen sind kryptografisch schwach — published Wordlist nutzen.** `password-gen`
+  wirbt mit „cryptographically secure", die Diceware-Wortliste hat aber nur **50 Wörter** →
+  5-Wort-Passphrase = **28,2 bits** Entropie (trivial knackbar). Die **EFF-Large-Wordlist** (7776
+  Wörter, public domain, der publizierte Standard) liefert **64,6 bits**.
+  → EFF-Liste als JSON einbetten (dep-frei), Test auf Entropie-Untergrenze.
+
+- **🟠 W7-2 `findings[]` ist ein Eigenbau-Schema — SARIF ist der Industriestandard.** OASIS SARIF 2.1
+  ist das Findings-Format, das GitHub Code Scanning, IDEs und alle SAST-Tools sprechen.
+  → findings[] als schlankes LLM-Format **behalten**, aber `tools/findings-to-sarif.mjs`-Adapter
+  bauen (+ SARIF-Export in review-aggregate) — damit sind Review-Ergebnisse in GitHub Code Scanning
+  hochladbar und mit jedem SARIF-Tool auswertbar.
+
+- **🟠 W7-3 Guardian-Secret-Patterns doppelt gepflegt statt aus der gebündelten Quelle.** Plan-B2
+  will Token-Regexes im Hook hart kodieren — dabei **shippen wir die Regexes schon** in
+  `templates/betterleaks.toml`. → Guardian parst die TOML (Node-Einzeiler) → EINE Quelle für
+  Pre-Push-Scan, Guardian und secrets-scan. (Verbessert B2.)
+
+- **🟠 W7-4 PII-Patterns nicht selbst erfinden — Presidio-Wissen übernehmen.** Microsoft Presidio
+  (published, battle-tested, inkl. DE-Recognizern) definiert genau die Pattern+Checksum-Kombis, die
+  B1 bauen will. Nicht als Dependency (Python), aber: **Pattern-Definitionen und Testvektoren als
+  Daten übernehmen** statt eigene Regexes zu erraten. (Verbessert B1.)
+
+- **🟡 W7-5 Sprachmix in der Discovery-Schicht:** 133 Descriptions DE, **18 EN** — exakt die
+  Flagships (review/*, e2e-codegen, confluence-format, …). Semantisches Matching verkraftet das,
+  aber der Katalog wirkt inkonsistent und Trigger-Vorhersagbarkeit leidet.
+  → Eine Sprache festlegen (vermutlich DE, da Nutzer-Prompts DE) und die 18 umziehen — Entscheidung.
+
+- **🟡 W7-6 Der feature-Workflow ist 6× beschrieben** (Skript = Wahrheit, dazu SKILL, reference,
+  examples, Command, ARCHITECTURE) — die Drift-Gefahr steht schon in reference.md §3 („Tabellen
+  nachziehen"). **Bessere Technik: docs-from-code** — `run-state.mjs describe --markdown` generiert
+  die Schritt-Tabellen, reference/Commands betten das Generat ein. (Verbessert C4.)
+
+- **🟡 W7-7 `run-state.mjs` ist Work/Home code-dupliziert, nur die Daten differieren.**
+  → Code identisch halten (CI-Gleichheits-Check per `diff`), WORKFLOWS in eine `workflows.json`
+  je Marketplace auslagern — Zwei-Welten bleibt (Daten pro Welt), Drift wird prüfbar. (C4.)
+
+- **🟡 W7-8 CDN-Pinning ohne SRI ist halbe Miete.** Bessere Technik: **Subresource Integrity** —
+  generierte HTML-Artefakte laden CDN-Skripte mit `integrity="sha384-…" crossorigin` und die
+  Allowlist führt Hashes statt nur URL-Präfixe. (Verschärft W5-2.)
+
+- **🟡 W7-9 Eigene Formate ohne maschinenlesbares Schema.** findings, eval-cases, profiles,
+  git-guardrails, labels sind nur in Prosa-Markdown definiert. → `docs/schemas/*.schema.json`
+  (JSON Schema 2020-12) publizieren: `$schema`-Zeile gibt Editor-Autocomplete, Validator prüft
+  dagegen, Verträge werden explizit.
+
+- **🟡 W7-10 Behaviour-Runner (P15) nicht selbst bauen — erst promptfoo evaluieren.** Published
+  Eval-Framework mit LLM-Judge, Assertions, CI-Integration und Custom-Providern; unsere
+  `cases.json` (query/expected_behavior/expected_tools) mappt fast 1:1 auf dessen Format.
+  Adapter statt Eigenbau spart Wochen.
+
+- **🟡 W7-11 „Abgucken" zum Prozess machen:** je ein 1:1-Vergleich unserer Flagships mit published
+  Gegenstücken (`anthropics/skills` skill-creator/document-skills, `github/awesome-copilot`
+  security-review) und konkrete Strukturideen portieren — z. B. deren „when NOT to use"-Sektionen
+  und Checklisten-Formate. Als wiederkehrenden Schritt in den Authoring-Guide aufnehmen.
+
+- **🟡 W7-12 Unsere `AGENTS.md` kollidiert mit dem published agents.md-Standard.** Der offene
+  Standard (agents.md, von Copilot & Co. gelesen) definiert AGENTS.md als **Instruktionsdatei für
+  Coding-Agenten**; unsere zwei AGENTS.md sind Konventions-Doku pro Marketplace. Tools, die den
+  Standard lesen, füttern dem Agenten also Governance-Tabellen als Anweisungen.
+  → Umbenennen (z. B. `CONVENTIONS.md`) **oder** inhaltlich zum Standard machen.
+
+- **🟡 W7-13 Fehlende Selbstanwendung: dieses Repo hat keine eigenen Agent-Instructions.** Wir
+  bauen Generatoren (`agents-md-generate`, copilot-instructions), aber das Repo selbst hat weder
+  Root-`AGENTS.md` noch `.github/copilot-instructions.md` mit den Kernregeln (dep-free ESM,
+  Zwei-Welten, Validator-Gates, Commit-Konventionen). → Dogfooding: selbst anlegen.
+
+- **🟡 W7-14 profile-switch: Slash-Form-Präzision.** `/mcp enable …` kann nur der **Nutzer** tippen;
+  der Agent kann nur `copilot mcp …` via execute ausführen. SKILL/Command sagen das nicht explizit —
+  Risiko, dass der Agent Slash-Kommandos „ausführen" will. → Ein klärender Satz in SKILL + Command.
+
+- **⚪ W7-15 `skill-uplift-tracker.md` wächst unbegrenzt** — erledigte Wellen 1–5 in einen
+  Archiv-Abschnitt/Datei falten, nur Aktives oben halten.
+
+---
+
 ## Fazit & Auswirkung auf den Plan (Teil 1)
 
 **Zwei Funde ändern bestehende Plan-Punkte:**
@@ -226,7 +303,13 @@
 
 **Empfohlene Priorisierung der neuen Funde** (nach Entscheidung einzeln in Blöcke einsortieren):
 - **Sofort-Kandidaten (funktional kaputt / Falschaussage):** W1-1 (prepare/dist), W1-2 (Lockfile),
-  W2-1 (error-Leak im PII-Proxy), W2-2 (PATH-Install-Story), W6-1 (Home-CDN-Allowlist), W5-1 (dotnet-vuln-Kosten).
-- **Mit A/B/C mitnehmen (gleiche Baustellen):** W1-3 (.gitignore state/), W2-3 (test-Script),
-  W3-1 (Konzept-Docs), W4-1/W4-2 (AGENTS/CONTRIBUTING), A3-Nachbar W1-4 (area design/api).
-- **Backlog:** W1-5/6/7, W2-4..8, W3-2/3, W4-3, W5-2, W6-2.
+  W2-1 (error-Leak im PII-Proxy), W2-2 (PATH-Install-Story), W6-1 (Home-CDN-Allowlist),
+  W5-1 (dotnet-vuln-Kosten), **W7-1 (28-bit-Passphrasen → EFF-Wordlist)**.
+- **Mit A/B/C mitnehmen (gleiche Baustellen, teils als bessere Umsetzung):** W1-3 (.gitignore state/),
+  W2-3 (test-Script), W3-1 (Konzept-Docs), W4-1/W4-2 (AGENTS/CONTRIBUTING), W1-4 (area design/api),
+  **W7-3 (B2 liest betterleaks.toml statt Hardcode)**, **W7-4 (B1 nutzt Presidio-Patterns)**,
+  **W7-6/W7-7 (C4: docs-from-code + workflows.json)**, **W7-8 (SRI zu W5-2)**, **W7-14 (C5-Satz)**.
+- **Backlog (einzeln entscheiden):** W1-5/6/7, W2-4..8, W3-2/3, W4-3, W5-2, W6-2,
+  W7-2 (SARIF-Adapter), W7-5 (Sprachkonsistenz), W7-9 (JSON Schemas), W7-10 (promptfoo statt
+  Eigenbau-Runner), W7-11 (Benchmark-Prozess), W7-12 (agents.md-Standard-Kollision),
+  W7-13 (eigene Repo-Instructions), W7-15 (Tracker-Archiv).
