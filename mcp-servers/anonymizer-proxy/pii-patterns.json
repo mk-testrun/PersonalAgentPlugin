@@ -4,12 +4,21 @@
       "name": "IBAN",
       "regex": "\\b[A-Z]{2}\\d{2}[A-Z0-9]{11,30}\\b",
       "flags": "g",
+      "validator": "iban",
       "replace": null
     },
     {
       "name": "SteuerID",
       "regex": "\\b\\d{11}\\b",
       "flags": "g",
+      "validator": "steuerid",
+      "replace": null
+    },
+    {
+      "name": "CreditCard",
+      "regex": "\\b(?:\\d[ -]?){12,18}\\d\\b",
+      "flags": "g",
+      "validator": "luhn",
       "replace": null
     }
   ],
@@ -34,9 +43,15 @@
     },
     {
       "name": "PhoneDE",
-      "regex": "(?:\\+49|0)[\\s\\-]?\\(?\\d{2,5}\\)?[\\s\\-]?\\d{3,}[\\s\\-]?\\d{0,}",
+      "regex": "(?<!\\d)(?:\\+49|0049|0)[\\s\\-/]?\\(?[1-9]\\d{1,4}\\)?[\\s\\-/]?\\d{3,8}(?:[\\s\\-]?\\d{1,6})?(?!\\d)",
       "flags": "g",
       "replace": "<Phone_{hash:6}>"
+    },
+    {
+      "name": "IPv4",
+      "regex": "\\b(?:(?:25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.){3}(?:25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\b",
+      "flags": "g",
+      "replace": "<IP_{hash:6}>"
     }
   ]
 }

@@ -1,6 +1,7 @@
 import { createHash } from 'crypto';
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
 import { dirname as pathDirname } from 'path';
+import { VALIDATORS } from './validators.mjs';
 
 export class BlockedError extends Error {
   constructor(category) {
@@ -12,23 +13,26 @@ export class BlockedError extends Error {
 
 export class Masker {
   /**
-   * @param {Array<{name:string,regex:string,flags?:string,replace:string|null}>} anonymizePatterns
-   * @param {Array<{name:string,regex:string,flags?:string}>} blockPatterns
+   * @param {Array<{name:string,regex:string,flags?:string,replace:string|null,validator?:string}>} anonymizePatterns
+   * @param {Array<{name:string,regex:string,flags?:string,validator?:string}>} blockPatterns
    * @param {{salt?:string, mapFile?:string}} options
+   *
+   * `validator` verweist auf eine Checksummen-Prüfung in validators.mjs (iban/luhn/steuerid);
+   * nur Regex-Treffer, die auch die Prüfziffer bestehen, gelten als PII.
    */
   constructor(anonymizePatterns, blockPatterns, { salt = 'default-salt', mapFile = null } = {}) {
     this._salt = salt;
     this._mapFile = mapFile;
     this._fwd = new Map(); // original → pseudonym
     this._rev = new Map(); // pseudonym → original
-    this._anonymizePatterns = anonymizePatterns.map(p => ({
-      ...p,
-      compiled: new RegExp(p.regex, p.flags ?? 'g'),
-    }));
-    this._blockPatterns = blockPatterns.map(p => ({
-      ...p,
-      compiled: new RegExp(p.regex, p.flags ?? 'g'),
-    }));
+    const compile = p => {
+      if (p.validator && !VALIDATORS[p.validator]) {
+        throw new Error(`Unknown validator "${p.validator}" in pattern "${p.name}"`);
+      }
+      return { ...p, compiled: new RegExp(p.regex, p.flags ?? 'g'), validate: p.validator ? VALIDATORS[p.validator] : null };
+    };
+    this._anonymizePatterns = anonymizePatterns.map(compile);
+    this._blockPatterns = blockPatterns.map(compile);
 
     if (mapFile && existsSync(mapFile)) {
       try {
@@ -68,20 +72,28 @@ export class Masker {
     }
   }
 
+  // true wenn das Pattern in str zuschlägt — mit Checksummen-Prüfung, falls konfiguriert
+  _hits(pat, str) {
+    pat.compiled.lastIndex = 0;
+    if (!pat.validate) return pat.compiled.test(str);
+    for (const m of str.matchAll(pat.compiled)) {
+      if (pat.validate(m[0])) return true;
+    }
+    return false;
+  }
+
   /** Replace a single string — mask PII, throw BlockedError on block-PII. */
   maskString(str) {
     // Check block patterns first (fail-closed)
     for (const pat of this._blockPatterns) {
-      pat.compiled.lastIndex = 0;
-      if (pat.compiled.test(str)) {
-        throw new BlockedError(pat.name);
-      }
+      if (this._hits(pat, str)) throw new BlockedError(pat.name);
     }
 
     let result = str;
     for (const pat of this._anonymizePatterns) {
       pat.compiled.lastIndex = 0;
       result = result.replace(pat.compiled, (match) => {
+        if (pat.validate && !pat.validate(match)) return match; // Checksumme falsch → kein PII
         if (this._fwd.has(match)) return this._fwd.get(match);
         const pseudonym = this._makePseudonym(match, pat.replace);
         this._fwd.set(match, pseudonym);
@@ -105,10 +117,7 @@ export class Masker {
   /** Scan for block-PII in args (client → downstream direction). Throws BlockedError. */
   scanBlockString(str) {
     for (const pat of this._blockPatterns) {
-      pat.compiled.lastIndex = 0;
-      if (pat.compiled.test(str)) {
-        throw new BlockedError(pat.name);
-      }
+      if (this._hits(pat, str)) throw new BlockedError(pat.name);
     }
   }
 

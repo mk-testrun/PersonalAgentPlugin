@@ -56,7 +56,9 @@ function makeMasker(salt = 'test-salt') {
 {
   const masker = makeMasker();
   assert.throws(
-    () => masker.scanBlockDeep({ query: 'Steuer-ID ist 12345678901' }),
+    // 86095742719 = kursierende Test-IdNr mit gültiger ISO-7064-Prüfziffer
+    // (seit B1 blocken nur Treffer, die auch die Checksumme bestehen)
+    () => masker.scanBlockDeep({ query: 'Steuer-ID ist 86095742719' }),
     (err) => err instanceof BlockedError && err.category === 'SteuerID',
     'Should throw BlockedError for SteuerID in scanBlockDeep'
   );
