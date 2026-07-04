@@ -297,6 +297,12 @@
 
 ## FINALER PLAN (Beschluss 2026-07-02: **alle** Funde aufgenommen, mit User-Korrekturen)
 
+> **✅ UMGESETZT 2026-07-04** — alle Blöcke A–E implementiert, getestet und gepusht
+> (Block A: c865e02, 74c9bb5, a6831a3 · Block B: 914f71a, fbb92f4, fe65337, 85bff84, 9d338f1 ·
+> Block C: 5b6e23a · Block D: 167d58f · Block E: 63d52c1). Endstand: validate:strict 0 Warnungen,
+> 50/50 Tool-Tests, alle 5 Server-Testsuiten grün, --maturity-gaps ohne Regression.
+> Deferred bleiben (User-Entscheid): W7-5 Sprachmix, W7-10 promptfoo, P15/P16/P17/P20, P11.
+
 **User-Entscheidungen eingearbeitet:**
 - W4-1: Felder sind umgebungsspezifisch, nicht „veraltet" — AGENTS.md ordnet ein statt zu verbieten.
 - W4-3: Cross-Marketplace-Verweis **entfernen + Validator-Regel** dagegen.
