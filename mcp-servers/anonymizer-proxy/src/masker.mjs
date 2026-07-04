@@ -33,6 +33,10 @@ export class Masker {
     };
     this._anonymizePatterns = anonymizePatterns.map(compile);
     this._blockPatterns = blockPatterns.map(compile);
+    // Early-out für unmask: wenn alle Pseudonym-Templates "<" enthalten (Standard: <Email_…>),
+    // kann ein String ohne "<" kein Pseudonym enthalten — spart die _rev-Schleife pro String.
+    this._canEarlyOut = anonymizePatterns.every(p => (p.replace ?? '').includes('<'));
+    this._persistTimer = null;
 
     if (mapFile && existsSync(mapFile)) {
       try {
@@ -58,7 +62,21 @@ export class Masker {
     return `${base}_${i}`;
   }
 
+  // Debounced: pro neuem Pseudonym sofort synchron zu schreiben skaliert nicht
+  // (ein großes ADO-Ergebnis kann hunderte Treffer haben). 50 ms Sammelfenster.
   _persistMap() {
+    if (!this._mapFile || this._persistTimer) return;
+    this._persistTimer = setTimeout(() => { this._persistTimer = null; this._writeMap(); }, 50);
+    this._persistTimer.unref?.();
+  }
+
+  /** Ausstehenden Persist sofort schreiben (Shutdown/Tests). */
+  flush() {
+    if (this._persistTimer) { clearTimeout(this._persistTimer); this._persistTimer = null; }
+    this._writeMap();
+  }
+
+  _writeMap() {
     if (!this._mapFile) return;
     try {
       const dir = pathDirname(this._mapFile);
@@ -107,6 +125,8 @@ export class Masker {
 
   /** Reverse-replace pseudonyms → originals in a string. */
   unmaskString(str) {
+    if (this._rev.size === 0) return str;
+    if (this._canEarlyOut && !str.includes('<')) return str; // kein Marker → kein Pseudonym
     let result = str;
     for (const [pseudonym, original] of this._rev) {
       result = result.split(pseudonym).join(original);

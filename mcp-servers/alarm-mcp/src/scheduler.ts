@@ -1,7 +1,8 @@
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
-import { dirname } from 'path';
+import { dirname, join } from 'path';
+import { homedir } from 'os';
 import { randomBytes } from 'crypto';
-import { spawnSync } from 'child_process';
+import { spawn } from 'child_process';
 
 export type AlarmState = 'pending' | 'fired' | 'cancelled';
 
@@ -23,7 +24,10 @@ export class Scheduler {
   private timers: Map<string, ReturnType<typeof setTimeout>> = new Map();
 
   constructor(storeFile?: string) {
-    this.storeFile = storeFile ?? (process.env.ALARM_STORE ?? '.copilot/state/alarms.json');
+    // Default im Home-Verzeichnis: cwd-relativ würde Alarme über Projektordner verstreuen
+    // und beim nächsten Start (anderes cwd) verlieren. ALARM_STORE übersteuert (Tests).
+    this.storeFile = storeFile ?? process.env.ALARM_STORE
+      ?? join(homedir(), '.copilot', 'state', 'alarms.json');
     this._load();
   }
 
@@ -151,12 +155,24 @@ export class Scheduler {
   }
 
   private _platformSound(): void {
+    // Async: spawnSync würde die Event-Loop (und damit JSON-RPC) bis zu 3 s blockieren.
+    let cmd: string, args: string[];
     if (process.platform === 'darwin') {
-      spawnSync('afplay', ['/System/Library/Sounds/Glass.aiff'], { timeout: 3000 });
+      cmd = 'afplay'; args = ['/System/Library/Sounds/Glass.aiff'];
     } else if (process.platform === 'linux') {
-      spawnSync('paplay', ['/usr/share/sounds/freedesktop/stereo/complete.oga'], { timeout: 3000 });
+      cmd = 'paplay'; args = ['/usr/share/sounds/freedesktop/stereo/complete.oga'];
     } else if (process.platform === 'win32') {
-      spawnSync('powershell', ['-Command', '[console]::beep(880,500)'], { timeout: 3000 });
+      cmd = 'powershell'; args = ['-Command', '[console]::beep(880,500)'];
+    } else {
+      return;
     }
+    try {
+      const p = spawn(cmd, args, { stdio: 'ignore' });
+      p.on('error', () => { /* Player fehlt → still bleiben */ });
+      const kill = setTimeout(() => p.kill(), 3000);
+      kill.unref?.();
+      p.on('exit', () => clearTimeout(kill));
+      p.unref?.();
+    } catch { /* best effort */ }
   }
 }

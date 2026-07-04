@@ -85,6 +85,9 @@ async function main() {
     process.exit(code ?? 0);
   });
 
+  // Persist ist debounced — beim Prozessende ausstehende Map-Änderungen noch schreiben.
+  process.on('exit', () => { try { masker.flush(); } catch { /* best effort */ } });
+
   // Client → proxy (stdin)
   const clientReader = createInterface({ input: process.stdin, crlfDelay: Infinity });
   clientReader.on('line', (line) => {

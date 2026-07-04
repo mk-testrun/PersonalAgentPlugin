@@ -8,10 +8,9 @@ bin/
 obj/
 *.user
 
-# MCP state
-.copilot/state/pseudonym.map.json
-.copilot/state/alarms.json
-.copilot/state/mood.jsonl
+# Laufzeit-State der Hooks/MCP-Server (Pseudonym-Map, Alarme, Audit-Log, Artefakte, …) —
+# pauschal: neuer State darf nie versehentlich committet werden.
+.copilot/state/
 
 # Secrets
 .env
@@ -21,15 +20,6 @@ obj/
 *.pem
 secrets/
 
-# Audit logs
-.copilot/state/audit.jsonl
-
-# Artifacts (generated, not tracked)
-.copilot/state/artifacts/
-.copilot/state/audio/
-.copilot/state/reports/
-
 # OS
 .DS_Store
 Thumbs.db
-

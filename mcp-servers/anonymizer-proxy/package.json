@@ -10,7 +10,7 @@
   "main": "./src/server.mjs",
   "scripts": {
     "check": "node --check src/masker.mjs && node --check src/server.mjs && node --check src/validators.mjs",
-    "test": "node test/roundtrip.mjs && node test/pii-patterns.test.mjs"
+    "test": "node test/roundtrip.mjs && node test/pii-patterns.test.mjs && node test/proxy.test.mjs"
   },
   "engines": {
     "node": ">=20"
