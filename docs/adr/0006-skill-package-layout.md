@@ -24,6 +24,7 @@ gegen den der Maturity-Score (ADR-0008) misst.
 skills/<gerund-name>/
 ├── SKILL.md         # Nav-Hub: Frontmatter (name+description) + Quick-Start + Verweise (1 Ebene tief)
 ├── reference.md     # Tiefe Details (ToC ab ~100 Zeilen)          — wenn es Tiefe gibt
+├── references/      # statt reference.md ab ≥2 Themen-Dateien     — nie beides zugleich
 ├── examples.md      # konkrete Input/Output-Paare                  — „show, don't tell"
 ├── templates/       # Ausgabe-Vorlagen                            — wenn der Skill etwas rendert
 ├── scripts/         # lauffähige, dep-freie .mjs                  — für deterministische Schritte
@@ -39,6 +40,9 @@ skills/<gerund-name>/
 - **Determinismus zuerst:** wo ein Schritt deterministisch ist (Report→findings, Katalog-Merge), gehört
   er in ein `scripts/*.mjs`, nicht in improvisierten Modell-Output.
 - Referenzen **eine Ebene tief** — keine tief verschachtelten `references/a/b/c.md`.
+- **`reference.md` vs. `references/`:** eine einzelne Tiefendatei heißt `reference.md`; ab **zwei**
+  Themen-Dateien wird es ein `references/`-Ordner (flach). Nie beides gleichzeitig — der Validator/
+  Maturity-Score akzeptiert beide Formen gleichwertig (gleiche Regel im Authoring-Guide).
 
 ## Konsequenzen
 - **Positiv:** schlanker Discovery-Kontext (nur SKILL.md + description), Tiefe on-demand; reproduzierbare

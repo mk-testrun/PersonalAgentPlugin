@@ -66,7 +66,8 @@ Body: Mission · Zuständige Skills (Delegation) · Tool-/Write-Scope · Verbote
 ```
 skills/<name>/
 ├── SKILL.md          # Pflicht: Nav-Hub mit echtem Inhalt, < 500 Zeilen
-├── references/       # Tiefe, progressiv geladen (bei echter Domänen-Tiefe)
+├── reference.md      # Tiefe als EINE Datei …
+├── references/       # … ODER als Ordner ab ≥2 Themen-Dateien (nie beides)
 │   ├── <thema>.md    #   z.B. vuln-categories.md, report-format.md
 │   └── …
 ├── examples.md       # konkrete Input/Output-Paare (wo Qualität vom Beispiel abhängt)
@@ -77,6 +78,10 @@ skills/<name>/
 **Nicht jeder Skill braucht alles.** Pflicht ist eine **substanzielle, konkrete SKILL.md**.
 `references/`/`scripts/`/`templates/`/`examples.md` kommen dazu, **wenn sie echten Wert haben** —
 nie als Ritual-Boilerplate.
+
+**`reference.md` vs. `references/` (gleiche Regel wie ADR-0006):** eine einzelne Tiefendatei heißt
+`reference.md`; ab **zwei** Themen-Dateien wird daraus ein flacher `references/`-Ordner. Nie beides
+gleichzeitig — Validator und Maturity-Score behandeln beide Formen gleichwertig.
 
 ### 2.1 SKILL.md-Frontmatter (harte Regeln)
 
@@ -192,6 +197,26 @@ Für Flaggschiff-/kritische Skills: **Evals zuerst**. `evals/cases.json` mit ≥
 
 Runner: `tools/run-evals.mjs`. Iterieren, indem man beobachtet, **wie** der Agent navigiert
 (unerwartete Pfade, verpasste Referenzen, ignorierte Dateien) — nicht nach Annahmen.
+
+---
+
+## 5b. Benchmark-Prozess (gegen die Besten kalibrieren)
+
+Für jeden **neuen Flaggschiff-Skill** (und bei größeren Rewrites) einmal explizit benchmarken,
+bevor er als fertig gilt:
+
+1. **Vergleichs-Exemplar wählen:** das thematisch nächste Skill-Paket aus
+   [`anthropics/skills`](https://github.com/anthropics/skills) (offizielle Claude-Skills) oder
+   [`github/awesome-copilot`](https://github.com/github/awesome-copilot) heranziehen.
+2. **Nebeneinanderlegen** (drei Fragen):
+   - *Description:* Ist unsere Trigger-/Was-Wie-Wann-Dichte mindestens gleichwertig?
+   - *Struktur:* Nutzt das Vorbild references/templates/scripts, wo wir improvisieren?
+   - *Determinismus:* Erledigt das Vorbild per Skript, was bei uns Prosa ist?
+3. **Delta notieren** — entweder sofort schließen oder als bewusstes Anti-Ziel in
+   `docs/skill-uplift-tracker.md` festhalten (nie stillschweigend schlechter bleiben).
+
+Nicht kopieren, kalibrieren: unsere Skills bleiben repo-spezifisch (Zwei-Welten, findings-Schema,
+[CONFIRM]/[GATE]) — aber Tiefe und Präzision müssen den Vergleich aushalten.
 
 ---
 

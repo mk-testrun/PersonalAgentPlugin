@@ -29,7 +29,6 @@ copilot plugin marketplace add ./marketplaces/home
 |---|---|---|
 | `HASS_URL` | env | Home Assistant URL |
 | `HASS_TOKEN` | env | Home Assistant Token |
-| `ONENOTE_NOTEBOOKS` | env | OneNote Notebooks |
 | `GH_PAT` | secret | GitHub Personal Access Token |
 | `BRAVE_KEY` | secret | Brave Search API-Key |
 | `NOTION_TOKEN` | secret | Notion Token |

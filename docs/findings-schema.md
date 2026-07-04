@@ -16,6 +16,18 @@ Alle Review-Skills in Work und Home verwenden dieses Schema für `findings[]`.
 }
 ```
 
+| Feld | Pflicht? | Anmerkung |
+|---|---|---|
+| `severity` | **Pflicht** | Enum, s. u. |
+| `area` | **Pflicht** | Enum (genau ein Wert — kein `design/api`) |
+| `ruleId` | **Pflicht** | stabil je Regel, z. B. `API-VERSIONING` |
+| `message` | **Pflicht** | eine Zeile, konkret |
+| `file` | optional | entfällt bei projektweiten Findings (z. B. fehlende Pipeline-Stage) |
+| `line` | optional | nur mit `file`; Integer ≥ 1 |
+| `suggestion` | optional | konkreter Fix-Vorschlag |
+
+Maschinell prüfbare Fassung: [`docs/schemas/findings.schema.json`](schemas/findings.schema.json).
+
 ## Aggregations-Regeln
 
 1. **Deduplizieren** nach `ruleId + file + line`

@@ -2,7 +2,7 @@
 name: api-contract-review
 description: >-
   Nutze für OpenAPI/Swagger- und REST-Vertrags-Prüfung: erkennt Breaking Changes gegen die vorige Spec, prüft
-  Versionierung, Nullability, Status-Codes und Fehler-Contracts. Liefert findings[] (area: design/api) mit
+  Versionierung, Nullability, Status-Codes und Fehler-Contracts. Liefert findings[] (area: design) mit
   Severity + Migration-Hinweis; [GATE] bei Breaking Change ohne Version.
 ---
 

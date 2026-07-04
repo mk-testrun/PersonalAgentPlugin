@@ -38,7 +38,6 @@ copilot plugin install onboarding
 |---|---|---|
 | `ADO_ORG` | env | Azure DevOps Organisation |
 | `ADO_PROJECT` | env | Projekt-Name |
-| `ADO_TEAM_ID` | env | Team-ID |
 | `ADO_LEAD_ID` | env | Standard-Lead/Reviewer |
 | `CONFLUENCE_URL` | env | Confluence-Basis-URL |
 | `CONFLUENCE_USER` | env | Confluence-Benutzer |

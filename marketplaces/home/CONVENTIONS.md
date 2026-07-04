@@ -1,4 +1,8 @@
-# AGENTS.md — Home-Marketplace Konventionen
+# CONVENTIONS.md — Home-Marketplace Konventionen
+
+> Früher „AGENTS.md" — umbenannt, weil AGENTS.md inzwischen ein offener Standard für
+> Repo-Instruktionen an Coding-Agenten ist (siehe Root-AGENTS.md dieses Monorepos).
+> Diese Datei hier sind die *Autoren-Konventionen* des Marketplaces.
 
 ## Agenten-Übersicht
 
@@ -11,13 +15,16 @@
 | lab | lab | Playwright-Skripte nach `state/artifacts/`; Home-Assistant mit [CONFIRM] |
 | orchestrator | orchestration | Keine Direkt-Writes ohne [CONFIRM]; delegiert |
 | prompt-builder | meta | Plugin/Skill-Dateien; Marketplace-Config mit [CONFIRM] |
-| loop | loop | Iteriert mit Hard-Limit; delegiert Verifikation; warn-Modus |
+| loop | general | Iteriert mit Hard-Limit; delegiert Verifikation; warn-Modus |
 
 ## §2.1 Command vs. Skill vs. Agent
 
 ### Skill
 - Wiederverwendbare Fähigkeit (`skills/<name>/SKILL.md`), Frontmatter `name` + `description` („Nutze wenn …").
-- Optional: `applyTo` (Glob), `mcp_tools`. Body: klare Steps/Checks.
+- Optional: `applyTo` (Glob), `mcp_tools` — **umgebungsspezifisch, nicht veraltet**: die Copilot CLI
+  implementiert sie (noch) nicht (Validator meldet das zur Information als Warning/Hint),
+  VS Code wertet `applyTo` aus. Kompatibilitätsmatrix: docs/skill-authoring-guide.md.
+- Body: klare Steps/Checks.
 
 ### Command
 - Benutzer-wählbarer Slash-Einstieg (`commands/<name>.md`), Frontmatter `description` + Body (Prompt).

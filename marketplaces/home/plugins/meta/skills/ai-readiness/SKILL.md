@@ -13,7 +13,7 @@ Die allgemeine **Code-Repo**-AI-Readiness eines beliebigen Projekts ist ein sepa
 
 ## Scoring-Dimensionen (Summe 0–100)
 
-1. **AIR-AGENTS** — `AGENTS.md` vorhanden & aktuell (Agenten-Tabelle, Konventionen). *(20)*
+1. **AIR-AGENTS** — `CONVENTIONS.md` vorhanden & aktuell (Agenten-Tabelle, Konventionen). *(20)*
 2. **AIR-TRIGGER** — Skills mit klaren „Nutze wenn …"-Descriptions, kein leerer Stub. *(15)*
 3. **AIR-APPLYTO** — `applyTo`-Skills für alle Haupt-Dateitypen. *(15)*
 4. **AIR-MCP** — `.mcp.json` korrekt verdrahtet (`${env:}`/`${secret:}`, keine Klartext-Secrets). *(15)*
