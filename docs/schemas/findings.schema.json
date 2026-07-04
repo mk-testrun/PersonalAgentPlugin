@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mk-testrun/PersonalAgentPlugin/docs/schemas/findings.schema.json",
+  "title": "findings[] — geteiltes Review-Schema (docs/findings-schema.md)",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["severity", "area", "ruleId", "message"],
+    "additionalProperties": false,
+    "properties": {
+      "severity": { "enum": ["critical", "high", "medium", "low", "info"] },
+      "area": { "enum": ["accessibility", "security", "performance", "design", "sql", "deps", "licenses", "pipeline", "env", "tests", "coverage", "wcag"] },
+      "ruleId": { "type": "string", "minLength": 1 },
+      "message": { "type": "string", "minLength": 1 },
+      "file": { "type": "string" },
+      "line": { "type": "integer", "minimum": 1 },
+      "suggestion": { "type": "string" }
+    },
+    "dependentRequired": { "line": ["file"] }
+  }
+}

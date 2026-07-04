@@ -1,12 +1,30 @@
 {
+  "note": "Erlaubte CDN-Dateien für generierte HTML-Artefakte der experimental-Skills. Exakt gepinnt + SRI (Supply-Chain): <script src=\"<url>\" integrity=\"<integrity>\" crossorigin=\"anonymous\">. jsdelivr serviert byte-identisch aus dem npm-Tarball — Hashes aktualisieren via `npm pack <pkg>@<version>` + `openssl dgst -sha384 -binary <file> | openssl base64 -A`. Unversionierte oder nur major-gepinnte URLs sind nicht erlaubt.",
   "allowed": [
-    "https://cdn.jsdelivr.net/npm/chart.js",
-    "https://cdn.jsdelivr.net/npm/gridjs",
-    "https://cdn.jsdelivr.net/npm/mermaid",
-    "https://cdn.jsdelivr.net/npm/reveal.js",
-    "https://unpkg.com/chart.js",
-    "https://unpkg.com/mermaid",
-    "https://unpkg.com/reveal.js",
-    "https://cdnjs.cloudflare.com/ajax/libs/Chart.js"
+    {
+      "lib": "chart.js",
+      "url": "https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js",
+      "integrity": "sha384-jb8JQMbMoBUzgWatfe6COACi2ljcDdZQ2OxczGA3bGNeWe+6DChMTBJemed7ZnvJ"
+    },
+    {
+      "lib": "gridjs",
+      "url": "https://cdn.jsdelivr.net/npm/gridjs@6.2.0/dist/gridjs.umd.js",
+      "integrity": "sha384-y62I+ZvjNRolkugL/AMpUZykqrL6oqYxBruObmlDAhDpmapM0s+xgvVK+wGVpza0"
+    },
+    {
+      "lib": "mermaid",
+      "url": "https://cdn.jsdelivr.net/npm/mermaid@10.9.6/dist/mermaid.min.js",
+      "integrity": "sha384-qX9VvWkP79m/O121ZE6sOYp0nf/pldQgtvWDbkpzi+3mUo4Wn4Ix4cFzNPay3VaB"
+    },
+    {
+      "lib": "reveal.js",
+      "url": "https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/dist/reveal.js",
+      "integrity": "sha384-rZIIVPQD/+U9IL3I62KrBHuVtPgYv+xdXvER5RBiVQRszJEJfLKRrcrZwI7fhcHT"
+    },
+    {
+      "lib": "reveal.js (css)",
+      "url": "https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/dist/reveal.css",
+      "integrity": "sha384-tK61vs+AeByBmiQ/i6CLgp/PbaaoB/k7M4J5mlX70GVtBPGUk5avjbXhSwhsf3fS"
+    }
   ]
 }

@@ -1,13 +1,40 @@
 {
-  "note": "Erlaubte CDN-Quellen für generierte HTML-Artefakte der visual-Skills. Major-gepinnt — unversionierte URLs sind nicht erlaubt (Supply-Chain). SRI-Hashes folgen (Plan E3).",
+  "note": "Erlaubte CDN-Dateien für generierte HTML-Artefakte der visual-Skills. Exakt gepinnt + SRI (Supply-Chain): <script src=\"<url>\" integrity=\"<integrity>\" crossorigin=\"anonymous\">. jsdelivr serviert byte-identisch aus dem npm-Tarball — Hashes aktualisieren via `npm pack <pkg>@<version>` + `openssl dgst -sha384 -binary <file> | openssl base64 -A`. Unversionierte oder nur major-gepinnte URLs sind nicht erlaubt.",
   "allowed": [
-    "https://cdn.jsdelivr.net/npm/chart.js@4",
-    "https://cdn.jsdelivr.net/npm/gridjs@6",
-    "https://cdn.jsdelivr.net/npm/mermaid@10",
-    "https://cdn.jsdelivr.net/npm/reveal.js@5",
-    "https://cdn.jsdelivr.net/npm/markmap-autoloader@0.16",
-    "https://cdn.jsdelivr.net/npm/vis-timeline@7",
-    "https://unpkg.com/chart.js@4",
-    "https://unpkg.com/mermaid@10"
+    {
+      "lib": "chart.js",
+      "url": "https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js",
+      "integrity": "sha384-jb8JQMbMoBUzgWatfe6COACi2ljcDdZQ2OxczGA3bGNeWe+6DChMTBJemed7ZnvJ"
+    },
+    {
+      "lib": "gridjs",
+      "url": "https://cdn.jsdelivr.net/npm/gridjs@6.2.0/dist/gridjs.umd.js",
+      "integrity": "sha384-y62I+ZvjNRolkugL/AMpUZykqrL6oqYxBruObmlDAhDpmapM0s+xgvVK+wGVpza0"
+    },
+    {
+      "lib": "mermaid",
+      "url": "https://cdn.jsdelivr.net/npm/mermaid@10.9.6/dist/mermaid.min.js",
+      "integrity": "sha384-qX9VvWkP79m/O121ZE6sOYp0nf/pldQgtvWDbkpzi+3mUo4Wn4Ix4cFzNPay3VaB"
+    },
+    {
+      "lib": "reveal.js",
+      "url": "https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/dist/reveal.js",
+      "integrity": "sha384-rZIIVPQD/+U9IL3I62KrBHuVtPgYv+xdXvER5RBiVQRszJEJfLKRrcrZwI7fhcHT"
+    },
+    {
+      "lib": "reveal.js (css)",
+      "url": "https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/dist/reveal.css",
+      "integrity": "sha384-tK61vs+AeByBmiQ/i6CLgp/PbaaoB/k7M4J5mlX70GVtBPGUk5avjbXhSwhsf3fS"
+    },
+    {
+      "lib": "markmap-autoloader",
+      "url": "https://cdn.jsdelivr.net/npm/markmap-autoloader@0.16.1/dist/index.js",
+      "integrity": "sha384-Hdn88HLxAahuP3yxI9t4CKpJt6DtJ3BXX4/9BpPru01+LP9VCqZ3xNUmJC0JNwES"
+    },
+    {
+      "lib": "vis-timeline",
+      "url": "https://cdn.jsdelivr.net/npm/vis-timeline@7.7.4/standalone/umd/vis-timeline-graph2d.min.js",
+      "integrity": "sha384-OecGrZZA34qTH9KvhpVYXLEYvqp2FveQ4TPGCpFEX/v9h+gLYHQShlyeLTpYvSQD"
+    }
   ]
 }

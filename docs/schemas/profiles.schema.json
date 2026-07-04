@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mk-testrun/PersonalAgentPlugin/docs/schemas/profiles.schema.json",
+  "title": "policy/profiles.json — MCP-Profile (home/general profile-switch)",
+  "type": "object",
+  "required": ["profiles"],
+  "properties": {
+    "profiles": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "required": ["mcpServers"],
+        "properties": {
+          "description": { "type": "string" },
+          "mcpServers": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } }
+        }
+      }
+    }
+  }
+}

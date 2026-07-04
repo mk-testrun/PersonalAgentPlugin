@@ -245,6 +245,49 @@ function validateMarketplace(marketplacePath, ctx) {
     if (!listed.has(`plugins/${d}`) && existsSync(join(pluginsDir, d, '.github', 'plugin', 'plugin.json')))
       warn(ctx, `Plugin "${d}" has a manifest but is not listed in marketplace.json`);
   }
+
+  checkCrossMarketplaceRefs(abs, pluginsDir, ctx);
+}
+
+// Zwei-Welten-Regel: Skill-/Command-/Agent-Texte dürfen keine plugin/skill-Paare referenzieren,
+// die nur in einem ANDEREN Marketplace unter ./marketplaces existieren (jede Welt self-contained).
+function skillPairs(mpAbs) {
+  const pairs = new Set();
+  const pd = join(mpAbs, 'plugins');
+  if (!existsSync(pd)) return pairs;
+  for (const plugin of readdirSync(pd).filter(d => statSync(join(pd, d)).isDirectory())) {
+    const sd = join(pd, plugin, 'skills');
+    if (!existsSync(sd)) continue;
+    for (const skill of readdirSync(sd).filter(d => statSync(join(sd, d)).isDirectory()))
+      pairs.add(`${plugin}/${skill}`);
+  }
+  return pairs;
+}
+function checkCrossMarketplaceRefs(mpAbs, pluginsDir, ctx) {
+  const own = skillPairs(mpAbs);
+  const foreign = new Set();
+  for (const other of allMarketplaces()) {
+    if (resolve(other) === mpAbs) continue;
+    for (const p of skillPairs(resolve(other))) if (!own.has(p)) foreign.add(p);
+  }
+  if (!foreign.size) return;
+  const scan = (file, rel) => {
+    const text = readFileSync(file, 'utf8');
+    for (const m of text.matchAll(/\b([a-z0-9][a-z0-9-]*\/[a-z0-9][a-z0-9-]*)\b/g)) {
+      if (foreign.has(m[1]))
+        warn(ctx, `${rel}: referenziert "${m[1]}" aus einem anderen Marketplace (Zwei-Welten: jede Welt ist self-contained)`);
+    }
+  };
+  for (const plugin of readdirSync(pluginsDir).filter(d => statSync(join(pluginsDir, d)).isDirectory())) {
+    for (const sub of ['skills', 'commands', 'agents']) {
+      const dir = join(pluginsDir, plugin, sub);
+      if (!existsSync(dir)) continue;
+      for (const entry of readdirSync(dir, { recursive: true })) {
+        const f = join(dir, String(entry));
+        if (f.endsWith('.md') && statSync(f).isFile()) scan(f, `${plugin}/${sub}/${entry}`);
+      }
+    }
+  }
 }
 
 // ---------- scoped helpers ----------

@@ -94,6 +94,25 @@ test('marketplace/plugin version drift → warning', () => {
   rmSync(dir, { recursive: true, force: true });
 });
 
+test('cross-marketplace skill reference → warning (Zwei-Welten)', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'vp-xmp-'));
+  mkdirSync(join(dir, '.github', 'plugin'), { recursive: true });
+  mkdirSync(join(dir, 'plugins', 'p', '.github', 'plugin'), { recursive: true });
+  mkdirSync(join(dir, 'plugins', 'p', 'skills', 's'), { recursive: true });
+  writeFileSync(join(dir, '.github', 'plugin', 'marketplace.json'), JSON.stringify({
+    name: 'mp', owner: { name: 'o' },
+    plugins: [{ name: 'p', source: 'plugins/p', description: 'd', version: '1.0.0' }],
+  }));
+  writeFileSync(join(dir, 'plugins', 'p', '.github', 'plugin', 'plugin.json'),
+    JSON.stringify({ name: 'p', description: 'd', version: '1.0.0', author: { name: 'a' }, license: 'MIT', repository: 'r' }));
+  // "review/security-review" existiert nur im Work-Marketplace dieses Repos → Warnung
+  writeFileSync(join(dir, 'plugins', 'p', 'skills', 's', 'SKILL.md'),
+    fm() + '\nSiehe auch review/security-review für Details.\n');
+  const r = run([dir]);
+  assert.ok(r.warnings.some(w => /review\/security-review/.test(w) && /anderen Marketplace/.test(w)), r.warnings.join('|'));
+  rmSync(dir, { recursive: true, force: true });
+});
+
 test('hooks.json old array shape → error (via plugin scope)', () => {
   const dir = mkdtempSync(join(tmpdir(), 'vp-plugin-'));
   mkdirSync(join(dir, '.github', 'plugin'), { recursive: true });

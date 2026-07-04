@@ -23,6 +23,13 @@ export function isRich(): boolean {
   return (process.env.VIEWER_RICH ?? 'auto') !== 'off';
 }
 
+// Titel/Alt-Texte kommen vom Aufrufer und landen in generiertem HTML — ohne Escaping wäre
+// jeder Renderer ein Injection-Vektor (<title>, alt="…", <h2>).
+export function escapeHtml(s: string): string {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
 export interface RenderResult {
   mode: 'rich' | 'fallback';
   inlineText: string;

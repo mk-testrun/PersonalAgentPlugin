@@ -31,5 +31,7 @@ Jeder Einzel-Skill bleibt eigenständig aufrufbar.
 
 - Markdown: `state/reports/review-<date>.md`
 - HTML: `state/reports/review-<date>.html` — Filter-UI (Severity / Area / Suche).
+- Optional SARIF 2.1.0 (GitHub Code Scanning / SARIF-Viewer):
+  `node tools/findings-to-sarif.mjs <findings.json> --out state/reports/review-<date>.sarif`
 
 Aggregiertes findings[] + Gate-Flag zurückgeben. Bei gesetztem Gate: **[GATE]**.

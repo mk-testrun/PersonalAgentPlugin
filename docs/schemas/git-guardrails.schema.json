@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mk-testrun/PersonalAgentPlugin/docs/schemas/git-guardrails.schema.json",
+  "title": "policy/git-guardrails.json — Guardian-Policy (Work: block-Modus · Home: warn-Modus)",
+  "type": "object",
+  "properties": {
+    "_credit": { "type": "string" },
+    "_mode": { "type": "string" },
+    "note": { "type": "string" },
+    "block": {
+      "type": "array", "items": { "type": "string", "minLength": 1 },
+      "description": "Work: Substring-Patterns → deny (git-push-Einträge behandelt der Force-Push-Zweig)"
+    },
+    "blockBranches": {
+      "type": "array", "items": { "type": "string", "minLength": 1 },
+      "description": "Work: geschützte Branches für Force-Push/Rebase"
+    },
+    "blockAlways": {
+      "type": "array", "items": { "type": "string", "minLength": 1 },
+      "description": "Home: Regex-Patterns → deny auch im warn-Modus"
+    },
+    "warn": {
+      "type": "array", "items": { "type": "string", "minLength": 1 },
+      "description": "Home: Substring-Patterns → allow + Warnung"
+    },
+    "allowExceptions": {
+      "type": "array", "items": { "type": "string", "minLength": 1 },
+      "description": "Enthält das Kommando eine dieser Zeichenketten, greifen die Push-Guardrails nicht (ADR-0004: force-with-lease)"
+    }
+  },
+  "anyOf": [
+    { "required": ["block"] },
+    { "required": ["blockAlways"] },
+    { "required": ["warn"] }
+  ]
+}

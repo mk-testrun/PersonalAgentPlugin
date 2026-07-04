@@ -10,6 +10,11 @@ copilot plugin marketplace add ./marketplaces/home
 
 **Reihenfolge:** general → visual/audio → morning → reviewer → lab → orchestration → meta
 
+**Voraussetzung Docker:** der GitHub-MCP-Server läuft als Container
+(`docker run … ghcr.io/github/github-mcp-server`, s. `general/.mcp.json`) — ohne laufenden
+Docker-Daemon starten die GitHub-Tools nicht. Alternative ohne Docker: das npm-Paket
+`@modelcontextprotocol/server-github` in `.mcp.json` eintragen (weniger Tools, dafür dep-frei).
+
 ## Plugins
 
 | Plugin | Beschreibung |

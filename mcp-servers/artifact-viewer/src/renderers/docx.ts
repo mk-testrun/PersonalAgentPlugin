@@ -1,6 +1,6 @@
 import mammoth from 'mammoth';
 import { resolve } from 'path';
-import { isRich, saveArtifact, genFilename, RenderResult } from '../fallback.js';
+import { isRich, saveArtifact, genFilename, RenderResult, escapeHtml } from '../fallback.js';
 
 export async function renderDocx(source: string, title = 'Document'): Promise<RenderResult> {
   const absPath = resolve(source);
@@ -8,7 +8,7 @@ export async function renderDocx(source: string, title = 'Document'): Promise<Re
 
   try {
     const htmlResult = await mammoth.convertToHtml({ path: source });
-    const html = `<!DOCTYPE html><html lang="de"><head><meta charset="utf-8"><title>${title}</title>
+    const html = `<!DOCTYPE html><html lang="de"><head><meta charset="utf-8"><title>${escapeHtml(title)}</title>
 <style>body{font-family:system-ui,sans-serif;max-width:800px;margin:2rem auto;padding:0 1rem;line-height:1.6}</style>
 </head><body>${htmlResult.value}</body></html>`;
     const fileUrl = saveArtifact(genFilename('html', 'docx'), html);

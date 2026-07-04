@@ -1,6 +1,6 @@
 import { readFileSync, statSync } from 'fs';
 import { resolve } from 'path';
-import { isRich, saveArtifact, genFilename, RenderResult } from '../fallback.js';
+import { isRich, saveArtifact, genFilename, RenderResult, escapeHtml } from '../fallback.js';
 
 export async function renderPdf(source: string, title = 'PDF'): Promise<RenderResult> {
   const stats = statSync(source);
@@ -8,7 +8,7 @@ export async function renderPdf(source: string, title = 'PDF'): Promise<RenderRe
   const sourceUrl = `file://${absPath}`;
 
   if (isRich()) {
-    const html = `<!DOCTYPE html><html><head><title>${title}</title></head>
+    const html = `<!DOCTYPE html><html><head><title>${escapeHtml(title)}</title></head>
 <body style="margin:0"><iframe src="${sourceUrl}" width="100%" style="border:none;height:100vh"></iframe>
 </body></html>`;
     const fileUrl = saveArtifact(genFilename('html', 'pdf'), html);

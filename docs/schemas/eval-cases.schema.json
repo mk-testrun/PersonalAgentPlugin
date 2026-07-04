@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mk-testrun/PersonalAgentPlugin/docs/schemas/eval-cases.schema.json",
+  "title": "evals/cases.json — Skill-Eval-Szenarien (tools/run-evals.mjs)",
+  "type": "array",
+  "minItems": 1,
+  "items": {
+    "type": "object",
+    "required": ["skill", "query", "expected_behavior"],
+    "properties": {
+      "skill": { "type": "string", "minLength": 1 },
+      "query": { "type": "string", "minLength": 1, "description": "Realistische Nutzeranfrage" },
+      "expected_behavior": {
+        "type": "array",
+        "minItems": 1,
+        "items": { "type": "string", "minLength": 1 },
+        "description": "Beobachtbare Kriterien"
+      },
+      "files": { "type": "array", "items": { "type": "string" }, "description": "Fixture-Pfade relativ zum Skill" },
+      "expected_tools": { "type": "array", "items": { "type": "string" } },
+      "expected_gates": { "type": "array", "items": { "type": "string" } },
+      "expected_confirmations": { "type": "integer", "minimum": 0 }
+    }
+  }
+}

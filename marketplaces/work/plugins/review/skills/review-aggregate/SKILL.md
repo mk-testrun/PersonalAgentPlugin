@@ -53,3 +53,14 @@ default recommendation "do not merge".
 The aggregated `findings[]` + gate flag, plus the MD and HTML report paths. Executive summary first,
 then per-area sections (security · accessibility · performance · sql · deps · design · pipeline · env),
 then the full detail table.
+
+### SARIF export (optional, für Tool-Interop)
+
+Für GitHub Code Scanning / ADO / SARIF-Viewer die aggregierten findings zusätzlich als SARIF 2.1.0 exportieren:
+
+```bash
+node tools/findings-to-sarif.mjs state/reports/findings.json --out state/reports/review-<date>.sarif
+```
+
+Mapping: critical/high → error · medium → warning · low/info → note (Original-Severity bleibt in
+`properties.severity`).

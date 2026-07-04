@@ -1,6 +1,6 @@
 import { statSync } from 'fs';
 import { resolve, extname } from 'path';
-import { isRich, saveArtifact, genFilename, RenderResult } from '../fallback.js';
+import { isRich, saveArtifact, genFilename, RenderResult, escapeHtml } from '../fallback.js';
 
 export async function render3d(source: string, title = '3D Model'): Promise<RenderResult> {
   const stats = statSync(source);
@@ -10,11 +10,11 @@ export async function render3d(source: string, title = '3D Model'): Promise<Rend
 
   if (isRich()) {
     // @google/model-viewer via CDN (optional peer, client-side only)
-    const html = `<!DOCTYPE html><html><head><title>${title}</title>
+    const html = `<!DOCTYPE html><html><head><title>${escapeHtml(title)}</title>
 <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 <style>body{margin:0;background:#1a1a2e}model-viewer{width:100%;height:100vh;--progress-bar-color:#00ffcc}</style>
 </head><body>
-<model-viewer src="${sourceUrl}" alt="${title}" auto-rotate camera-controls shadow-intensity="1">
+<model-viewer src="${sourceUrl}" alt="${escapeHtml(title)}" auto-rotate camera-controls shadow-intensity="1">
 </model-viewer>
 </body></html>`;
     const fileUrl = saveArtifact(genFilename('html', '3d'), html);

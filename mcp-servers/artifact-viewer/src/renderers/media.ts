@@ -1,6 +1,6 @@
 import { statSync } from 'fs';
 import { resolve, extname } from 'path';
-import { isRich, saveArtifact, genFilename, RenderResult } from '../fallback.js';
+import { isRich, saveArtifact, genFilename, RenderResult, escapeHtml } from '../fallback.js';
 
 export async function renderAudio(source: string, title = 'Audio'): Promise<RenderResult> {
   const stats = statSync(source);
@@ -9,9 +9,9 @@ export async function renderAudio(source: string, title = 'Audio'): Promise<Rend
   const ext = extname(source).slice(1).toLowerCase();
 
   if (isRich()) {
-    const html = `<!DOCTYPE html><html><head><title>${title}</title></head>
+    const html = `<!DOCTYPE html><html><head><title>${escapeHtml(title)}</title></head>
 <body style="margin:2rem;font-family:system-ui,sans-serif;background:#111;color:#eee">
-<h2 style="margin-bottom:1rem">${title}</h2>
+<h2 style="margin-bottom:1rem">${escapeHtml(title)}</h2>
 <audio controls style="width:100%;margin-bottom:1rem"><source src="${sourceUrl}">Browser unterstützt kein Audio.</audio>
 <p style="font-size:0.8rem;color:#999">Format: ${ext.toUpperCase()} · ${stats.size} bytes · ${sourceUrl}</p>
 </body></html>`;
@@ -33,7 +33,7 @@ export async function renderVideo(source: string, title = 'Video'): Promise<Rend
   const ext = extname(source).slice(1).toLowerCase();
 
   if (isRich()) {
-    const html = `<!DOCTYPE html><html><head><title>${title}</title></head>
+    const html = `<!DOCTYPE html><html><head><title>${escapeHtml(title)}</title></head>
 <body style="margin:0;background:#000;display:flex;justify-content:center;align-items:center;min-height:100vh">
 <video controls style="max-width:100%;max-height:100vh"><source src="${sourceUrl}">Browser unterstützt kein Video.</video>
 </body></html>`;
