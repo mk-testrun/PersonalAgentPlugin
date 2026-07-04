@@ -147,3 +147,62 @@ test('home policy-driven: custom warn pattern → allow with warning; blockAlway
   assert.equal(decideWithPolicy(HOME_GUARDIAN, 'git wobble now', policy), 'allow');
   rmSync(dir, { recursive: true, force: true });
 });
+
+// --- B4: Audit-Hook-Kette schreibt/rotiert .copilot/state/audit.jsonl (temp-cwd) ---
+import { readFileSync, mkdirSync, chmodSync } from 'node:fs';
+
+const HOOKS_DIR = new URL('../../marketplaces/work/plugins/general/hooks/scripts/', import.meta.url).pathname;
+const runHook = (script, cwd, input = '', env = {}) =>
+  execFileSync('bash', [join(HOOKS_DIR, script)], { input, encoding: 'utf8', cwd, env: { ...process.env, ...env } });
+
+test('audit init → prompt → tool: Einträge landen als JSONL in .copilot/state/audit.jsonl', () => {
+  const cwd = mkdtempSync(join(tmpdir(), 'audit-'));
+  runHook('audit-init.sh', cwd);
+  runHook('audit-prompt.sh', cwd);
+  runHook('audit-tool.sh', cwd, JSON.stringify({ toolName: 'shell', toolArgs: 'ls' }));
+  const lines = readFileSync(join(cwd, '.copilot/state/audit.jsonl'), 'utf8').trim().split('\n').map(l => JSON.parse(l));
+  assert.deepEqual(lines.map(l => l.event), ['sessionStart', 'userPromptSubmitted', 'postToolUse']);
+  assert.equal(lines[2].tool, 'shell');
+  for (const l of lines) assert.match(l.ts, /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/);
+  rmSync(cwd, { recursive: true, force: true });
+});
+
+test('audit-rotate: Einträge älter als 90 Tage fliegen raus, junge bleiben, sessionEnd kommt dazu', () => {
+  const cwd = mkdtempSync(join(tmpdir(), 'audit-rot-'));
+  mkdirSync(join(cwd, '.copilot/state'), { recursive: true });
+  const recent = new Date().toISOString().slice(0, 19) + 'Z';
+  writeFileSync(join(cwd, '.copilot/state/audit.jsonl'),
+    `{"event":"postToolUse","ts":"2020-01-01T00:00:00Z"}\n{"event":"postToolUse","ts":"${recent}"}\nkein json\n`);
+  runHook('audit-rotate.sh', cwd);
+  const lines = readFileSync(join(cwd, '.copilot/state/audit.jsonl'), 'utf8').trim().split('\n').map(l => JSON.parse(l));
+  assert.deepEqual(lines.map(l => l.event), ['postToolUse', 'sessionEnd'], 'alt + unparsbar entfernt, jung + sessionEnd da');
+  assert.equal(lines[0].ts, recent);
+  rmSync(cwd, { recursive: true, force: true });
+});
+
+// --- B4: notify-with-sound — Player via PATH-Shim, Schwellwert 30s ---
+const NOTIFY = new URL('../../marketplaces/home/plugins/audio/hooks/scripts/notify-with-sound.sh', import.meta.url).pathname;
+
+function runNotify(input) {
+  const dir = mkdtempSync(join(tmpdir(), 'notify-'));
+  const marker = join(dir, 'played.txt');
+  for (const player of ['afplay', 'paplay']) {
+    const shim = join(dir, player);
+    writeFileSync(shim, `#!/usr/bin/env bash\necho "${player} $@" >> "${marker}"\n`);
+    chmodSync(shim, 0o755);
+  }
+  execFileSync('bash', [NOTIFY], {
+    input: JSON.stringify(input), encoding: 'utf8',
+    env: { ...process.env, PATH: `${dir}:${process.env.PATH}` },
+  });
+  let played = '';
+  try { played = readFileSync(marker, 'utf8'); } catch {}
+  rmSync(dir, { recursive: true, force: true });
+  return played;
+}
+
+test('notify-with-sound: >=30s success → Erfolgs-Sound, error → Fehler-Sound, <30s → still', () => {
+  assert.match(runNotify({ duration: 45, status: 'success' }), /Glass|complete/);
+  assert.match(runNotify({ duration: 45, status: 'error' }), /Basso|dialog-error/);
+  assert.equal(runNotify({ duration: 5, status: 'success' }), '');
+});
