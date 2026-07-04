@@ -2,78 +2,36 @@
 /**
  * run-state.mjs — deterministic orchestrator state machine.
  *
- * The workflow STEPS live here in code, not in a prompt — that is the anti-drift core: the model reads
- * the plan and the "next step" from this script instead of re-inventing the choreography each run.
- * State is a JSON run-file under the artifacts dir, which makes runs resumable after an interrupt.
+ * The workflow STEPS live in workflows.json NEXT TO this script, not in a prompt — that is the
+ * anti-drift core: the model reads the plan and the "next step" from data instead of re-inventing
+ * the choreography each run. State is a JSON run-file under the artifacts dir (resumable).
+ * The SCRIPT is byte-identical in Work and Home (CI enforces it); only workflows.json differs
+ * per marketplace (two-worlds principle: shared engine, world-specific choreography).
  *
  * Commands:
- *   init   --workflow <name> [--title "..."] [--dir DIR]   → create run-file, print dry-run plan + run-id
- *   show   <run-file>                                       → print all steps with status + current pointer
- *   resume <run-file>                                       → print the next pending step (delegate + gate)
- *   advance <run-file> [--status done|blocked|skipped] [--note "..."]  → complete current step, move pointer
+ *   init     --workflow <name> [--title "..."] [--dir DIR]  → create run-file, print dry-run plan + run-id
+ *   show     <run-file>                                      → print all steps with status + current pointer
+ *   resume   <run-file>                                      → print the next pending step (delegate + gate)
+ *   advance  <run-file> [--status done|blocked|skipped] [--note "..."]  → complete current step (atomic write)
+ *   list     [--dir DIR]                                     → all run-files with progress
+ *   prune    [--dir DIR] [--keep N]                          → delete finished runs, keep newest N (default 5)
+ *   describe [--markdown]                                    → workflows as text/markdown (docs from code)
  *
  * Markers: [CONFIRM] = stop for yes/no before a mutating step · [GATE] = hard stop on critical/high.
+ * Steps with "optional": true may be skipped via advance --status skipped without breaking the flow.
  * Exit: 0 ok · 2 bad usage/unknown workflow · 3 run-file/step error.
  */
-import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'fs';
-import { join } from 'path';
+import { readFileSync, writeFileSync, renameSync, unlinkSync, mkdirSync, existsSync, readdirSync } from 'fs';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
 
 const errMsg = e => (e instanceof Error ? e.message : String(e));
+const __dir = dirname(fileURLToPath(import.meta.url));
 
-// --- canonical workflow definitions (single source of truth) ---
-// gate: 'confirm' | 'gate' | null   delegate: plugin/agent that does the work
-const WORKFLOWS = {
-  feature: {
-    description: 'Issue → Branch → Implementierung → Tests → Review → PR',
-    steps: [
-      { id: 'resolve',  title: 'Issue/Anforderung read-only auflösen',                 delegate: 'general',      gate: 'confirm' },
-      { id: 'branch',   title: 'Idempotenz-Check + Branch feature/AB-<id>-<slug>',       delegate: 'general',      gate: 'confirm' },
-      { id: 'implement',title: 'Implementierung',                                        delegate: 'blazor',       gate: 'confirm' },
-      { id: 'unit',     title: 'Unit-Tests + Coverage-Gate',                             delegate: 'testing',      gate: null },
-      { id: 'e2e',      title: 'E2E (localhost, opt-in)',                                delegate: 'testing',      gate: 'gate' },
-      { id: 'review',   title: 'Diff-gescopter Review (OWASP/WCAG/SQL/…)',               delegate: 'review',       gate: 'gate' },
-      { id: 'pr',       title: 'PR öffnen + Work-Item verlinken',                        delegate: 'general',      gate: 'confirm' },
-      { id: 'doc',      title: 'Doku/ADR (optional)',                                    delegate: 'doku',         gate: 'confirm' },
-    ],
-  },
-  bugfix: {
-    description: 'Repro → Failing-Test → Fix → grün → Review → PR',
-    steps: [
-      { id: 'repro',    title: 'Bug reproduzieren, Ursache eingrenzen (read-only)',      delegate: 'general',      gate: 'confirm' },
-      { id: 'branch',   title: 'Branch fix/AB-<id>-<slug>',                              delegate: 'general',      gate: 'confirm' },
-      { id: 'failtest', title: 'Failing-Test schreiben (reproduziert den Bug)',          delegate: 'testing',      gate: null },
-      { id: 'fix',      title: 'Fix implementieren',                                     delegate: 'blazor',       gate: 'confirm' },
-      { id: 'green',    title: 'Tests grün + Coverage hält',                             delegate: 'testing',      gate: 'gate' },
-      { id: 'review',   title: 'Diff-Review (Regressions-Fokus)',                        delegate: 'review',       gate: 'gate' },
-      { id: 'pr',       title: 'PR öffnen + Work-Item verlinken',                        delegate: 'general',      gate: 'confirm' },
-    ],
-  },
-  'review-flow': {
-    description: 'Vollständige Review-Matrix auf den aktuellen Diff → findings[] + Report',
-    steps: [
-      { id: 'scope',    title: 'Diff-Scope bestimmen (Branch vs. base)',                 delegate: 'review',       gate: null },
-      { id: 'matrix',   title: 'Review-Matrix ausführen (Security/WCAG/SQL/Deps/Perf)',  delegate: 'review',       gate: null },
-      { id: 'aggregate',title: 'findings[] aggregieren + Report (md + html)',            delegate: 'review',       gate: 'gate' },
-    ],
-  },
-  ship: {
-    description: 'Merge-bereiten PR über das Deploy-Gate bringen (nur Work)',
-    steps: [
-      { id: 'preflight',title: 'PR-Status: grün, squash-mergeable, Work-Item verlinkt',  delegate: 'general',      gate: null },
-      { id: 'review',   title: 'Letzter Review-Gate-Check (keine offenen critical/high)',delegate: 'review',       gate: 'gate' },
-      { id: 'merge',    title: 'Squash-Merge',                                           delegate: 'general',      gate: 'confirm' },
-      { id: 'pipeline', title: 'Pipeline-Konventionen prüfen (Approval-Stage, Scans)',   delegate: 'general',      gate: 'gate' },
-    ],
-  },
-  plan: {
-    description: 'Größeres Vorhaben in einen prüfbaren Schrittplan zerlegen (kein Code)',
-    steps: [
-      { id: 'clarify',  title: 'Ziel + Erfolgskriterium klären (read-only)',            delegate: 'general',      gate: 'confirm' },
-      { id: 'decompose',title: 'In Wellen/Schritte zerlegen, Abhängigkeiten',            delegate: 'general',      gate: null },
-      { id: 'record',   title: 'Plan als ADR/Doc festhalten',                           delegate: 'experimental', gate: 'confirm' },
-    ],
-  },
-};
+// --- workflow definitions: data, not code (workflows.json neben dem Skript) ---
+let WORKFLOWS;
+try { WORKFLOWS = JSON.parse(readFileSync(join(__dir, 'workflows.json'), 'utf8')); }
+catch (e) { process.stderr.write(`run-state: workflows.json unlesbar (${errMsg(e)})\n`); process.exit(3); }
 
 // --- args ---
 const argv = process.argv.slice(2);
@@ -83,6 +41,7 @@ function opt(name, def = null) {
   const i = argv.indexOf(`--${name}`);
   return i > -1 && argv[i + 1] && !argv[i + 1].startsWith('--') ? argv[i + 1] : def;
 }
+const hasFlag = name => argv.includes(`--${name}`);
 const die = (code, msg) => { process.stderr.write(`run-state: ${msg}\n`); process.exit(code); };
 
 function runId() {
@@ -94,10 +53,18 @@ function loadRun(file) {
   if (!file || !existsSync(file)) die(3, `run-file not found: ${file}`);
   try { return JSON.parse(readFileSync(file, 'utf8')); } catch (e) { die(3, `bad run-file (${errMsg(e)})`); }
 }
+// Atomar: erst tmp schreiben, dann rename — ein Abbruch mitten im Write hinterlässt nie einen
+// korrupten (= nicht mehr resumebaren) Run-State.
+function saveRun(file, run) {
+  const tmp = `${file}.tmp`;
+  writeFileSync(tmp, JSON.stringify(run, null, 2));
+  renameSync(tmp, file);
+}
 function markerLabel(g) { return g === 'gate' ? ' [GATE]' : g === 'confirm' ? ' [CONFIRM]' : ''; }
 function planLines(wf) {
-  return wf.steps.map((s, i) => `  ${i + 1}. ${s.title} → ${s.delegate}${markerLabel(s.gate)}`);
+  return wf.steps.map((s, i) => `  ${i + 1}. ${s.title} → ${s.delegate}${markerLabel(s.gate)}${s.optional ? ' (optional)' : ''}`);
 }
+const isFinished = run => run.steps.every(s => s.status !== 'pending');
 
 // --- commands ---
 if (cmd === 'init') {
@@ -114,7 +81,7 @@ if (cmd === 'init') {
   };
   mkdirSync(dir, { recursive: true });
   const file = join(dir, `orchestrator-${name}-${id}.json`);
-  writeFileSync(file, JSON.stringify(run, null, 2));
+  saveRun(file, run);
   process.stdout.write(
     `Workflow: ${name} — ${wf.description}\n` +
     `Run-ID: ${id}\nState: ${file}\n\nDry-run-Plan:\n${planLines(wf).join('\n')}\n\n` +
@@ -129,7 +96,7 @@ if (cmd === 'show') {
   const run = loadRun(file);
   const rows = run.steps.map((s, i) => {
     const mark = i === run.cursor ? '▶' : s.status === 'done' ? '✓' : s.status === 'blocked' ? '✗' : s.status === 'skipped' ? '↷' : ' ';
-    return ` ${mark} ${i + 1}. ${s.title} → ${s.delegate}${markerLabel(s.gate)}${s.note ? `  (${s.note})` : ''}`;
+    return ` ${mark} ${i + 1}. ${s.title} → ${s.delegate}${markerLabel(s.gate)}${s.optional ? ' (optional)' : ''}${s.note ? `  (${s.note})` : ''}`;
   });
   process.stdout.write(`Workflow ${run.workflow} (${run.runId})${run.title ? ` — ${run.title}` : ''}\n${rows.join('\n')}\n`);
   process.exit(0);
@@ -145,7 +112,8 @@ if (cmd === 'resume') {
     `Nächster Schritt ${i + 1}/${run.steps.length}: ${s.title}\n` +
     `Delegieren an: ${s.delegate}\n` +
     (s.gate === 'gate' ? `[GATE] — bei critical/high hart stoppen.\n`
-      : s.gate === 'confirm' ? `[CONFIRM] — vor Ausführung Ja/Nein einholen.\n` : `(kein Gate)\n`),
+      : s.gate === 'confirm' ? `[CONFIRM] — vor Ausführung Ja/Nein einholen.\n` : `(kein Gate)\n`) +
+    (s.optional ? `(optional — überspringen mit: advance --status skipped)\n` : ''),
   );
   process.exit(0);
 }
@@ -161,11 +129,57 @@ if (cmd === 'advance') {
   const note = opt('note');
   if (note) run.steps[i].note = note;
   run.cursor = Math.min(i + 1, run.steps.length - 1);
-  writeFileSync(file, JSON.stringify(run, null, 2));
+  saveRun(file, run);
   const done = run.steps.filter(s => s.status === 'done').length;
   process.stdout.write(`Schritt ${i + 1} → ${status}. (${done}/${run.steps.length} done)\n`);
   if (status === 'blocked') process.stdout.write(`⚠ blockiert — Workflow hält hier an.\n`);
   process.exit(0);
 }
 
-die(2, `usage: run-state.mjs init|show|resume|advance … (workflows: ${Object.keys(WORKFLOWS).join(', ')})`);
+if (cmd === 'list') {
+  const dir = opt('dir', join('.copilot', 'state', 'artifacts'));
+  const files = existsSync(dir) ? readdirSync(dir).filter(f => f.startsWith('orchestrator-') && f.endsWith('.json')).sort() : [];
+  if (!files.length) { process.stdout.write(`(keine Runs unter ${dir})\n`); process.exit(0); }
+  for (const f of files) {
+    try {
+      const run = JSON.parse(readFileSync(join(dir, f), 'utf8'));
+      const done = run.steps.filter(s => s.status !== 'pending').length;
+      const state = isFinished(run) ? 'fertig' : run.steps.some(s => s.status === 'blocked') ? 'BLOCKIERT' : 'offen';
+      process.stdout.write(`${state.padEnd(9)} ${run.workflow.padEnd(12)} ${done}/${run.steps.length}  ${join(dir, f)}${run.title ? `  — ${run.title}` : ''}\n`);
+    } catch { process.stdout.write(`korrupt   ${join(dir, f)}\n`); }
+  }
+  process.exit(0);
+}
+
+if (cmd === 'prune') {
+  const dir = opt('dir', join('.copilot', 'state', 'artifacts'));
+  const keep = Number(opt('keep', '5'));
+  const files = existsSync(dir) ? readdirSync(dir).filter(f => f.startsWith('orchestrator-') && f.endsWith('.json')).sort() : [];
+  // Nur abgeschlossene Runs löschen; die neuesten `keep` bleiben immer (auch wenn fertig).
+  const finished = files.filter(f => {
+    try { return isFinished(JSON.parse(readFileSync(join(dir, f), 'utf8'))); } catch { return false; }
+  });
+  const toDelete = finished.slice(0, Math.max(0, finished.length - keep));
+  for (const f of toDelete) unlinkSync(join(dir, f));
+  process.stdout.write(`prune: ${toDelete.length} abgeschlossene Run(s) gelöscht, ${files.length - toDelete.length} behalten.\n`);
+  process.exit(0);
+}
+
+if (cmd === 'describe') {
+  if (hasFlag('markdown')) {
+    const out = ['# Workflows (generiert aus workflows.json — nicht von Hand pflegen)', ''];
+    for (const [name, wf] of Object.entries(WORKFLOWS)) {
+      out.push(`## ${name}`, '', wf.description, '', '| # | Schritt | Delegat | Gate |', '|---|---|---|---|');
+      wf.steps.forEach((s, i) => out.push(`| ${i + 1} | ${s.title}${s.optional ? ' *(optional)*' : ''} | ${s.delegate} | ${s.gate ?? '—'} |`));
+      out.push('');
+    }
+    process.stdout.write(out.join('\n'));
+  } else {
+    for (const [name, wf] of Object.entries(WORKFLOWS)) {
+      process.stdout.write(`${name} — ${wf.description}\n${planLines(wf).join('\n')}\n\n`);
+    }
+  }
+  process.exit(0);
+}
+
+die(2, `usage: run-state.mjs init|show|resume|advance|list|prune|describe … (workflows: ${Object.keys(WORKFLOWS).join(', ')})`);

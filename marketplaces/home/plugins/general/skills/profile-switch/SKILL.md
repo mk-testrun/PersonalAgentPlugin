@@ -30,9 +30,11 @@ Gibt die exakten Kommandos aus: erst `disable` für alle Server, die **nicht** i
 `enable` für die Profil-Server. Universe = Vereinigung aller in profiles.json genannten Server.
 
 ### Schritt 2 — Kommandos ausführen
-Die ausgegebenen Kommandos ausführen — entweder als Terminal-Subcommand (`copilot mcp enable/disable …`,
-via execute) oder als interaktive Slash-Kommandos (`/mcp enable/disable …`). Danach sind genau die
-Profil-Server aktiv, der Rest ist deaktiviert (bleibt konfiguriert, wird nur nicht genutzt).
+Präzisierung Slash vs. CLI: **Slash-Kommandos (`/mcp …`) kann nur der Nutzer selbst interaktiv in der
+Session eintippen** — der Agent kann sie nicht ausführen. Der Agent nutzt die CLI-Form
+(`copilot mcp enable/disable …` via execute); die `--form slash`-Ausgabe ist zum Kopieren für den
+Nutzer gedacht. Danach sind genau die Profil-Server aktiv, der Rest ist deaktiviert (bleibt
+konfiguriert, wird nur nicht genutzt).
 
 ### Schritt 3 — Bestätigen
 Das Skript persistiert `{profile, enable, disable}` nach `state/profile.json`. Zum Anzeigen des aktiven

@@ -15,3 +15,5 @@ kodiert (kein Improvisieren). Die folgende Liste spiegelt sie:
 7. PR öffnen + Work-Item verlinken — **[CONFIRM]**
 8. Doku-Hinweis (optional **[CONFIRM]** ADR/README via doku)
 9. Run-Log schreiben. Bei Abbruch nach Schritt 2: **[CONFIRM]** Branch löschen?
+
+Wiedereinstieg nach Unterbrechung: `node scripts/run-state.mjs resume <state-file>` — offene Runs zeigt `list`, abgeschlossene räumt `prune` auf.

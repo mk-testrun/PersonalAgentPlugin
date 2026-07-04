@@ -42,6 +42,7 @@ npm install                                   # alle Workspaces ('prepare: tsc' 
 node tools/validate-plugins.mjs marketplaces/work
 node tools/validate-plugins.mjs marketplaces/home
 npm test --workspaces                         # MCP-Server-Tests
+git config core.hooksPath .githooks           # pre-push-Schranke (validate --strict + Tests)
 ```
 
 ## Validieren
@@ -57,6 +58,10 @@ node tools/validate-plugins.mjs --changed-only origin/main   # nur git-geändert
 # Reifegrad messen (reines Reporting)
 node tools/validate-plugins.mjs --maturity
 node tools/validate-plugins.mjs --maturity-md docs/skill-maturity.md
+
+# Reifegrad-Regressionen gegen den committeten Stand (Exit 1 bei Verschlechterung;
+# optionale Mindestziele in docs/skill-targets.json: {"work/review/security-review": 75, "*": 15})
+node tools/validate-plugins.mjs --maturity-gaps
 ```
 
 Findings sind **dreistufig**: `error` (CLI lädt nicht) · `warning` (nur Fremd-KI-Produkt) ·

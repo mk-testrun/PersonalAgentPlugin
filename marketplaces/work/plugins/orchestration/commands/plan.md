@@ -7,3 +7,5 @@ Treiber: **`workflow-router`** — `run-state.mjs init --workflow plan`. Schritt
 1. Ziel klären, Umfang, Annahmen explizit
 2. Nummerierten Plan mit Done-Kriterien je Schritt + zuständiger Komponente erstellen
 3. Endet mit optionalem **[CONFIRM]** „Plan als /feature ausführen?"
+
+Wiedereinstieg nach Unterbrechung: `node scripts/run-state.mjs resume <state-file>` — offene Runs zeigt `list`, abgeschlossene räumt `prune` auf.

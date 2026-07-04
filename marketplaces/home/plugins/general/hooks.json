@@ -7,6 +7,12 @@
         "bash": "bash \"{{plugin_data_dir}}/hooks/scripts/audit-init.sh\"",
         "powershell": "pwsh -File \"{{plugin_data_dir}}/hooks/scripts/audit-init.ps1\"",
         "timeoutSec": 10
+      },
+      {
+        "type": "command",
+        "bash": "bash \"{{plugin_data_dir}}/hooks/scripts/profile-remind.sh\"",
+        "powershell": "pwsh -File \"{{plugin_data_dir}}/hooks/scripts/profile-remind.ps1\"",
+        "timeoutSec": 10
       }
     ],
     "preToolUse": [

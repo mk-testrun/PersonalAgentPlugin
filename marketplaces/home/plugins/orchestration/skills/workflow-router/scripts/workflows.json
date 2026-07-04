@@ -1,0 +1,30 @@
+{
+  "feature": {
+    "description": "Issue → Branch → Implementierung → Review → PR (GitHub)",
+    "steps": [
+      { "id": "resolve",   "title": "Issue read-only auflösen",                          "delegate": "general",  "gate": "confirm" },
+      { "id": "branch",    "title": "Idempotenz-Check + Branch feature/<slug>",          "delegate": "general",  "gate": "confirm" },
+      { "id": "implement", "title": "Implementierung (Multi-Lang-Conventions)",          "delegate": "general",  "gate": "confirm" },
+      { "id": "review",    "title": "Diff-Review (Security/WCAG/Deps/Perf)",             "delegate": "reviewer", "gate": "gate" },
+      { "id": "pr",        "title": "PR öffnen (GitHub)",                                "delegate": "general",  "gate": "confirm" }
+    ]
+  },
+  "bugfix": {
+    "description": "Repro → Fix → Review → PR (GitHub)",
+    "steps": [
+      { "id": "repro",  "title": "Bug reproduzieren, Ursache eingrenzen (read-only)",    "delegate": "general",  "gate": "confirm" },
+      { "id": "branch", "title": "Branch fix/<slug>",                                    "delegate": "general",  "gate": "confirm" },
+      { "id": "fix",    "title": "Fix implementieren",                                   "delegate": "general",  "gate": "confirm" },
+      { "id": "review", "title": "Diff-Review (Regressions-Fokus)",                      "delegate": "reviewer", "gate": "gate" },
+      { "id": "pr",     "title": "PR öffnen (GitHub)",                                   "delegate": "general",  "gate": "confirm" }
+    ]
+  },
+  "review-flow": {
+    "description": "Vollständige Review-Matrix auf den Diff → findings[] + Report",
+    "steps": [
+      { "id": "scope",     "title": "Diff-Scope bestimmen",                                  "delegate": "reviewer", "gate": null },
+      { "id": "matrix",    "title": "Review-Matrix (WCAG/BFSG/Security/Deps/AI-Readiness)",  "delegate": "reviewer", "gate": null },
+      { "id": "aggregate", "title": "findings[] aggregieren + Report",                       "delegate": "reviewer", "gate": "gate" }
+    ]
+  }
+}

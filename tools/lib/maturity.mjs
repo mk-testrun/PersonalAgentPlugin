@@ -169,7 +169,10 @@ export function renderHistogram(rows, mpName) {
 }
 
 export function renderMarkdown(rows) {
-  const allRows = [...rows].sort((a, b) => b.pct - a.pct || `${a.plugin}/${a.skill}`.localeCompare(`${b.plugin}/${b.skill}`));
+  // rows tragen optional r.mp (Marketplace) — Work/Home haben gleichnamige Plugin/Skill-Paare,
+  // ohne mp-Präfix wären die Zeilen mehrdeutig (und --maturity-gaps könnte nicht vergleichen).
+  const label = r => (r.mp ? `${r.mp}/` : '') + `${r.plugin}/${r.skill}`;
+  const allRows = [...rows].sort((a, b) => b.pct - a.pct || label(a).localeCompare(label(b)));
   const total = allRows.length;
   const avg = total ? Math.round(allRows.reduce((a, r) => a + r.pct, 0) / total) : 0;
   const dist = [5, 4, 3, 2, 1, 0].map(s => `${s}★: ${allRows.filter(r => r.stars === s).length}`).join(' · ');
@@ -186,7 +189,7 @@ export function renderMarkdown(rows) {
   ];
   for (const r of allRows) {
     const miss = r.missing.length ? r.missing.join('; ') : '—';
-    out.push(`| ${r.stars}★ | ${r.pct} | \`${r.plugin}/${r.skill}\` | ${miss} |`);
+    out.push(`| ${r.stars}★ | ${r.pct} | \`${label(r)}\` | ${miss} |`);
   }
   out.push('');
   return out.join('\n');

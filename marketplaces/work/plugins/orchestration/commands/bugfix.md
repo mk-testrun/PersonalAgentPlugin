@@ -10,3 +10,5 @@ Treiber: **`workflow-router`** — `run-state.mjs init --workflow bugfix` (deter
 4. Fix via blazor → Tests grün? (Loop)
 5. Review via review — **[GATE]**
 6. PR öffnen — **[CONFIRM]**. Run-Log.
+
+Wiedereinstieg nach Unterbrechung: `node scripts/run-state.mjs resume <state-file>` — offene Runs zeigt `list`, abgeschlossene räumt `prune` auf.

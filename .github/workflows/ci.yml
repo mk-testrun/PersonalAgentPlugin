@@ -26,6 +26,10 @@ jobs:
           npm run maturity
           git diff --exit-code docs/skill-maturity.md || {
             echo "::error::docs/skill-maturity.md ist nicht aktuell — 'npm run maturity' ausführen und committen."; exit 1; }
+      - name: Orchestrator-Engine Work↔Home identisch (nur workflows.json darf differieren)
+        run: |
+          cmp marketplaces/work/plugins/orchestration/skills/workflow-router/scripts/run-state.mjs \
+              marketplaces/home/plugins/orchestration/skills/workflow-router/scripts/run-state.mjs
       - name: PowerShell hook scripts syntax check
         run: |
           if command -v pwsh >/dev/null; then

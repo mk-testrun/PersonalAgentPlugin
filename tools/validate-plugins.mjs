@@ -295,6 +295,7 @@ function parseArgs(argv) {
     else if (a === '--changed-only') { o.mode = 'changed'; if (argv[i + 1] && !argv[i + 1].startsWith('--')) o.target = argv[++i]; }
     else if (a === '--maturity') o.maturity = true;
     else if (a === '--maturity-md') o.maturityMd = argv[++i];
+    else if (a === '--maturity-gaps') o.maturityGaps = true;
     else if (a === '--strict')  o.strict = true;
     else if (a === '--no-hints') o.hints = false;
     else if (a === '--format')  o.format = argv[++i];
@@ -320,7 +321,7 @@ if (opt.maturity || opt.maturityMd) {
     ? [resolve(opt.target)] : allMarketplaces();
   const all = [];
   for (const mp of mps) {
-    const rows = scoreMarketplace(mp);
+    const rows = scoreMarketplace(mp).map(r => ({ ...r, mp: basename(mp) }));
     all.push(...rows);
     if (opt.maturity) console.log(renderHistogram(rows, basename(mp)));
   }
@@ -334,9 +335,45 @@ if (opt.maturity || opt.maturityMd) {
   }
   process.exit(0);
 }
+// ---- maturity gaps: Regressionen gegen den committeten Stand (git show HEAD:) + optionale Ziele ----
+if (opt.maturityGaps) {
+  const mps = (opt.target && existsSync(join(resolve(opt.target), '.github', 'plugin', 'marketplace.json')))
+    ? [resolve(opt.target)] : allMarketplaces();
+  const current = new Map();
+  for (const mp of mps) for (const r of scoreMarketplace(mp)) current.set(`${basename(mp)}/${r.plugin}/${r.skill}`, r);
+
+  // Baseline: der committete docs/skill-maturity.md (| ★ | % | `plugin/skill` | … |)
+  const baseline = new Map();
+  try {
+    const md = execSync('git show HEAD:docs/skill-maturity.md', { encoding: 'utf8' });
+    for (const m of md.matchAll(/^\|\s*\d★\s*\|\s*(\d+)\s*\|\s*`([^`]+)`/gm)) baseline.set(m[2], Number(m[1]));
+  } catch { /* keine Baseline (frisches Repo) → nur Ziele prüfen */ }
+
+  // Optionale Mindestziele: docs/skill-targets.json { "plugin/skill": <min-%>, "*": <min-%> }
+  let targets = {};
+  try { targets = JSON.parse(readFileSync('docs/skill-targets.json', 'utf8')); } catch { /* optional */ }
+
+  let failed = 0;
+  for (const [key, r] of current) {
+    const base = baseline.get(key);
+    if (base !== undefined && r.pct < base) {
+      console.log(`REGRESSION  ${key}: ${base}% → ${r.pct}%`);
+      failed++;
+    }
+    const min = targets[key] ?? targets['*'];
+    if (min !== undefined && r.pct < min) {
+      console.log(`UNTER ZIEL  ${key}: ${r.pct}% < Ziel ${min}%`);
+      failed++;
+    }
+  }
+  if (failed) { console.log(`\n✗  ${failed} Maturity-Gap(s).`); process.exit(1); }
+  console.log(`✓  Keine Maturity-Regressionen (${current.size} Skills gegen Baseline/Ziele geprüft).`);
+  process.exit(0);
+}
+
 if (opt.mode !== 'changed' && !opt.target) {
   console.error('Usage: node tools/validate-plugins.mjs <marketplace-path> | --skill|--plugin|--agent|--command <path> | --changed-only [base]');
-  console.error('       flags: --strict  --no-hints  --format json');
+  console.error('       flags: --strict  --no-hints  --format json  --maturity  --maturity-md <file>  --maturity-gaps');
   process.exit(1);
 }
 

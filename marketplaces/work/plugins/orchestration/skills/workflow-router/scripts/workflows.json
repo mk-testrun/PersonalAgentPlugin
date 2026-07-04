@@ -1,0 +1,52 @@
+{
+  "feature": {
+    "description": "Issue → Branch → Implementierung → Tests → Review → PR",
+    "steps": [
+      { "id": "resolve",   "title": "Issue/Anforderung read-only auflösen",                  "delegate": "general",      "gate": "confirm" },
+      { "id": "branch",    "title": "Idempotenz-Check + Branch feature/AB-<id>-<slug>",      "delegate": "general",      "gate": "confirm" },
+      { "id": "implement", "title": "Implementierung",                                       "delegate": "blazor",       "gate": "confirm" },
+      { "id": "unit",      "title": "Unit-Tests + Coverage-Gate",                            "delegate": "testing",      "gate": null },
+      { "id": "e2e",       "title": "E2E (localhost, opt-in)",                               "delegate": "testing",      "gate": "gate", "optional": true },
+      { "id": "review",    "title": "Diff-gescopter Review (OWASP/WCAG/SQL/…)",              "delegate": "review",       "gate": "gate" },
+      { "id": "pr",        "title": "PR öffnen + Work-Item verlinken",                       "delegate": "general",      "gate": "confirm" },
+      { "id": "doc",       "title": "Doku/ADR (optional)",                                   "delegate": "doku",         "gate": "confirm", "optional": true }
+    ]
+  },
+  "bugfix": {
+    "description": "Repro → Failing-Test → Fix → grün → Review → PR",
+    "steps": [
+      { "id": "repro",    "title": "Bug reproduzieren, Ursache eingrenzen (read-only)",      "delegate": "general",      "gate": "confirm" },
+      { "id": "branch",   "title": "Branch fix/AB-<id>-<slug>",                              "delegate": "general",      "gate": "confirm" },
+      { "id": "failtest", "title": "Failing-Test schreiben (reproduziert den Bug)",          "delegate": "testing",      "gate": null },
+      { "id": "fix",      "title": "Fix implementieren",                                     "delegate": "blazor",       "gate": "confirm" },
+      { "id": "green",    "title": "Tests grün + Coverage hält",                             "delegate": "testing",      "gate": "gate" },
+      { "id": "review",   "title": "Diff-Review (Regressions-Fokus)",                        "delegate": "review",       "gate": "gate" },
+      { "id": "pr",       "title": "PR öffnen + Work-Item verlinken",                        "delegate": "general",      "gate": "confirm" }
+    ]
+  },
+  "review-flow": {
+    "description": "Vollständige Review-Matrix auf den aktuellen Diff → findings[] + Report",
+    "steps": [
+      { "id": "scope",     "title": "Diff-Scope bestimmen (Branch vs. base)",                "delegate": "review",       "gate": null },
+      { "id": "matrix",    "title": "Review-Matrix ausführen (Security/WCAG/SQL/Deps/Perf)", "delegate": "review",       "gate": null },
+      { "id": "aggregate", "title": "findings[] aggregieren + Report (md + html)",           "delegate": "review",       "gate": "gate" }
+    ]
+  },
+  "ship": {
+    "description": "Merge-bereiten PR über das Deploy-Gate bringen (nur Work)",
+    "steps": [
+      { "id": "preflight", "title": "PR-Status: grün, squash-mergeable, Work-Item verlinkt",   "delegate": "general", "gate": null },
+      { "id": "review",    "title": "Letzter Review-Gate-Check (keine offenen critical/high)", "delegate": "review",  "gate": "gate" },
+      { "id": "merge",     "title": "Squash-Merge",                                            "delegate": "general", "gate": "confirm" },
+      { "id": "pipeline",  "title": "Pipeline-Konventionen prüfen (Approval-Stage, Scans)",    "delegate": "general", "gate": "gate" }
+    ]
+  },
+  "plan": {
+    "description": "Größeres Vorhaben in einen prüfbaren Schrittplan zerlegen (kein Code)",
+    "steps": [
+      { "id": "clarify",   "title": "Ziel + Erfolgskriterium klären (read-only)",             "delegate": "general",      "gate": "confirm" },
+      { "id": "decompose", "title": "In Wellen/Schritte zerlegen, Abhängigkeiten",            "delegate": "general",      "gate": null },
+      { "id": "record",    "title": "Plan als ADR/Doc festhalten",                            "delegate": "experimental", "gate": "confirm" }
+    ]
+  }
+}

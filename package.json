@@ -5,12 +5,15 @@
     "mcp-servers/*"
   ],
   "scripts": {
-    "test:tools": "node --test tools/test/validate-plugins.test.mjs tools/test/run-evals.test.mjs tools/test/hooks.test.mjs",
+    "test:tools": "node --test tools/test/*.test.mjs",
     "test:servers": "npm test --workspaces",
     "validate": "node tools/validate-plugins.mjs marketplaces/work && node tools/validate-plugins.mjs marketplaces/home",
     "evals": "node tools/run-evals.mjs marketplaces/work && node tools/run-evals.mjs marketplaces/home",
     "maturity": "node tools/validate-plugins.mjs --maturity-md docs/skill-maturity.md",
     "test": "npm run validate && npm run evals && npm run test:tools && npm run test:servers",
     "validate:strict": "node tools/validate-plugins.mjs marketplaces/work --strict && node tools/validate-plugins.mjs marketplaces/home --strict"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }
