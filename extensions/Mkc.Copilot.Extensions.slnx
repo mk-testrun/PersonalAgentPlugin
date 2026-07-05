@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Mkc.Copilot.Extensions.Core/Mkc.Copilot.Extensions.Core.csproj" />
+    <Project Path="src/Mkc.Copilot.Extensions.Flow/Mkc.Copilot.Extensions.Flow.csproj" />
+    <Project Path="src/Mkc.Copilot.Extensions.Guardian/Mkc.Copilot.Extensions.Guardian.csproj" />
+    <Project Path="src/Mkc.Copilot.Extensions.Recorder/Mkc.Copilot.Extensions.Recorder.csproj" />
+    <Project Path="src/Mkc.Copilot.Extensions.Sentinel/Mkc.Copilot.Extensions.Sentinel.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Mkc.Copilot.Extensions.Tests/Mkc.Copilot.Extensions.Tests.csproj" />
+  </Folder>
+</Solution>
