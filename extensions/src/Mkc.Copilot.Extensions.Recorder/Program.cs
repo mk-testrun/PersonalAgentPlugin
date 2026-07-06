@@ -1,2 +1,2 @@
-﻿// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Hello, World!");
+// Platzhalter — wird je Phase ersetzt.
+Console.Error.WriteLine("Mkc.Copilot.Extensions.Recorder: noch nicht verdrahtet");
