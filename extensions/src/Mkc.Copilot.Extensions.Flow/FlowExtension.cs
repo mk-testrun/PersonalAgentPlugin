@@ -5,6 +5,7 @@ using Mkc.Copilot.Extensions.Core.Bridge;
 using Mkc.Copilot.Extensions.Core.Pii;
 using Mkc.Copilot.Extensions.Core.State;
 using Mkc.Copilot.Extensions.Core.Workflow;
+using Mkc.Copilot.Extensions.Core.Workflow.Meta;
 
 namespace Mkc.Copilot.Extensions.Flow;
 
@@ -15,7 +16,8 @@ namespace Mkc.Copilot.Extensions.Flow;
 public sealed class FlowExtension(
     ModeContract modeContract, WorkflowEngine engine,
     BackendModeStore backendMode, PiiScrubber pii, string cwd,
-    RemoteConfig remoteConfig, Func<PiiScrubber, IPlanningBackend?> adoFactory) : IExtensionHead
+    RemoteConfig remoteConfig, Func<PiiScrubber, IPlanningBackend?> adoFactory,
+    GoalTracker goals, LoopRunner loop, BatchRunner batch, StateStore store) : IExtensionHead
 {
     private const string ExtensionName = "mkc-work-flow";
 
@@ -41,6 +43,10 @@ public sealed class FlowExtension(
             new("release", "Release-Workflow starten"),
             new("moin", "Workday-Start: git-Status, offene Workflows, Tagesplan"),
             new("commitmsg", "Conventional-Commit-Nachricht aus staged Diff bauen"),
+            new("goal", "Ziel mit prüfbaren Checks: set <text> | status | clear"),
+            new("loop", "Iterieren Richtung Ziel: start [--max n] | status | stop"),
+            new("simplify", "Deterministischer Vereinfachungs-Pass über den aktuellen Diff"),
+            new("batch", "Task-Queue: add <task> | run | status | resume"),
         ],
         Tools =
         [
@@ -83,8 +89,19 @@ public sealed class FlowExtension(
         return new SessionStartResult(string.Join("\n", parts));
     }
 
-    private Task<PostToolUseResult?> OnPostToolUseAsync(PostToolUsePayload payload, CancellationToken ct)
-        => Task.FromResult<PostToolUseResult?>(null); // Gate-Registrierung: Phase 4 (Test-Marker)
+    private async Task<PostToolUseResult?> OnPostToolUseAsync(PostToolUsePayload payload, CancellationToken ct)
+    {
+        // TestsGreen-Gate: nach einem 'dotnet test'-Shell-Aufruf den Exit-Code als Marker persistieren.
+        var cmd = payload.ToolArgs.ValueKind == JsonValueKind.Object
+                  && payload.ToolArgs.TryGetProperty("command", out var c) ? c.GetString() ?? "" : "";
+        if (cmd.Contains("dotnet test", StringComparison.OrdinalIgnoreCase) || cmd.Contains("test", StringComparison.OrdinalIgnoreCase))
+        {
+            var exit = payload.Error is null ? "0" : "1";
+            store.AppendLine("last-test-exit", exit);
+            File.WriteAllText(Path.Combine(store.RootDir, "last-test-exit"), exit);
+        }
+        return null;
+    }
 
     private async Task<CommandInvokeResult?> OnCommandAsync(CommandInvokePayload payload, CancellationToken ct)
     {
@@ -97,6 +114,10 @@ public sealed class FlowExtension(
             "commitmsg" => await HandleCommitMsgAsync(ct),
             "feature" or "bugfix" or "doc" or "refactor" or "review" or "security" or "release"
                 => await HandleStartAsync(payload.Name, payload.Args.Trim(), mode, ct),
+            "goal" => await HandleGoalAsync(payload.Args.Trim(), ct),
+            "loop" => await HandleLoopAsync(payload.Args.Trim(), ct),
+            "simplify" => await HandleSimplifyAsync(ct),
+            "batch" => HandleBatch(payload.Args.Trim()),
             _ => $"Unbekanntes Kommando: {payload.Name}",
         };
         return new CommandInvokeResult(text);
@@ -214,6 +235,103 @@ public sealed class FlowExtension(
     {
         var ado = Active()?.Ado;
         return await CommitComposer.ComposeAsync(cwd, ado, ct);
+    }
+
+    // ---- Meta-Workflows ----
+
+    private async Task<string> HandleGoalAsync(string args, CancellationToken ct)
+    {
+        var parts = args.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
+        var sub = parts.FirstOrDefault() ?? "status";
+        switch (sub)
+        {
+            case "set":
+                var text = parts.Length > 1 ? parts[1].Trim('"', ' ') : "";
+                if (string.IsNullOrEmpty(text)) return "Nutzung: /goal set \"Ziel\" — danach Checks via 'dotnet test' etc. Standard-Check: dotnet test.";
+                goals.Set(text, [new GoalCheck("dotnet test", 0)]);
+                return $"Ziel gesetzt: {text}\nStandard-Check: 'dotnet test' (Exit 0). Anpassbar in .copilot/state/extensions/mkc/goal.json.";
+            case "clear":
+                goals.Clear();
+                return "Ziel gelöscht.";
+            default:
+                var goal = goals.Current;
+                if (goal is null || string.IsNullOrEmpty(goal.Text)) return "Kein Ziel gesetzt.";
+                var results = await goals.EvaluateAsync(ct);
+                var lines = results.Select(r => $"  {(r.Passed ? "✓" : "✗")} {r.Cmd} (exit {r.ExitCode})");
+                return $"Ziel: {goal.Text}\nChecks:\n{string.Join("\n", lines)}";
+        }
+    }
+
+    private async Task<string> HandleLoopAsync(string args, CancellationToken ct)
+    {
+        var parts = args.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        var sub = parts.FirstOrDefault() ?? "status";
+        switch (sub)
+        {
+            case "start":
+                var max = 5;
+                var maxIdx = Array.IndexOf(parts, "--max");
+                if (maxIdx >= 0 && maxIdx + 1 < parts.Length && int.TryParse(parts[maxIdx + 1], out var m)) max = m;
+                if (goals.Current is null || string.IsNullOrEmpty(goals.Current.Text))
+                    return "Kein Ziel gesetzt — zuerst /goal set \"…\".";
+                loop.Start(max);
+                return $"Loop gestartet (max {max} Iterationen) Richtung Ziel: {goals.Current.Text}. " +
+                       "Arbeite; nach jedem Stillstand werden Checks + Fortschritt geprüft (/loop status).";
+            case "stop":
+                loop.Stop();
+                return "Loop gestoppt.";
+            default:
+                return await EvaluateLoopAsync(ct);
+        }
+    }
+
+    /// <summary>Wird von /loop status (und potenziell SessionIdle) aufgerufen: eine Iterations-Entscheidung.</summary>
+    private async Task<string> EvaluateLoopAsync(CancellationToken ct)
+    {
+        var state = loop.Load();
+        if (!state.Active) return "Kein aktiver Loop.";
+
+        var allGreen = await goals.AllGreenAsync(ct);
+        var errorOut = string.Join("\n", (await goals.EvaluateAsync(ct)).Where(r => !r.Passed).Select(r => r.Cmd + " exit " + r.ExitCode));
+        var diffStat = (await GitRunner.RunAsync(cwd, ["diff", "--stat"], ct)).StdOut;
+        var hash = ProgressHash.Compute(errorOut, diffStat);
+        var budgetExhausted = false; // Budget lebt im Sentinel; hier konservativ false (Sentinel deny greift separat).
+
+        var decision = loop.Decide(allGreen, hash, budgetExhausted);
+        return decision.Injection is not null ? $"{decision.Message}\n{decision.Injection}" : decision.Message;
+    }
+
+    private async Task<string> HandleSimplifyAsync(CancellationToken ct)
+    {
+        var runner = new SimplifyRunner(cwd);
+        var files = await runner.ChangedFilesAsync(ct);
+        if (files.Count == 0) return "Keine geänderten Dateien im aktuellen Diff — nichts zu vereinfachen.";
+        return $"Simplify-Pass über {files.Count} Datei(en):\n" +
+               string.Join("\n", files.Select(f => $"  - {f}")) +
+               "\n\nGehe Datei für Datei vor: vereinfachen ohne Verhaltensänderung, dann Tests. " +
+               "Rote Datei via checkpoint zurückholen (mkc-work-sentinel: /checkpoint).";
+    }
+
+    private string HandleBatch(string args)
+    {
+        var parts = args.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
+        var sub = parts.FirstOrDefault() ?? "status";
+        switch (sub)
+        {
+            case "add":
+                if (parts.Length < 2) return "Nutzung: /batch add <Task-Beschreibung>";
+                batch.Add(parts[1].Trim('"'));
+                return $"Task hinzugefügt. {batch.Status()}";
+            case "run":
+            case "resume":
+                var state = batch.Start();
+                var current = batch.Current();
+                return current is null
+                    ? "Keine offenen Tasks."
+                    : $"Batch {(sub == "resume" ? "fortgesetzt" : "gestartet")}. Aktueller Task: {current.Description}\n{batch.Status()}";
+            default:
+                return batch.Status();
+        }
     }
 
     private async Task<ToolInvokeResult?> OnToolAsync(ToolInvokePayload payload, CancellationToken ct)
