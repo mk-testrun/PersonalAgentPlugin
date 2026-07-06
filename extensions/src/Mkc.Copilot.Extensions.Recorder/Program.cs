@@ -8,5 +8,6 @@ var store = StateStore.FromEnvironment();
 var head = new RecorderExtension(
     new UsageAggregator(store, PriceTable.Load()),
     new DenyLog(store),
-    new WorkflowEngine(store, new Gates()));
+    new WorkflowEngine(store, new Gates()),
+    store);
 return await ExtensionRunner.RunAsync(head, args);

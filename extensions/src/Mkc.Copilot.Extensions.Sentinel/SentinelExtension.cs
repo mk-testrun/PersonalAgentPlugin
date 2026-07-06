@@ -33,7 +33,7 @@ public sealed class SentinelExtension(StateStore store, ModeContract modeContrac
         Commands =
         [
             new("autopilot", "Autopilot-Modus: on|off|auto|status"),
-            new("budget", "Session-Budgets: show | set <key> <n>"),
+            new("budget", "Session-Budgets: show | set <key> <n> | suggest"),
             new("checkpoint", "Checkpoints: list | create"),
         ],
         WantsPermissionFlow = true,
@@ -172,8 +172,18 @@ public sealed class SentinelExtension(StateStore store, ModeContract modeContrac
             _budgets.SetLimit(key, limit);
             return $"Budget {key} = {limit}";
         }
-        var lines = _budgets.Snapshot().Select(kv => $"{kv.Key}: {kv.Value.Used}/{kv.Value.Limit}");
-        return "Budgets (verbraucht/Limit):\n" + string.Join("\n", lines);
+        if (parts is ["suggest", ..])
+        {
+            var suggestions = new BudgetAdvisor(store).Suggest(_budgets.Snapshot());
+            if (suggestions.Count == 0)
+                return "Noch zu wenig Recorder-Historie für Vorschläge (mkc-work-recorder aktivieren).";
+            var lines = suggestions.Select(s =>
+                $"{s.Key}: aktuell {s.CurrentLimit} → Vorschlag {s.Suggested}  ({s.Basis})\n" +
+                $"  übernehmen mit: /budget set {s.Key} {s.Suggested}");
+            return "Budget-Vorschläge aus der Nutzungshistorie:\n" + string.Join("\n", lines);
+        }
+        var snap = _budgets.Snapshot().Select(kv => $"{kv.Key}: {kv.Value.Used}/{kv.Value.Limit}");
+        return "Budgets (verbraucht/Limit):\n" + string.Join("\n", snap);
     }
 
     private async Task<string> HandleCheckpointAsync(string sub, CancellationToken ct)

@@ -19,10 +19,14 @@ public static class DefaultPolicy
         {
             using var doc = JsonDocument.Parse(File.ReadAllText(overridePath));
             var root = doc.RootElement;
+            var mode = root.TryGetProperty("mode", out var m) && m.ValueKind == JsonValueKind.String
+                       && string.Equals(m.GetString(), "warn", StringComparison.OrdinalIgnoreCase)
+                ? PolicyMode.Warn : PolicyMode.Block;
             return new GitPolicy
             {
                 ProtectedBranches = ReadArray(root, "protectedBranches") ?? new GitPolicy().ProtectedBranches,
                 ProtectedBranchPrefixes = ReadArray(root, "protectedBranchPrefixes") ?? new GitPolicy().ProtectedBranchPrefixes,
+                Mode = mode,
             };
         }
         catch

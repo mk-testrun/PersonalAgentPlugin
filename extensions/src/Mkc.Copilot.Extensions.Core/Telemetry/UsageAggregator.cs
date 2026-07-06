@@ -6,7 +6,9 @@ namespace Mkc.Copilot.Extensions.Core.Telemetry;
 
 public sealed record UsageEntry(
     DateTimeOffset Ts, string Model, long InputTokens, long OutputTokens, long CachedTokens,
-    string? WorkflowId, bool Estimated, double? RealCost = null);
+    string? WorkflowId, bool Estimated, double? RealCost = null, string? Initiator = null);
+
+public sealed record FleetLine(string Initiator, long Input, long Output, int Calls, double Cost, bool Estimated);
 
 [JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
 [JsonSerializable(typeof(UsageEntry))]
@@ -23,10 +25,31 @@ public sealed class UsageAggregator(StateStore store, PriceTable prices)
 {
     public const string FileName = "recorder/usage.jsonl";
 
-    public void Record(string model, long input, long output, long cached, string? workflowId, bool estimated, double? realCost = null)
+    public void Record(string model, long input, long output, long cached, string? workflowId, bool estimated,
+        double? realCost = null, string? initiator = null)
     {
-        var entry = new UsageEntry(DateTimeOffset.UtcNow, model, input, output, cached, workflowId, estimated, realCost);
+        var entry = new UsageEntry(DateTimeOffset.UtcNow, model, input, output, cached, workflowId, estimated, realCost, initiator);
         store.AppendLine(FileName, JsonSerializer.Serialize(entry, UsageJsonContext.Default.UsageEntry));
+    }
+
+    /// <summary>Kostenaufschlüsselung je (Sub-)Agent — für Fleet-Läufe (initiator-Feld der usage-Events).</summary>
+    public IReadOnlyList<FleetLine> FleetBreakdown()
+    {
+        return ReadAll()
+            .Where(e => e.Initiator is { Length: > 0 })
+            .GroupBy(e => e.Initiator!)
+            .Select(g =>
+            {
+                var input = g.Sum(e => e.InputTokens);
+                var output = g.Sum(e => e.OutputTokens);
+                var cost = g.All(e => e.RealCost is not null)
+                    ? g.Sum(e => e.RealCost!.Value)
+                    : prices.Cost(g.First().Model, input, output, g.Sum(e => e.CachedTokens)).Cost;
+                var estimated = g.Any(e => e.Estimated) || g.Any(e => e.RealCost is null);
+                return new FleetLine(g.Key, input, output, g.Count(), cost, estimated);
+            })
+            .OrderByDescending(f => f.Cost)
+            .ToList();
     }
 
     public IEnumerable<UsageEntry> ReadAll()

@@ -99,14 +99,32 @@ public sealed class GuardianExtension(StateStore store, ModeContract modeContrac
         var escalation = repeated >= 3
             ? " STOP: Dieser Befehl wurde bereits mehrfach verweigert — er ist policy-blockiert. Wähle einen anderen Weg."
             : "";
+        // Adaptive Policy: konkreten Ausweg vorschlagen statt nur zu blockieren.
+        var alternative = Alternatives.GetValueOrDefault(decision.Rule);
+        var hint = alternative is null ? "" : $" Alternative: {alternative}";
 
         return new PreToolUseResult
         {
             PermissionDecision = "deny",
             PermissionDecisionReason = $"[{decision.Rule}] {decision.Reason}",
-            AdditionalContext = $"mkc-work-guardian: '{Truncate(commandText, 120)}' verweigert ({decision.Rule}).{escalation}",
+            AdditionalContext = $"mkc-work-guardian: '{Truncate(commandText, 120)}' verweigert ({decision.Rule}).{hint}{escalation}",
         };
     }
+
+    /// <summary>Regel → konkreter erlaubter Ausweg (adaptive Policy-Hinweise).</summary>
+    private static readonly IReadOnlyDictionary<string, string> Alternatives = new Dictionary<string, string>
+    {
+        ["git-push-force"] = "git push --force-with-lease (verliert keine fremden Commits).",
+        ["git-push-force-protected"] = "auf einem Feature-Branch arbeiten und per PR mergen statt main zu forcen.",
+        ["git-push-lease-protected"] = "auf einem Feature-Branch arbeiten und per PR mergen statt den geschützten Branch zu forcen.",
+        ["git-reset-hard"] = "git stash (reversibel) oder ein Checkpoint via /checkpoint create vor dem Reset.",
+        ["git-clean-force"] = "git clean -n (Dry-Run) zeigt erst, was gelöscht würde.",
+        ["git-branch-force-delete"] = "git branch -d (nur gemergte) oder den Branch vorher pushen/sichern.",
+        ["git-rebase-shared"] = "auf einem eigenen Branch rebasen, geteilte Branches nur mergen.",
+        ["secret-in-args"] = "Secret über ${env:NAME}/${secret:NAME} referenzieren statt im Klartext.",
+        ["insecure-http"] = "https:// verwenden.",
+        ["branch-name-lint"] = "git-flow-Schema nutzen: feature/ab1234-kurz-beschreibung.",
+    };
 
     private Task<PostToolUseResult?> OnPostToolUseAsync(PostToolUsePayload payload, CancellationToken ct)
     {

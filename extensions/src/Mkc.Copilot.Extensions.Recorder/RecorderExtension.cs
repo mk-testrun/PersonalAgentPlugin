@@ -11,12 +11,13 @@ namespace Mkc.Copilot.Extensions.Recorder;
 /// mkc-work-recorder: vollständige Telemetrie (fail-open, Opt-in). Zeichnet Session-Events auf,
 /// verrechnet assistant.usage zu Kosten je Session/Workflow, wertet Denies aus.
 /// </summary>
-public sealed class RecorderExtension(UsageAggregator usage, DenyLog denyLog, WorkflowEngine engine)
+public sealed class RecorderExtension(UsageAggregator usage, DenyLog denyLog, WorkflowEngine engine, StateStore store)
     : IExtensionHead
 {
     private const string ExtensionName = "mkc-work-recorder";
     private readonly Dictionary<string, long> _toolStarts = new();
     private readonly List<long> _toolLatencies = [];
+    private readonly HashSet<string> _subagentNames = [];
     private int _compactions;
     private int _subagents;
 
@@ -27,7 +28,7 @@ public sealed class RecorderExtension(UsageAggregator usage, DenyLog denyLog, Wo
         Name = ExtensionName,
         Version = "0.1.0",
         Hooks = ["sessionEnd"],
-        Commands = [new("flightlog", "Telemetrie: last | report | costs [workflow <id>] | models | denies")],
+        Commands = [new("flightlog", "Telemetrie: last | report | costs [workflow <id>] | models | denies | fleet | export")],
         WantsSessionEvents =
         [
             "AssistantUsage", "ToolExecutionStart", "ToolExecutionComplete",
@@ -50,7 +51,10 @@ public sealed class RecorderExtension(UsageAggregator usage, DenyLog denyLog, Wo
             case "ToolExecutionStart": TrackStart(evt.Data); break;
             case "ToolExecutionComplete": TrackComplete(evt.Data); break;
             case "Compaction": _compactions++; break;
-            case "SubagentStarted": _subagents++; break;
+            case "SubagentStarted":
+                _subagents++;
+                if (Str(evt.Data, "agentName") is { Length: > 0 } an) _subagentNames.Add(an);
+                break;
         }
         return Task.FromResult<object?>(null);
     }
@@ -64,7 +68,8 @@ public sealed class RecorderExtension(UsageAggregator usage, DenyLog denyLog, Wo
         var estimated = model == "unknown";
         // Reale Kosten (Modell-Multiplikator) der CLI übernehmen, wenn vorhanden.
         double? realCost = TryProp(data, "cost") is { ValueKind: JsonValueKind.Number } cv ? cv.GetDouble() : null;
-        usage.Record(model, input, output, cached, engine.ActiveId(), estimated, realCost);
+        var initiator = Str(data, "initiator");
+        usage.Record(model, input, output, cached, engine.ActiveId(), estimated, realCost, initiator);
     }
 
     private void TrackStart(JsonElement data)
@@ -98,10 +103,51 @@ public sealed class RecorderExtension(UsageAggregator usage, DenyLog denyLog, Wo
             "costs" => CostsText(parts.Length >= 3 && parts[1] == "workflow" ? parts[2] : null),
             "models" => ModelsText(),
             "denies" => DeniesText(),
+            "fleet" => FleetText(),
+            "export" => await ExportOtlpAsync(ct),
             "report" => await WriteReportArtifactAsync(ct),
             _ => LastText(),
         };
         return new CommandInvokeResult(text);
+    }
+
+    private string FleetText()
+    {
+        var lines = usage.FleetBreakdown();
+        if (lines.Count == 0)
+            return _subagents == 0
+                ? "Kein Fleet-Lauf erfasst (keine Subagenten)."
+                : $"{_subagents} Subagent(en){(_subagentNames.Count > 0 ? " (" + string.Join(", ", _subagentNames) + ")" : "")}, " +
+                  "aber keine initiator-attribuierten usage-Events.";
+        var rows = lines.Select(f =>
+            $"  {f.Initiator}: {f.Cost:0.000} €{(f.Estimated ? " [geschätzt]" : "")} · {f.Input}+{f.Output} Tokens · {f.Calls} Calls");
+        return $"Fleet-Kosten je Subagent ({_subagents} gestartet):\n{string.Join("\n", rows)}";
+    }
+
+    /// <summary>Exportiert die Kostenaufschlüsselung als OTLP-kompatible JSON-Lines (Log-Records).</summary>
+    private async Task<string> ExportOtlpAsync(CancellationToken ct)
+    {
+        var report = usage.Report();
+        var records = report.ByModel.Select(m => new
+        {
+            timeUnixNano = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() * 1_000_000L,
+            severityText = "INFO",
+            body = new { stringValue = $"mkc.usage model={m.Model}" },
+            attributes = new object[]
+            {
+                new { key = "model", value = new { stringValue = m.Model } },
+                new { key = "tokens.input", value = new { intValue = m.Input } },
+                new { key = "tokens.output", value = new { intValue = m.Output } },
+                new { key = "tokens.cached", value = new { intValue = m.Cached } },
+                new { key = "cost.eur", value = new { doubleValue = m.Cost } },
+                new { key = "calls", value = new { intValue = (long)m.Calls } },
+                new { key = "estimated", value = new { boolValue = m.Estimated } },
+            },
+        });
+        var path = Path.Combine(store.RootDir, "recorder", $"otlp-{DateTimeOffset.UtcNow:yyyyMMdd-HHmmss}.jsonl");
+        Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+        await File.WriteAllLinesAsync(path, records.Select(r => JsonSerializer.Serialize(r)), ct);
+        return $"OTLP-Export ({report.ByModel.Count} Modell-Records) → {path}";
     }
 
     private string CostsText(string? workflowId)

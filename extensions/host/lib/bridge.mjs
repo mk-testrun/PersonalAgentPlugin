@@ -235,6 +235,9 @@ export async function startBridge(joinSession, { name, failMode, extensionUrl })
     "auto_mode_switch.completed": "AutoModeSwitch",
     "session.usage_info": "Compaction",
     "compaction.complete": "Compaction",
+    "subagent.started": "SubagentStarted",
+    "subagent.completed": "SubagentCompleted",
+    "subagent.failed": "SubagentFailed",
   };
 
   // Usage-Felder der realen API auf die interne Form normalisieren
@@ -248,11 +251,14 @@ export async function startBridge(joinSession, { name, failMode, extensionUrl })
         outputTokens: d.outputTokens ?? 0,
         cachedTokens: (d.cacheReadTokens ?? 0) + (d.cacheWriteTokens ?? 0),
         cost: d.cost ?? null,
+        initiator: d.initiator ?? null,   // identifiziert den (Sub-)Agenten für Fleet-Attribution
       };
     if (kind === "ToolExecutionStart" || kind === "ToolExecutionComplete")
       return { invocationId: d.toolCallId ?? d.toolName ?? "", toolName: d.toolName, success: d.success };
     if (kind === "AutoModeSwitch")
       return { enabled: d.response?.enabled ?? d.enabled ?? null };
+    if (kind === "SubagentStarted" || kind === "SubagentCompleted" || kind === "SubagentFailed")
+      return { agentName: d.agentName ?? d.agentDisplayName ?? "subagent", agentId: d.agentId ?? null };
     return d;
   }
 

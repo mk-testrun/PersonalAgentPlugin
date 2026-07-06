@@ -9,9 +9,18 @@
 > Details in `docs/extensions-capability-alignment.md`. **Erledigt aus der Must/Should-Liste:**
 > A2 (Capability-Abgleich), A3 (Version-Pin `1.0.68`), Teile B5 (reales `auto_mode_switch`-
 > Signal für Autopilot), C8 (State-`schemaVersion`), C9 (Concurrency-Lock `StateStore.Mutate`),
-> F-spaceId-Cache; Recorder nutzt reale CLI-`cost`. **Offen bleibt der einzige echte Blocker:**
-> A1 (voll LLM-getriebener E2E-Lauf) — braucht GitHub-Token + interaktives TUI und ist in der
-> Sandbox nicht ausführbar; Ersatz-Verifikation über den realen-API-Shim-Test + E2E-Checkliste.
+> F-spaceId-Cache; Recorder nutzt reale CLI-`cost`.
+>
+> **Update Phase 8 (Could/Anhebung, 2026-07-06):** Fleet-Kostenattribution je Subagent
+> (`/flightlog fleet`, `subagent.*` + `initiator`), OTLP-Export (`/flightlog export`),
+> statistik-gestützte Budget-Vorschläge (`/budget suggest`), adaptive Guardian-Hinweise
+> (Regel→Ausweg), Home-Welt-Warn-Modus (`GitPolicy.Mode`). **ForUri** (nicht anwendbar aufs
+> Extension-Modell) und **Embedding-Retrieval** (CLI-seitig) sind im ADR-0010-Nachtrag
+> begründet abgeschlossen.
+>
+> **Offen bleibt der einzige echte Blocker:** A1 (voll LLM-getriebener E2E-Lauf) — braucht
+> GitHub-Token + interaktives TUI und ist in der Sandbox nicht ausführbar; Ersatz-Verifikation
+> über den realen-API-Shim-Test + E2E-Checkliste.
 
 ---
 

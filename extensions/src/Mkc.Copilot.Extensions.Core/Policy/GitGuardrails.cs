@@ -1,10 +1,20 @@
 namespace Mkc.Copilot.Extensions.Core.Policy;
 
+/// <summary>Härtegrad der Guardrails: Block = Work-Welt (Deny), Warn = Home-Welt (Confirm statt Deny).</summary>
+public enum PolicyMode { Block, Warn }
+
 /// <summary>Konfiguration der Git-Regeln (Default: Work-Welt, ADR-0004).</summary>
 public sealed record GitPolicy
 {
     public string[] ProtectedBranches { get; init; } = ["main", "master", "develop"];
     public string[] ProtectedBranchPrefixes { get; init; } = ["release/"];
+
+    /// <summary>
+    /// Block (Default, Work): destruktive Ops werden verweigert.
+    /// Warn (Home): nicht-geschützte destruktive Ops werden zu Confirm herabgestuft;
+    /// force-push auf geschützte Branches bleibt IMMER Deny (ADR-0004).
+    /// </summary>
+    public PolicyMode Mode { get; init; } = PolicyMode.Block;
 
     public bool IsProtected(string branch) =>
         ProtectedBranches.Contains(branch, StringComparer.OrdinalIgnoreCase)
@@ -17,7 +27,20 @@ public sealed record GitPolicy
 /// </summary>
 public static class GitGuardrails
 {
+    // Diese Denies bleiben auch im Warn-Modus hart (ADR-0004: geschützte Branches).
+    private static readonly HashSet<string> AlwaysHard =
+        ["git-push-force-protected", "git-push-lease-protected", "git-push-delete-protected"];
+
     public static PolicyDecision Evaluate(string[] argv, GitPolicy policy)
+    {
+        var decision = EvaluateCore(argv, policy);
+        // Home-Welt: nicht-geschützte Denies zu Confirm herabstufen.
+        if (policy.Mode == PolicyMode.Warn && decision.Verdict == Verdict.Deny && !AlwaysHard.Contains(decision.Rule))
+            return decision with { Verdict = Verdict.Confirm };
+        return decision;
+    }
+
+    private static PolicyDecision EvaluateCore(string[] argv, GitPolicy policy)
     {
         if (argv.Length < 2 || argv[0] != "git") return PolicyDecision.Allow;
         var sub = argv[1];
@@ -63,7 +86,9 @@ public static class GitGuardrails
         if (hasDelete && isProtected)
             return PolicyDecision.Deny("git-push-delete-protected", $"Löschen des geschützten Branches '{targetBranch}' ist gesperrt.");
         if (hasForce && !hasLease)
-            return PolicyDecision.Deny("git-push-force", "git push --force ist gesperrt — nutze --force-with-lease.");
+            return isProtected
+                ? PolicyDecision.Deny("git-push-force-protected", $"git push --force auf geschützten Branch '{targetBranch}' ist gesperrt.")
+                : PolicyDecision.Deny("git-push-force", "git push --force ist gesperrt — nutze --force-with-lease.");
         if (hasLease && isProtected)
             return PolicyDecision.Deny("git-push-lease-protected", $"Auch --force-with-lease ist auf '{targetBranch}' gesperrt.");
         return PolicyDecision.Allow;

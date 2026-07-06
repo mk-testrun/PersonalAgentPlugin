@@ -69,9 +69,28 @@ Weitere fixierte Entscheidungen:
 - **`extension.mjs`-API ist instabil:** getestete CLI-Version in `versions.json` gepinnt;
   Feature-Detection der `joinSession`-Optionen; stabile Grenze ist `mkc-bridge/1`.
 
+## Nachtrag Phase 8 (Anhebung/„Could", 2026-07-06)
+- **ForUri/natives SDK statt Stecker — geklärt: NICHT anwendbar aufs Extension-Modell.**
+  Die reale CLI 1.0.68 lädt Extensions ausschließlich durch **Fork von `extension.mjs`** und
+  Anbindung via `joinSession()` (`preloads/extension_bootstrap.mjs`, SDK per Resolver-Hook).
+  Einen dokumentierten `ForUri`-Connect-back für *Extensions* gibt es nicht — er betrifft das
+  eigenständige App-SDK, nicht dieses Szenario. Der Stecker bleibt die korrekte, alternativlose
+  Grenze. Damit ist dieser Punkt erledigt (kein v3-Umbau nötig/möglich).
+- **Embedding-basierte Kontext-Injektion — CLI-seitig, nicht durch uns umsetzbar.** Wir halten
+  nur unsere SystemMessage-Sections klein/thematisch (bereits umgesetzt), damit das
+  CLI-Retrieval greift. Kein eigener Code.
+- **Fleet-Kostenattribution — umgesetzt.** Shim mappt `subagent.started/completed/failed` und
+  reicht `initiator` auf `assistant.usage` durch; Recorder: `/flightlog fleet` (Kosten je
+  Subagent), `/flightlog export` (OTLP-JSON-Lines).
+- **Adaptive Policy — umgesetzt.** Guardian schlägt bei Deny konkrete Auswege vor
+  (force→force-with-lease etc.); Sentinel `/budget suggest` aus der Recorder-Historie.
+- **Home-Welt-Semantik — als Warn-Modus umgesetzt.** `GitPolicy.Mode = Warn` (via
+  `policy.json` `"mode":"warn"`) stuft nicht-geschützte destruktive Ops auf Confirm herab;
+  force-push auf geschützte Branches bleibt hart Deny (ADR-0004). Eine vollständige separate
+  `mkc-home-*`-Extensionfamilie bleibt ein config-getriebener Folgeschritt.
+
 ## Offene Fragen
-- ForUri/natives SDK statt Stecker: Re-Evaluation erst in einer etwaigen v3.
-- Fleet-Hook-Semantik (wirken Extension-Hooks auf Subagent-Tool-Calls?) — im Dogfooding zu
-  verifizieren; Custom Agents + `/fleet` sind v2.
+- Fleet-Hook-Semantik (wirken Extension-Hooks auf Subagent-Tool-Calls?) — nur im echten
+  Dogfooding mit Token verifizierbar (siehe `docs/extensions-capability-alignment.md`).
 - Vereinheitlichung `policy/git-guardrails.json` (Marketplace) ↔ `DefaultPolicy.cs` (Extension).
-- Home-Variante (`mkc-home-*`) außerhalb des aktuellen Scopes.
+- Voll LLM-getriebener E2E-Lauf (A1) — braucht GitHub-Token + interaktives TUI.

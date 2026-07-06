@@ -189,3 +189,20 @@ test("recorder: assistant.usage-Events ⇒ /flightlog costs summiert je Modell",
     assert.match(models.payload.text, /gpt-5/);
   } finally { await r.close(); s.cleanup(); }
 });
+
+test("recorder: fleet-Attribution + OTLP-export gegen echtes Binary", async () => {
+  const s = tempState();
+  const r = connect("mkc-work-recorder", { stateDir: s.dir });
+  try {
+    await r.init();
+    r.event("event.session", { kind: "SubagentStarted", data: { agentName: "reviewer" } });
+    r.event("event.session", { kind: "AssistantUsage", data: { model: "gpt-5", inputTokens: 1000, outputTokens: 0, cachedTokens: 0, cost: 0.05, initiator: "reviewer" } });
+    await new Promise((res) => setTimeout(res, 200));
+    const fleet = await r.request("command.invoke", { name: "flightlog", args: "fleet" });
+    assert.match(fleet.payload.text, /reviewer/);
+    const exp = await r.request("command.invoke", { name: "flightlog", args: "export" });
+    assert.match(exp.payload.text, /OTLP-Export/);
+    const { existsSync, readdirSync } = await import("node:fs");
+    assert.ok(readdirSync(join(s.dir, "recorder")).some((f) => f.startsWith("otlp-")));
+  } finally { await r.close(); s.cleanup(); }
+});
