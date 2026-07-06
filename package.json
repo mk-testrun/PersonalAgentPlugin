@@ -10,6 +10,8 @@
     "validate": "node tools/validate-plugins.mjs marketplaces/work && node tools/validate-plugins.mjs marketplaces/home",
     "evals": "node tools/run-evals.mjs marketplaces/work && node tools/run-evals.mjs marketplaces/home",
     "maturity": "node tools/validate-plugins.mjs --maturity-md docs/skill-maturity.md",
+    "validate:extensions": "node tools/validate-extensions.mjs",
+    "test:extensions": "dotnet test extensions --filter \"Category!=Integration\" && node --test extensions/shim-test/mock-harness.test.mjs extensions/shim-test/shim-bridge.test.mjs",
     "test": "npm run validate && npm run evals && npm run test:tools && npm run test:servers"
   }
 }

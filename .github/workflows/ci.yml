@@ -63,12 +63,33 @@ jobs:
       - name: Test artifact-viewer textfile
         working-directory: mcp-servers/artifact-viewer
         run: node test/textfile.test.mjs
-      - name: Build dotnet-mcpserver-starter
-        working-directory: mcp-servers/dotnet-mcpserver-starter
+      # Hinweis: Das .NET-MCP-Template liegt als Kopiervorlage unter
+      # marketplaces/work/plugins/meta/skills/mcp-author/templates/dotnet-starter/
+      # (kein laufender Server) und wird daher hier nicht gebaut.
+
+  extensions:
+    name: Build & Test Copilot-CLI-Extensions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+      - name: Build (warnings as errors)
+        run: dotnet build extensions -c Release
+      - name: Unit tests
+        run: dotnet test extensions -c Release --filter "Category!=Integration"
+      - name: Publish heads
         run: |
-          if command -v dotnet &>/dev/null; then
-            dotnet build
-          else
-            echo "No .NET SDK found — skipping dotnet build (optional step)"
-          fi
-        continue-on-error: true
+          for h in Guardian Sentinel Flow Recorder; do
+            low=$(echo "$h" | tr '[:upper:]' '[:lower:]')
+            dotnet publish "extensions/src/Mkc.Copilot.Extensions.$h" -c Release \
+              -o "extensions/host/mkc-work-$low/bin" --nologo
+          done
+      - name: Validate extensions
+        run: node tools/validate-extensions.mjs --strict
+      - name: Bridge mock-harness + shim regression (real binaries)
+        run: node --test extensions/shim-test/mock-harness.test.mjs extensions/shim-test/shim-bridge.test.mjs

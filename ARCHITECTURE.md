@@ -190,3 +190,33 @@ Manifest-Struktur, SKILL.md-/Agent-/Command-Frontmatter, Agent-Tool-IDs, `.mcp.j
 
 MCP-Server-Konventionen: [ADR-0005](docs/adr/0005-mcp-server-conventions.md) ·
 Skill-Paket-Layout: [ADR-0006](docs/adr/0006-skill-package-layout.md).
+
+---
+
+## §10 Copilot-CLI-Extensions (experimentell, Work, User-Scope)
+
+Neben den beiden Marketplaces liegt unter `extensions/` ein **lokales Copilot-CLI-Extension-
+System** (das `.github/extensions/`-System der CLI — **kein** MCP, **kein** Plugin, **keine**
+GitHub-App-Extension). Vier einzeln aktivierbare Extensions in **C#/net10.0**, geteilte
+Core-Library, ausschließlich User-Scope installiert (`~/.copilot/extensions/`).
+
+| Extension | Zweck | Fail |
+|---|---|---|
+| `mkc-work-guardian` | Git-Guardrails (argv-Parser), Tool-Guardian, Secret-Scan, Branch-Lint · `/guardian` | closed |
+| `mkc-work-sentinel` | Autopilot-Erkennung, Budgets, Checkpoints · `/autopilot` `/budget` `/checkpoint` | closed |
+| `mkc-work-flow` | 7 Workflows, Local/Remote-Backends (ADO/Confluence REST), PII-Scrub, Meta (`/goal` `/loop` `/simplify` `/batch`) · `/mode` `/workflow` `/feature` … `/moin` `/commitmsg` | open |
+| `mkc-work-recorder` | Telemetrie: Kosten je Session/Workflow, Modelle, Denies · `/flightlog` | open (Opt-in) |
+
+- **Echte Extension, kein Overlay:** `extension.mjs` ist ein fester ~12-Zeilen-Stecker; die
+  gesamte Logik liegt im .NET-Prozess. Protokoll Stecker↔.NET: **`mkc-bridge/1`** (NDJSON,
+  [Spec](docs/extensions-bridge-protocol.md)).
+- **Kopplung nur über State-Dateien** (`mode.json` stale⇒autonomous, `denials.jsonl`,
+  `current-workflow.json`); jedes `preToolUse`-Deny gewinnt.
+- **Autopilot „Härten + Budgets"**, Confirm-Deadline 60 s ⇒ Deny.
+- **Kein ADO-/Confluence-MCP:** REST direkt aus C#, PII-Scrub vor jedem Call.
+- Installation: `extensions/install/install.sh --mode link` · Validierung:
+  `node tools/validate-extensions.mjs` · CI-Job `extensions` (setup-dotnet 10.0.x).
+
+Architektur-Entscheidung: [ADR-0010](docs/adr/0010-copilot-cli-extensions.md) ·
+Konzept: [Extensions_Konzept.md](docs/Extensions_Konzept.md) ·
+Ausführungsplan: [Extensions_Ausfuehrungsplan.md](docs/Extensions_Ausfuehrungsplan.md).
