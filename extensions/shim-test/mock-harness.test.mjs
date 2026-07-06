@@ -173,3 +173,19 @@ test("flow: /feature start erzeugt plan.md + workflow-state, /workflow next bloc
     assert.match(list.payload.text, /feature\/csv-export/);
   } finally { await f.close(); s.cleanup(); }
 });
+
+test("recorder: assistant.usage-Events ⇒ /flightlog costs summiert je Modell", async () => {
+  const s = tempState();
+  const r = connect("mkc-work-recorder", { stateDir: s.dir });
+  try {
+    await r.init();
+    r.event("event.session", { kind: "AssistantUsage", data: { model: "gpt-5", inputTokens: 1000, outputTokens: 1000, cachedTokens: 0 } });
+    r.event("event.session", { kind: "AssistantUsage", data: { model: "gpt-5", inputTokens: 2000, outputTokens: 0, cachedTokens: 0 } });
+    await new Promise((res) => setTimeout(res, 200));
+    const costs = await r.request("command.invoke", { name: "flightlog", args: "costs" });
+    // gpt-5: 3000/1k*0.010 + 1000/1k*0.030 = 0.060
+    assert.match(costs.payload.text, /0[.,]060/);
+    const models = await r.request("command.invoke", { name: "flightlog", args: "models" });
+    assert.match(models.payload.text, /gpt-5/);
+  } finally { await r.close(); s.cleanup(); }
+});
