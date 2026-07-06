@@ -14,7 +14,8 @@ namespace Mkc.Copilot.Extensions.Flow;
 /// </summary>
 public sealed class FlowExtension(
     ModeContract modeContract, WorkflowEngine engine,
-    BackendModeStore backendMode, PiiScrubber pii, string cwd) : IExtensionHead
+    BackendModeStore backendMode, PiiScrubber pii, string cwd,
+    RemoteConfig remoteConfig, Func<PiiScrubber, IPlanningBackend?> adoFactory) : IExtensionHead
 {
     private const string ExtensionName = "mkc-work-flow";
 
@@ -90,7 +91,7 @@ public sealed class FlowExtension(
         var mode = modeContract.Read();
         var text = payload.Name switch
         {
-            "mode" => HandleMode(payload.Args.Trim()),
+            "mode" => await HandleModeAsync(payload.Args.Trim(), ct),
             "workflow" => await HandleWorkflowAsync(payload.Args.Trim(), mode, ct),
             "moin" => await HandleMoinAsync(mode, ct),
             "commitmsg" => await HandleCommitMsgAsync(ct),
@@ -101,13 +102,39 @@ public sealed class FlowExtension(
         return new CommandInvokeResult(text);
     }
 
-    private string HandleMode(string arg)
+    private async Task<string> HandleModeAsync(string arg, CancellationToken ct)
     {
         switch (arg)
         {
-            case "local": backendMode.Write("local"); return "Backend-Modus: local (dateibasiert).";
-            case "remote": return "Remote-Backend kommt in Phase 3 (SyncEngine). Aktuell: " + backendMode.Read();
-            default: return $"Backend-Modus: {backendMode.Read()}";
+            case "local":
+                backendMode.Write("local");
+                return "Backend-Modus: local (dateibasiert).";
+            case "remote":
+                if (!remoteConfig.AdoComplete)
+                    return "Remote nicht verfügbar. " + remoteConfig.MissingReport() + " — bleibe auf local.";
+                var ado = adoFactory(pii);
+                if (ado is null) return "ADO-Backend konnte nicht initialisiert werden — bleibe auf local.";
+                backendMode.Write("remote");
+                // Aktiven Workflow beim Wechsel nach remote pushen (idempotent).
+                if (Active() is { } state)
+                {
+                    var sync = new SyncEngine(cwd, new LocalBackend(cwd), ado);
+                    try
+                    {
+                        var outcome = await sync.PushAsync(state.Id, state.Title, ct);
+                        if (outcome.AdoRef is not null) { state.Ado = outcome.AdoRef; engine.Save(state); }
+                        return $"Backend-Modus: remote. {outcome.Message}";
+                    }
+                    catch (Exception ex)
+                    {
+                        backendMode.Write("local");
+                        return $"Sync fehlgeschlagen ({ex.Message}) — bleibe auf local (fail-safe).";
+                    }
+                }
+                return "Backend-Modus: remote.";
+            default:
+                return $"Backend-Modus: {backendMode.Read()}" +
+                       (remoteConfig.AdoComplete ? "" : $" · {remoteConfig.MissingReport()}");
         }
     }
 
