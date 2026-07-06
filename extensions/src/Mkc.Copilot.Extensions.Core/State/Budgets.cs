@@ -1,6 +1,9 @@
 namespace Mkc.Copilot.Extensions.Core.State;
 
-public sealed record BudgetsFile(Dictionary<string, int> Counters, Dictionary<string, int> Limits);
+public sealed record BudgetsFile(Dictionary<string, int> Counters, Dictionary<string, int> Limits)
+{
+    public int SchemaVersion { get; init; } = 1;
+}
 
 /// <summary>
 /// Persistente Session-Budgets (Ausführungsplan T2.1):
@@ -23,13 +26,18 @@ public sealed class Budgets(StateStore store)
         store.ReadJson<BudgetsFile>(FileName)
         ?? new BudgetsFile([], new Dictionary<string, int>(DefaultLimits));
 
-    /// <summary>Zählt hoch; true = Budget überschritten.</summary>
+    /// <summary>Zählt hoch (lock-geschützt gegen parallele Sessions); true = Budget überschritten.</summary>
     public bool Increment(string key)
     {
-        var file = Load();
-        file.Counters[key] = file.Counters.GetValueOrDefault(key) + 1;
-        store.WriteJson(FileName, file);
-        return file.Counters[key] > file.Limits.GetValueOrDefault(key, int.MaxValue);
+        var exceeded = false;
+        store.Mutate<BudgetsFile>(FileName, current =>
+        {
+            var file = current ?? new BudgetsFile([], new Dictionary<string, int>(DefaultLimits));
+            file.Counters[key] = file.Counters.GetValueOrDefault(key) + 1;
+            exceeded = file.Counters[key] > file.Limits.GetValueOrDefault(key, int.MaxValue);
+            return file;
+        });
+        return exceeded;
     }
 
     public void SetLimit(string key, int limit)

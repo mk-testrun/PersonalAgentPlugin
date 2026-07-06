@@ -4,6 +4,15 @@
 > und ADR-0010. Stand: der 7-Phasen-Plan ist umgesetzt und CI-grün. Dieses Dokument sagt
 > **ehrlich**, was zwischen „funktioniert im Test" und „produktiv einsetzbar" noch fehlt.
 
+> **Update Phase 7 (2026-07-06):** GitHub Copilot CLI **1.0.68** installiert, die reale
+> `@github/copilot-sdk`-API (SDK-Protokoll 3) verifiziert und der Shim daran abgeglichen —
+> Details in `docs/extensions-capability-alignment.md`. **Erledigt aus der Must/Should-Liste:**
+> A2 (Capability-Abgleich), A3 (Version-Pin `1.0.68`), Teile B5 (reales `auto_mode_switch`-
+> Signal für Autopilot), C8 (State-`schemaVersion`), C9 (Concurrency-Lock `StateStore.Mutate`),
+> F-spaceId-Cache; Recorder nutzt reale CLI-`cost`. **Offen bleibt der einzige echte Blocker:**
+> A1 (voll LLM-getriebener E2E-Lauf) — braucht GitHub-Token + interaktives TUI und ist in der
+> Sandbox nicht ausführbar; Ersatz-Verifikation über den realen-API-Shim-Test + E2E-Checkliste.
+
 ---
 
 ## 1. Ehrlicher Ist-Stand

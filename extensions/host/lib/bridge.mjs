@@ -144,6 +144,9 @@ export async function startBridge(joinSession, { name, failMode, extensionUrl })
   try { ({ manifest } = await rpc.handshake()); }
   catch (e) { process.stderr.write(`[bridge] ${name} handshake fehlgeschlagen: ${e.message}\n`); manifest = null; }
 
+  // Reale @github/copilot-sdk-API (CLI 1.0.68, SDK-Protokoll 3): Hooks heißen onXxx,
+  // sessionStart liefert `source` (nicht `resumed`), postToolUse hat `toolResult` und
+  // Fehler laufen über den separaten onPostToolUseFailure-Hook.
   const hooks = {};
   const wants = new Set(manifest?.hooks ?? []);
 
@@ -151,34 +154,46 @@ export async function startBridge(joinSession, { name, failMode, extensionUrl })
   const orFallback = (r, fallback) => (r.reached ? (r.payload ?? {}) : fallback);
 
   if (wants.has("preToolUse"))
-    hooks.preToolUse = async (input) => {
+    hooks.onPreToolUse = async (input) => {
       const r = await callHook("hook.preToolUse", normPre(input));
       return orFallback(r, failMode === "closed" ? failClosedDeny : {});
     };
-  if (wants.has("postToolUse"))
-    hooks.postToolUse = async (input) => orFallback(await callHook("hook.postToolUse", input), {});
+  if (wants.has("postToolUse")) {
+    hooks.onPostToolUse = async (input) =>
+      orFallback(await callHook("hook.postToolUse", {
+        toolName: input?.toolName, toolArgs: input?.toolArgs, result: input?.toolResult,
+      }), {});
+    // Fehlerhafte Tool-Läufe kommen NUR über den separaten Failure-Hook (TestsGreen-Marker).
+    hooks.onPostToolUseFailure = async (input) =>
+      orFallback(await callHook("hook.postToolUse", {
+        toolName: input?.toolName, toolArgs: input?.toolArgs, error: input?.error ?? "failure",
+      }), {});
+  }
   if (wants.has("userPromptSubmitted"))
-    hooks.userPromptSubmitted = async (input) => orFallback(await callHook("hook.userPromptSubmitted", input), {});
+    hooks.onUserPromptSubmitted = async (input) => orFallback(await callHook("hook.userPromptSubmitted", input), {});
   if (wants.has("sessionStart"))
-    hooks.sessionStart = async (input) => orFallback(await callHook("hook.sessionStart", { resumed: !!input?.resumed }), {});
+    hooks.onSessionStart = async (input) =>
+      orFallback(await callHook("hook.sessionStart", { resumed: input?.source === "resume" }), {});
   if (wants.has("sessionEnd"))
-    hooks.sessionEnd = async (input) => orFallback(await callHook("hook.sessionEnd", input), {});
+    hooks.onSessionEnd = async (input) => orFallback(await callHook("hook.sessionEnd", { reason: input?.reason }), {});
   if (wants.has("errorOccurred"))
-    hooks.errorOccurred = async (input) => orFallback(await callHook("hook.errorOccurred", input), { action: "skip" });
+    hooks.onErrorOccurred = async (input) => orFallback(await callHook("hook.errorOccurred", input), { action: "skip" });
 
+  // Command-Handler geben in der realen API `void` zurück — Ausgabe erfolgt über session.log().
   const commands = (manifest?.commands ?? []).map((c) => ({
     name: c.name, description: c.description,
     handler: async (ctx) => {
       const res = await rpc.request("command.invoke", { name: c.name, args: ctx?.args ?? "" });
-      return res?.payload?.text ?? "";
+      const text = res?.payload?.text;
+      if (text && session?.log) { try { await session.log(text); } catch { process.stderr.write(text + "\n"); } }
     },
   }));
 
+  // Reale Tool-API: { name, description, parameters (JSON-Schema), handler }.
   const tools = (manifest?.tools ?? []).map((t) => ({
-    name: t.name, description: t.description, inputSchema: t.inputSchema,
-    skipPermission: t.skipPermission ?? false, defer: t.defer ?? false,
+    name: t.name, description: t.description, parameters: t.inputSchema,
     handler: async (args, inv) => {
-      const res = await rpc.request("tool.invoke", { name: t.name, args, invocationId: inv?.invocationId ?? "" });
+      const res = await rpc.request("tool.invoke", { name: t.name, args, invocationId: inv?.toolCallId ?? inv?.invocationId ?? "" });
       return res?.payload?.result ?? null;
     },
   }));
@@ -210,11 +225,43 @@ export async function startBridge(joinSession, { name, failMode, extensionUrl })
       : undefined,
   });
 
-  // Abonnierte Session-Events an den Child weiterreichen.
+  // Reale Event-Typen → interne Kinds, die die Heads erwarten.
+  const EVENT_MAP = {
+    "tool.execution_start": "ToolExecutionStart",
+    "tool.execution_complete": "ToolExecutionComplete",
+    "assistant.usage": "AssistantUsage",
+    "assistant.turn_start": "TurnStart",
+    "agent_idle": "SessionIdle",
+    "auto_mode_switch.completed": "AutoModeSwitch",
+    "session.usage_info": "Compaction",
+    "compaction.complete": "Compaction",
+  };
+
+  // Usage-Felder der realen API auf die interne Form normalisieren
+  // (cacheRead+cacheWrite ⇒ cachedTokens; model/cost übernehmen).
+  function normalizeEventData(kind, evt) {
+    const d = evt?.data ?? {};
+    if (kind === "AssistantUsage")
+      return {
+        model: d.model ?? "unknown",
+        inputTokens: d.inputTokens ?? 0,
+        outputTokens: d.outputTokens ?? 0,
+        cachedTokens: (d.cacheReadTokens ?? 0) + (d.cacheWriteTokens ?? 0),
+        cost: d.cost ?? null,
+      };
+    if (kind === "ToolExecutionStart" || kind === "ToolExecutionComplete")
+      return { invocationId: d.toolCallId ?? d.toolName ?? "", toolName: d.toolName, success: d.success };
+    if (kind === "AutoModeSwitch")
+      return { enabled: d.response?.enabled ?? d.enabled ?? null };
+    return d;
+  }
+
+  // Abonnierte Session-Events an den Child weiterreichen (reale API: session.on(handler)).
   if (session.on && wantsEvents.size > 0)
-    session.on("*", (evt) => {
-      const kind = evt?.type ?? evt?.kind;
-      if (kind && wantsEvents.has(kind)) rpc.event("event.session", { kind, data: evt });
+    session.on((evt) => {
+      const kind = EVENT_MAP[evt?.type] ?? null;
+      if (kind && wantsEvents.has(kind))
+        rpc.event("event.session", { kind, data: normalizeEventData(kind, evt) });
     });
 
   return { dispose: () => rpc.shutdown() };

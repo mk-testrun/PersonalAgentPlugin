@@ -52,5 +52,52 @@ public sealed class StateStore(string rootDir)
         return File.Exists(path) ? File.ReadLines(path) : [];
     }
 
+    /// <summary>
+    /// Serialisiert Read-Modify-Write über parallele CLI-Sessions im selben Repo per
+    /// prozessübergreifendem Advisory-Lock (&lt;relative&gt;.lock). Verhindert verlorene Updates
+    /// z. B. auf budgets.json/workflows/*.json. Bei Lock-Kollision: kurzer Retry-Backoff.
+    /// </summary>
+    public void Mutate<T>(string relative, Func<T?, T> update, JsonSerializerOptions? options = null) where T : class
+    {
+        var path = PathFor(relative);
+        using var _ = AcquireLock(relative);
+        var current = File.Exists(path)
+            ? TryDeserialize<T>(File.ReadAllText(path), options)
+            : null;
+        var next = update(current);
+        var tmp = path + ".tmp";
+        File.WriteAllText(tmp, JsonSerializer.Serialize(next, options ?? Default));
+        File.Move(tmp, path, overwrite: true);
+    }
+
+    private IDisposable AcquireLock(string relative)
+    {
+        var lockPath = PathFor(relative) + ".lock";
+        for (var attempt = 0; ; attempt++)
+        {
+            try
+            {
+                return new FileStream(lockPath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None,
+                    bufferSize: 1, FileOptions.DeleteOnClose);
+            }
+            catch (IOException) when (attempt < 50)
+            {
+                Thread.Sleep(20); // bis ~1 s warten, dann aufgeben (Deadlock-Schutz)
+            }
+            catch (IOException)
+            {
+                return new NoOpLock(); // Lock nicht erreichbar ⇒ ohne Lock fortfahren (fail-open)
+            }
+        }
+    }
+
+    private static T? TryDeserialize<T>(string json, JsonSerializerOptions? options) where T : class
+    {
+        try { return JsonSerializer.Deserialize<T>(json, options ?? Default); }
+        catch { return null; }
+    }
+
+    private sealed class NoOpLock : IDisposable { public void Dispose() { } }
+
     private static readonly JsonSerializerOptions Default = new(JsonSerializerDefaults.Web);
 }

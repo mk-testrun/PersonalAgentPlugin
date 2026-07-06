@@ -37,7 +37,7 @@ public sealed class SentinelExtension(StateStore store, ModeContract modeContrac
             new("checkpoint", "Checkpoints: list | create"),
         ],
         WantsPermissionFlow = true,
-        WantsSessionEvents = ["UserMessage", "ToolExecutionStart", "ToolExecutionComplete", "SessionIdle"],
+        WantsSessionEvents = ["UserMessage", "ToolExecutionStart", "ToolExecutionComplete", "SessionIdle", "AutoModeSwitch"],
     };
 
     public void Register(BridgeHost host)
@@ -73,6 +73,15 @@ public sealed class SentinelExtension(StateStore store, ModeContract modeContrac
         {
             case "ToolExecutionStart": detector.OnToolExecutionStart(); break;
             case "UserMessage": detector.OnUserMessage(); break;
+            case "AutoModeSwitch":
+                // Autoritatives Autopilot-Signal der CLI (besser als Heuristik).
+                var enabled = evt.Data.ValueKind == JsonValueKind.Object
+                              && evt.Data.TryGetProperty("enabled", out var e)
+                              && e.ValueKind is JsonValueKind.True or JsonValueKind.False
+                    ? e.GetBoolean() : (bool?)null;
+                if (enabled is true) detector.SetAuthoritative(SessionMode.Autonomous);
+                else if (enabled is false) detector.SetAuthoritative(SessionMode.Interactive);
+                break;
         }
         PublishMode();
         return Task.FromResult<object?>(null);

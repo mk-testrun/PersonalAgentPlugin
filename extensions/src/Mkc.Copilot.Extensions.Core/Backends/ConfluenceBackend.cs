@@ -44,11 +44,16 @@ public sealed class ConfluenceBackend(RestClient client, RemoteConfig config, Pi
         return new DocRef(pageId, title, $"{config.ConfluenceBaseUrl}/pages/{pageId}");
     }
 
+    private string? _spaceIdCache;
+
     private async Task<string> ResolveSpaceIdAsync(CancellationToken ct)
     {
+        // spaceId ist je Space stabil ⇒ einmal pro Prozess auflösen und memoizen
+        // (spart je Draft/Publish einen REST-Roundtrip).
+        if (_spaceIdCache is not null) return _spaceIdCache;
         var json = await client.GetAsync($"{ApiV2}/spaces?keys={config.ConfluenceSpace}", ct);
         if (json.TryGetProperty("results", out var results) && results.GetArrayLength() > 0)
-            return results[0].GetProperty("id").GetRawText().Trim('"');
+            return _spaceIdCache = results[0].GetProperty("id").GetRawText().Trim('"');
         throw new InvalidOperationException($"Confluence-Space '{config.ConfluenceSpace}' nicht gefunden.");
     }
 

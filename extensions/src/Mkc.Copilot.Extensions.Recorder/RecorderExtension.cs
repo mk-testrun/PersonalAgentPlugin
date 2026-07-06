@@ -62,7 +62,9 @@ public sealed class RecorderExtension(UsageAggregator usage, DenyLog denyLog, Wo
         var output = Num(data, "outputTokens");
         var cached = Num(data, "cachedTokens");
         var estimated = model == "unknown";
-        usage.Record(model, input, output, cached, engine.ActiveId(), estimated);
+        // Reale Kosten (Modell-Multiplikator) der CLI übernehmen, wenn vorhanden.
+        double? realCost = TryProp(data, "cost") is { ValueKind: JsonValueKind.Number } cv ? cv.GetDouble() : null;
+        usage.Record(model, input, output, cached, engine.ActiveId(), estimated, realCost);
     }
 
     private void TrackStart(JsonElement data)

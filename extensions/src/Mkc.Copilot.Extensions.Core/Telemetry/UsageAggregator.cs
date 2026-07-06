@@ -6,7 +6,7 @@ namespace Mkc.Copilot.Extensions.Core.Telemetry;
 
 public sealed record UsageEntry(
     DateTimeOffset Ts, string Model, long InputTokens, long OutputTokens, long CachedTokens,
-    string? WorkflowId, bool Estimated);
+    string? WorkflowId, bool Estimated, double? RealCost = null);
 
 [JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
 [JsonSerializable(typeof(UsageEntry))]
@@ -23,9 +23,9 @@ public sealed class UsageAggregator(StateStore store, PriceTable prices)
 {
     public const string FileName = "recorder/usage.jsonl";
 
-    public void Record(string model, long input, long output, long cached, string? workflowId, bool estimated)
+    public void Record(string model, long input, long output, long cached, string? workflowId, bool estimated, double? realCost = null)
     {
-        var entry = new UsageEntry(DateTimeOffset.UtcNow, model, input, output, cached, workflowId, estimated);
+        var entry = new UsageEntry(DateTimeOffset.UtcNow, model, input, output, cached, workflowId, estimated, realCost);
         store.AppendLine(FileName, JsonSerializer.Serialize(entry, UsageJsonContext.Default.UsageEntry));
     }
 
@@ -50,6 +50,10 @@ public sealed class UsageAggregator(StateStore store, PriceTable prices)
                 var input = g.Sum(e => e.InputTokens);
                 var output = g.Sum(e => e.OutputTokens);
                 var cached = g.Sum(e => e.CachedTokens);
+                // Reale CLI-Kosten bevorzugen, wenn jeder Eintrag der Gruppe sie mitliefert;
+                // sonst über die PriceTable schätzen.
+                if (g.All(e => e.RealCost is not null))
+                    return new ModelBreakdown(g.Key, input, output, cached, g.Count(), g.Sum(e => e.RealCost!.Value), false);
                 var (cost, estimated) = prices.Cost(g.Key, input, output, cached);
                 return new ModelBreakdown(g.Key, input, output, cached, g.Count(), cost, estimated || g.Any(e => e.Estimated));
             })
