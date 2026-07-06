@@ -155,3 +155,21 @@ test("sentinel: /autopilot on|off schaltet Modus", async () => {
     assert.match(off.payload.text, /Interactive/);
   } finally { await sen.close(); s.cleanup(); }
 });
+
+test("flow: /feature start erzeugt plan.md + workflow-state, /workflow next blockt an gate", async () => {
+  const s = tempState();
+  // git-Repo, damit Gates deterministisch sind
+  const { execSync } = await import("node:child_process");
+  execSync("git init -q && git config user.email t@t.de && git config user.name t && git commit -q --allow-empty -m init", { cwd: s.dir, shell: "/bin/bash" });
+  const f = connect("mkc-work-flow", { stateDir: s.dir });
+  try {
+    await f.init();
+    const start = await f.request("command.invoke", { name: "feature", args: 'start "CSV Export"' });
+    assert.match(start.payload.text, /Workflow 'feature' gestartet/);
+    const { existsSync } = await import("node:fs");
+    assert.ok(existsSync(join(s.dir, ".copilot", "planning", "csv-export", "plan.md")));
+
+    const list = await f.request("command.invoke", { name: "workflow", args: "list" });
+    assert.match(list.payload.text, /feature\/csv-export/);
+  } finally { await f.close(); s.cleanup(); }
+});
