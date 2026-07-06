@@ -67,7 +67,8 @@ public sealed class ConfluenceBackend(RestClient client, RemoteConfig config, Pi
                 else { sb.Append("]]></ac:plain-text-body></ac:structured-macro>"); inCode = false; }
                 continue;
             }
-            if (inCode) { sb.Append(Escape(line)).Append('\n'); continue; }
+            // Code steht in CDATA und darf NICHT escaped werden; nur die CDATA-Endsequenz aufbrechen.
+            if (inCode) { sb.Append(line.Replace("]]>", "]]]]><![CDATA[>")).Append('\n'); continue; }
 
             if (line.StartsWith("- ", StringComparison.Ordinal))
             {

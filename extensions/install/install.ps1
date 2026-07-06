@@ -13,7 +13,11 @@ $TargetRoot = Join-Path $HOME ".copilot/extensions"
 New-Item -ItemType Directory -Force -Path $TargetRoot | Out-Null
 
 function To-Pascal($name) {
-  ($name -replace "^mkc-work-", "") -replace "(^|-)(.)", { $_.Groups[2].Value.ToUpper() }
+  # Namen sind nach Prefix-Entfernung einwortig (guardian/sentinel/flow/recorder).
+  # Kein Scriptblock-Replace (in Windows PowerShell 5.1 nicht unterstützt).
+  $s = $name -replace "^mkc-work-", ""
+  if ($s.Length -eq 0) { return $s }
+  $s.Substring(0, 1).ToUpper() + $s.Substring(1)
 }
 
 foreach ($e in $Exts) {

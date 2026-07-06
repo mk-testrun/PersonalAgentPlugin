@@ -3,6 +3,7 @@ using Mkc.Copilot.Extensions.Core.Autopilot;
 using Mkc.Copilot.Extensions.Core.Backends;
 using Mkc.Copilot.Extensions.Core.Bridge;
 using Mkc.Copilot.Extensions.Core.Pii;
+using Mkc.Copilot.Extensions.Core.Policy;
 using Mkc.Copilot.Extensions.Core.State;
 using Mkc.Copilot.Extensions.Core.Workflow;
 using Mkc.Copilot.Extensions.Core.Workflow.Meta;
@@ -89,17 +90,44 @@ public sealed class FlowExtension(
         return new SessionStartResult(string.Join("\n", parts));
     }
 
-    private async Task<PostToolUseResult?> OnPostToolUseAsync(PostToolUsePayload payload, CancellationToken ct)
+    private Task<PostToolUseResult?> OnPostToolUseAsync(PostToolUsePayload payload, CancellationToken ct)
     {
-        // TestsGreen-Gate: nach einem 'dotnet test'-Shell-Aufruf den Exit-Code als Marker persistieren.
+        // TestsGreen-Gate: nach einem echten Test-Kommando den Exit-Code als Marker persistieren.
         var cmd = payload.ToolArgs.ValueKind == JsonValueKind.Object
                   && payload.ToolArgs.TryGetProperty("command", out var c) ? c.GetString() ?? "" : "";
-        if (cmd.Contains("dotnet test", StringComparison.OrdinalIgnoreCase) || cmd.Contains("test", StringComparison.OrdinalIgnoreCase))
+        if (IsTestCommand(cmd))
         {
-            var exit = payload.Error is null ? "0" : "1";
-            store.AppendLine("last-test-exit", exit);
-            File.WriteAllText(Path.Combine(store.RootDir, "last-test-exit"), exit);
+            // Exit-Code bevorzugt aus dem Result lesen; nur wenn nicht vorhanden auf Error/Failure zurückfallen.
+            var exit = ExtractExitCode(payload.Result) ?? (payload.Error is null ? 0 : 1);
+            File.WriteAllText(Path.Combine(store.RootDir, "last-test-exit"), exit.ToString());
         }
+        return Task.FromResult<PostToolUseResult?>(null);
+    }
+
+    /// <summary>Erkennt Test-Runner am Kommando-Anfang (nach Ketten-Split), nicht per Substring.</summary>
+    private static bool IsTestCommand(string cmd)
+    {
+        foreach (var argv in ShellCommandParser.Parse(cmd))
+        {
+            if (argv.Length == 0) continue;
+            var tool = argv[0];
+            var sub = argv.Length > 1 ? argv[1] : "";
+            if ((tool is "dotnet" && sub == "test")
+                || tool is "pytest" or "vitest" or "jest"
+                || (tool is "npm" or "pnpm" or "yarn" && argv.Contains("test"))
+                || (tool == "go" && sub == "test")
+                || (tool == "cargo" && sub == "test"))
+                return true;
+        }
+        return false;
+    }
+
+    private static int? ExtractExitCode(JsonElement? result)
+    {
+        if (result is not { ValueKind: JsonValueKind.Object } r) return null;
+        foreach (var name in (string[])["exitCode", "exit_code", "code", "returnCode"])
+            if (r.TryGetProperty(name, out var v) && v.ValueKind == JsonValueKind.Number)
+                return v.GetInt32();
         return null;
     }
 

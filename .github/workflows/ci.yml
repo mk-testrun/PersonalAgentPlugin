@@ -91,5 +91,5 @@ jobs:
           done
       - name: Validate extensions
         run: node tools/validate-extensions.mjs --strict
-      - name: Bridge mock-harness (real binaries)
-        run: node --test extensions/shim-test/mock-harness.test.mjs
+      - name: Bridge mock-harness + shim regression (real binaries)
+        run: node --test extensions/shim-test/mock-harness.test.mjs extensions/shim-test/shim-bridge.test.mjs

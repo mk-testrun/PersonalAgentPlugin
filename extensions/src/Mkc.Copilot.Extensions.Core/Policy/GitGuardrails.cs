@@ -69,11 +69,16 @@ public static class GitGuardrails
         return PolicyDecision.Allow;
     }
 
-    /// <summary>Zielbranch = Teil hinter ':' im Refspec, sonst der Refspec selbst (2. Nicht-Flag-Arg nach Remote).</summary>
+    /// <summary>
+    /// Zielbranch = Teil hinter ':' im Refspec, sonst der Refspec selbst (2. Nicht-Flag-Arg nach Remote).
+    /// Ohne expliziten Refspec (`git push --force-with-lease origin`) ist das Ziel der aktuell
+    /// ausgecheckte Branch — hier nicht ohne git ermittelbar; die reine `-f`-Sperre (EvaluatePush)
+    /// greift dann unabhängig, `--force-with-lease` bleibt zulässig (verliert keine fremden Commits).
+    /// </summary>
     private static string? ResolveTargetBranch(string[] rest)
     {
         var positional = rest.Where(a => !a.StartsWith('-')).ToArray();
-        if (positional.Length < 2) return positional.Length == 1 ? null : null;
+        if (positional.Length < 2) return null;
         var refspec = positional[1];
         var colon = refspec.IndexOf(':');
         var branch = colon >= 0 ? refspec[(colon + 1)..] : refspec;

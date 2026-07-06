@@ -20,7 +20,11 @@ EXTS="${ONLY:-$DEFAULT}"
 TARGET_ROOT="$HOME/.copilot/extensions"
 mkdir -p "$TARGET_ROOT"
 
-pascal() { echo "$1" | sed 's/^mkc-work-//' | sed 's/^\(.\)/\U\1/'; }
+# Portabel (kein GNU-sed \U): erstes Zeichen groß via tr.
+pascal() {
+  local s="${1#mkc-work-}"
+  printf '%s%s' "$(printf '%s' "${s:0:1}" | tr '[:lower:]' '[:upper:]')" "${s:1}"
+}
 
 for e in $EXTS; do
   proj="Mkc.Copilot.Extensions.$(pascal "$e")"

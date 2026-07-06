@@ -118,16 +118,24 @@ function normPre(input) {
   };
 }
 
-export async function startBridge(joinSession, { name, failMode }) {
-  const extRoot = fileURLToPath(new URL("./", import.meta.url));
+export async function startBridge(joinSession, { name, failMode, extensionUrl }) {
+  // extRoot ist das host/<name>/-Verzeichnis (dort liegt bin/). Es MUSS aus der
+  // extension.mjs stammen (extensionUrl), nicht aus lib/bridge.mjs — sonst würde bin/
+  // im lib-Ordner gesucht. Fallback auf import.meta.url nur, wenn nicht übergeben.
+  const extRoot = fileURLToPath(new URL("./", extensionUrl ?? import.meta.url));
   let rpc = startChild(name, extRoot);
   let restarts = 0;
 
+  // Ergebnis-Diskriminanz: { reached:true, payload } wenn das Kind geantwortet hat
+  // (payload kann bewusst null sein = "kein Votum/allow") vs. { reached:false } bei
+  // Ausfall/Timeout. Nur reached:false darf fail-closed auslösen.
   async function callHook(method, payload) {
-    if (!rpc.child.stdin.writable && restarts < 1) { restarts++; rpc = startChild(name, extRoot); await rpc.handshake(); }
+    if (!rpc.child.stdin.writable && restarts < 1) {
+      restarts++; rpc = startChild(name, extRoot);
+      try { await rpc.handshake(); wireChildRequests(); } catch { /* Ausfall unten */ }
+    }
     const res = await rpc.request(method, payload);
-    if (res && res.ok) return res.payload;
-    return null;
+    return res && res.ok ? { reached: true, payload: res.payload } : { reached: false };
   }
 
   const failClosedDeny = { permissionDecision: "deny", permissionDecisionReason: `${name} offline — fail-closed` };
@@ -139,21 +147,24 @@ export async function startBridge(joinSession, { name, failMode }) {
   const hooks = {};
   const wants = new Set(manifest?.hooks ?? []);
 
+  // Kind erreichbar ⇒ dessen Votum (auch null = allow). Ausfall ⇒ Fallback je Hook.
+  const orFallback = (r, fallback) => (r.reached ? (r.payload ?? {}) : fallback);
+
   if (wants.has("preToolUse"))
     hooks.preToolUse = async (input) => {
       const r = await callHook("hook.preToolUse", normPre(input));
-      return r ?? (failMode === "closed" ? failClosedDeny : {});
+      return orFallback(r, failMode === "closed" ? failClosedDeny : {});
     };
   if (wants.has("postToolUse"))
-    hooks.postToolUse = async (input) => (await callHook("hook.postToolUse", input)) ?? {};
+    hooks.postToolUse = async (input) => orFallback(await callHook("hook.postToolUse", input), {});
   if (wants.has("userPromptSubmitted"))
-    hooks.userPromptSubmitted = async (input) => (await callHook("hook.userPromptSubmitted", input)) ?? {};
+    hooks.userPromptSubmitted = async (input) => orFallback(await callHook("hook.userPromptSubmitted", input), {});
   if (wants.has("sessionStart"))
-    hooks.sessionStart = async (input) => (await callHook("hook.sessionStart", { resumed: !!input?.resumed })) ?? {};
+    hooks.sessionStart = async (input) => orFallback(await callHook("hook.sessionStart", { resumed: !!input?.resumed }), {});
   if (wants.has("sessionEnd"))
-    hooks.sessionEnd = async (input) => (await callHook("hook.sessionEnd", input)) ?? {};
+    hooks.sessionEnd = async (input) => orFallback(await callHook("hook.sessionEnd", input), {});
   if (wants.has("errorOccurred"))
-    hooks.errorOccurred = async (input) => (await callHook("hook.errorOccurred", input)) ?? { action: "skip" };
+    hooks.errorOccurred = async (input) => orFallback(await callHook("hook.errorOccurred", input), { action: "skip" });
 
   const commands = (manifest?.commands ?? []).map((c) => ({
     name: c.name, description: c.description,
@@ -172,14 +183,18 @@ export async function startBridge(joinSession, { name, failMode }) {
     },
   }));
 
-  // ui.*-Gegenrequests des Childs auf session.ui.* abbilden.
-  rpc.onRequest("ui.confirm", async (p) => {
-    if (!session.ui?.confirm) return { confirmed: false, timedOut: true };
-    const confirmed = await session.ui.confirm(p.message ?? p.title ?? "?");
-    return { confirmed: !!confirmed };
-  });
-  rpc.onRequest("ui.select", async (p) => ({ choice: session.ui?.select ? await session.ui.select(p.message, p.options) : null }));
-  rpc.onRequest("ui.input", async (p) => ({ value: session.ui?.input ? await session.ui.input(p.message) : null }));
+  // ui.*-Gegenrequests des Childs auf session.ui.* abbilden. Als benannte Funktion,
+  // damit sie nach einem Child-Restart (callHook) neu verdrahtet werden kann.
+  function wireChildRequests() {
+    rpc.onRequest("ui.confirm", async (p) => {
+      if (!session?.ui?.confirm) return { confirmed: false, timedOut: true };
+      const confirmed = await session.ui.confirm(p.message ?? p.title ?? "?");
+      return { confirmed: !!confirmed };
+    });
+    rpc.onRequest("ui.select", async (p) => ({ choice: session?.ui?.select ? await session.ui.select(p.message, p.options) : null }));
+    rpc.onRequest("ui.input", async (p) => ({ value: session?.ui?.input ? await session.ui.input(p.message) : null }));
+  }
+  wireChildRequests();
 
   const wantsEvents = new Set(manifest?.wantsSessionEvents ?? []);
   const session = await joinSession({
