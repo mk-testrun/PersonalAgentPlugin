@@ -3,12 +3,15 @@
 # Publiziert die .NET-Heads und verlinkt/kopiert host/<name>/ nach ~/.copilot/extensions/.
 set -euo pipefail
 
-MODE="link"; ONLY=""; WITH_RECORDER=0
+MODE="link"; ONLY=""; WITH_RECORDER=0; COMPANIONS=""
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --mode) MODE="$2"; shift 2;;
     --only) ONLY="$2"; shift 2;;
     --with-recorder) WITH_RECORDER=1; shift;;
+    --with-caveman)  COMPANIONS="$COMPANIONS caveman";  shift;;
+    --with-graphify) COMPANIONS="$COMPANIONS graphify"; shift;;
+    --with-headroom) COMPANIONS="$COMPANIONS headroom"; shift;;
     *) echo "unbekannt: $1" >&2; exit 2;;
   esac
 done
@@ -40,4 +43,15 @@ for e in $EXTS; do
   fi
   echo "   installiert: $e ($MODE)"
 done
-echo "Fertig. In der CLI: /extensions list"
+
+# Optionale Companion-Präferenzen (caveman/graphify/headroom) — nur Markierung,
+# die Skills/den Proxy installiert der Nutzer selbst (siehe /companions-Hinweise).
+if [[ -n "$COMPANIONS" ]]; then
+  comp_file="$HOME/.copilot/extensions/mkc/companions.json"
+  mkdir -p "$(dirname "$comp_file")"
+  entries=""
+  for c in $COMPANIONS; do entries="$entries\"$c\":true,"; done
+  printf '{%s}\n' "${entries%,}" > "$comp_file"
+  echo "   Companions als Präferenz gesetzt:$COMPANIONS (Setup via /companions)"
+fi
+echo "Fertig. In der CLI: /extensions list · /companions list"

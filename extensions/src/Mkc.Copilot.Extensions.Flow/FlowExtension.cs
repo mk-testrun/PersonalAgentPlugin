@@ -2,6 +2,7 @@ using System.Text.Json;
 using Mkc.Copilot.Extensions.Core.Autopilot;
 using Mkc.Copilot.Extensions.Core.Backends;
 using Mkc.Copilot.Extensions.Core.Bridge;
+using Mkc.Copilot.Extensions.Core.Companions;
 using Mkc.Copilot.Extensions.Core.Pii;
 using Mkc.Copilot.Extensions.Core.Policy;
 using Mkc.Copilot.Extensions.Core.State;
@@ -18,7 +19,8 @@ public sealed class FlowExtension(
     ModeContract modeContract, WorkflowEngine engine,
     BackendModeStore backendMode, PiiScrubber pii, string cwd,
     RemoteConfig remoteConfig, Func<PiiScrubber, IPlanningBackend?> adoFactory,
-    GoalTracker goals, LoopRunner loop, BatchRunner batch, StateStore store) : IExtensionHead
+    GoalTracker goals, LoopRunner loop, BatchRunner batch, StateStore store,
+    CompanionRegistry companions) : IExtensionHead
 {
     private const string ExtensionName = "mkc-work-flow";
 
@@ -48,6 +50,7 @@ public sealed class FlowExtension(
             new("loop", "Iterieren Richtung Ziel: start [--max n] | status | stop"),
             new("simplify", "Deterministischer Vereinfachungs-Pass über den aktuellen Diff"),
             new("batch", "Task-Queue: add <task> | run | status | resume"),
+            new("companions", "Optionale Token-Tools (caveman/graphify/headroom): list | enable <id> | disable <id>"),
         ],
         Tools =
         [
@@ -87,6 +90,8 @@ public sealed class FlowExtension(
         parts.Add($"Backend-Modus: {backendMode.Read()}");
         var projectCtx = await WorkConventions.ProjectContextAsync(cwd, ct);
         if (!string.IsNullOrEmpty(projectCtx)) parts.Add(projectCtx);
+        var activeCompanions = companions.Status(cwd).Where(c => c.Enabled).Select(c => c.Id).ToArray();
+        if (activeCompanions.Length > 0) parts.Add("Aktive Token-Tools: " + string.Join(", ", activeCompanions));
         return new SessionStartResult(string.Join("\n", parts));
     }
 
@@ -146,6 +151,7 @@ public sealed class FlowExtension(
             "loop" => await HandleLoopAsync(payload.Args.Trim(), ct),
             "simplify" => await HandleSimplifyAsync(ct),
             "batch" => HandleBatch(payload.Args.Trim()),
+            "companions" => HandleCompanions(payload.Args.Trim()),
             _ => $"Unbekanntes Kommando: {payload.Name}",
         };
         return new CommandInvokeResult(text);
@@ -359,6 +365,40 @@ public sealed class FlowExtension(
                     : $"Batch {(sub == "resume" ? "fortgesetzt" : "gestartet")}. Aktueller Task: {current.Description}\n{batch.Status()}";
             default:
                 return batch.Status();
+        }
+    }
+
+    // ---- Optionale Companion-Integrationen (caveman/graphify/headroom) ----
+
+    private string HandleCompanions(string args)
+    {
+        var parts = args.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
+        var sub = parts.FirstOrDefault() ?? "list";
+        var id = parts.Length > 1 ? parts[1].Trim() : "";
+
+        switch (sub)
+        {
+            case "enable":
+            case "disable":
+                var companion = CompanionRegistry.Find(id);
+                if (companion is null)
+                    return $"Unbekannter Companion '{id}'. Verfügbar: {string.Join(", ", CompanionRegistry.Known.Select(c => c.Id))}.";
+                companions.SetEnabled(companion.Id, sub == "enable");
+                var detected = companions.Detect(companion, cwd);
+                var hint = sub == "enable" && !detected ? $"\n  Noch nicht erkannt — Setup: {companion.SetupHint}" : "";
+                return $"{companion.Name} {(sub == "enable" ? "aktiviert" : "deaktiviert")} (Präferenz). " +
+                       $"Erkannt: {(detected ? "ja" : "nein")}.{hint}";
+            default:
+                var lines = companions.Status(cwd).Select(st =>
+                {
+                    var c = CompanionRegistry.Find(st.Id)!;
+                    return $"  {(st.Enabled ? "[x]" : "[ ]")} {st.Id} ({c.Kind}) — {st.TokenEffect}" +
+                           $"\n      erkannt: {(st.Detected ? "ja" : "nein")} · {c.Homepage}";
+                });
+                return "Optionale Token-Tools (Präferenz + Erkennung; Skills lädt die CLI selbst):\n" +
+                       string.Join("\n", lines) +
+                       "\n\nAn/Aus: /companions enable|disable <id>. Sie ergänzen die Extensions " +
+                       "(caveman spart Output-, graphify Input-, headroom IO-Tokens) und werden nicht nachgebaut.";
         }
     }
 

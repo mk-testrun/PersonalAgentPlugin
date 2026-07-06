@@ -463,16 +463,29 @@ orchestrieren **nicht** selbst, wir konfigurieren und messen:
   Kosten je Subagent über `subagent.*`- + usage-Events.
 - Sentinel-Budgets gelten global über alle Subagents (ein Budget-Topf pro Session).
 
-### 5.5 Koexistenz mit Skills & Plugins (z. B. Caveman)
+### 5.5 Optionale Companion-Integrationen (Caveman, Graphify, Headroom)
 
-Extensions ersetzen das Skill-/Plugin-System **nicht** — die CLI lädt beides unabhängig in
-dieselbe Session. Ein Skill wie **Caveman** (reduziert Antwort-Tokens um ~75 % durch
-Weglassen von Füllwörtern bei erhaltener technischer Präzision, Intensitätsstufen,
-auto-triggernd) ist **später jederzeit zusätzlich nutzbar — keine Integration nötig**.
-Er ist sogar komplementär: unsere Extensions minimieren **Input**-Tokens (Digests,
-Re-Entry-State, defer-Tools), Caveman minimiert **Output**-Tokens. Einzige Regel:
-Extensions bleiben skill-agnostisch (keine Annahmen über Antwortstil in Gates/Parsing —
-Gates lesen Exit-Codes, nie Modelltext).
+Extensions ersetzen fremde Skills/Proxies **nicht** und wir **vendoren sie nicht** — die CLI
+lädt Skills unabhängig, ein Proxy läuft als eigener Prozess. Wir bieten sie als **schaltbare
+Optionen** über `/companions` und Installer-Flags (`--with-caveman` etc.). Die drei sind
+bewusst unterschiedlicher Natur (deshalb `CompanionKind` Skill vs. Proxy):
+
+| Companion | Art | Spart | Warum kein Teil der Extension |
+|---|---|---|---|
+| **Caveman** | Skill | Output-Tokens (~75 %, Füllwörter) | reine Instruktion — Skill genügt; CLI lädt ihn selbst |
+| **Graphify** | Skill + Skripte | Input-Tokens (Knowledge-Graph statt Datei-Springen) | eigenes Analyse-Tooling + persistiertes Graph-Artefakt |
+| **Headroom** | **Proxy** | IO-Tokens (−50…95 %, komprimiert Tool-Outputs) | sitzt im Datenpfad CLI↔LLM — kann kein Skill sein |
+
+**Prinzip:** Ein Skill kann nur beeinflussen, *was das Modell instruiert wird*. Deterministische
+Berechnung (Graphify), Eingriff in den echten Datenfluss (Headroom) oder erzwingbares Verhalten
+mit Zustand (unsere Extensions) brauchen mehr als einen Skill — genau die Begründung aus ADR-0010.
+
+**Umsetzung** (`Companions/Companion.cs` + `/companions`): Registry der drei bekannten Tools,
+An/Aus-Präferenz in `~/.copilot/extensions/mkc/companions.json`, Erkennung (Skill über
+Kandidaten-Verzeichnisse, Proxy über `HEADROOM_PROXY`-ENV), Setup-Hinweis beim Aktivieren,
+und aktive Companions werden in den `sessionStart`-Kontextblock aufgenommen. Sie sind
+komplementär zu unseren Extensions (die Input-Tokens via Digests/Re-Entry/defer-Tools sparen).
+Einzige Regel: Extensions bleiben companion-agnostisch — Gates lesen Exit-Codes, nie Modelltext.
 
 ---
 

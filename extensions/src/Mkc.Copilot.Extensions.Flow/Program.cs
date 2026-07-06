@@ -1,6 +1,7 @@
 using Mkc.Copilot.Extensions.Core.Autopilot;
 using Mkc.Copilot.Extensions.Core.Backends;
 using Mkc.Copilot.Extensions.Core.Bridge;
+using Mkc.Copilot.Extensions.Core.Companions;
 using Mkc.Copilot.Extensions.Core.Infrastructure;
 using Mkc.Copilot.Extensions.Core.Pii;
 using Mkc.Copilot.Extensions.Core.State;
@@ -24,5 +25,6 @@ var head = new FlowExtension(
     new GoalTracker(store, cwd),
     new LoopRunner(store),
     new BatchRunner(store),
-    store);
+    store,
+    new CompanionRegistry());
 return await ExtensionRunner.RunAsync(head, args);
