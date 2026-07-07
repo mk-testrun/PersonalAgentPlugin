@@ -189,9 +189,11 @@ export async function startBridge(joinSession, { name, failMode, extensionUrl })
     },
   }));
 
-  // Reale Tool-API: { name, description, parameters (JSON-Schema), handler }.
+  // Reale Tool-API: { name, description, parameters, handler, skipPermission?, defer? }.
   const tools = (manifest?.tools ?? []).map((t) => ({
     name: t.name, description: t.description, parameters: t.inputSchema,
+    ...(t.skipPermission ? { skipPermission: true } : {}),          // z. B. deanonymize_text (rein lokal)
+    ...(t.defer ? { defer: "auto" } : {}),                          // lazy laden ⇒ spart Prompt-Tokens
     handler: async (args, inv) => {
       const res = await rpc.request("tool.invoke", { name: t.name, args, invocationId: inv?.toolCallId ?? inv?.invocationId ?? "" });
       return res?.payload?.result ?? null;
@@ -200,14 +202,24 @@ export async function startBridge(joinSession, { name, failMode, extensionUrl })
 
   // ui.*-Gegenrequests des Childs auf session.ui.* abbilden. Als benannte Funktion,
   // damit sie nach einem Child-Restart (callHook) neu verdrahtet werden kann.
+  // session.ui.* wirft, wenn der Host keine Elicitation unterstützt ⇒ erst Capability prüfen.
+  const uiAvailable = () => session?.capabilities?.ui?.elicitation === true && !!session?.ui;
   function wireChildRequests() {
     rpc.onRequest("ui.confirm", async (p) => {
-      if (!session?.ui?.confirm) return { confirmed: false, timedOut: true };
-      const confirmed = await session.ui.confirm(p.message ?? p.title ?? "?");
-      return { confirmed: !!confirmed };
+      if (!uiAvailable()) return { confirmed: false, timedOut: true };
+      try { return { confirmed: !!(await session.ui.confirm(p.message ?? p.title ?? "?")) }; }
+      catch { return { confirmed: false, timedOut: true }; }
     });
-    rpc.onRequest("ui.select", async (p) => ({ choice: session?.ui?.select ? await session.ui.select(p.message, p.options) : null }));
-    rpc.onRequest("ui.input", async (p) => ({ value: session?.ui?.input ? await session.ui.input(p.message) : null }));
+    rpc.onRequest("ui.select", async (p) => {
+      if (!uiAvailable()) return { choice: null, timedOut: true };
+      try { return { choice: await session.ui.select(p.message, p.options) }; }
+      catch { return { choice: null, timedOut: true }; }
+    });
+    rpc.onRequest("ui.input", async (p) => {
+      if (!uiAvailable()) return { value: null, timedOut: true };
+      try { return { value: await session.ui.input(p.message) }; }
+      catch { return { value: null, timedOut: true }; }
+    });
   }
   wireChildRequests();
 
@@ -233,8 +245,7 @@ export async function startBridge(joinSession, { name, failMode, extensionUrl })
     "assistant.turn_start": "TurnStart",
     "agent_idle": "SessionIdle",
     "auto_mode_switch.completed": "AutoModeSwitch",
-    "session.usage_info": "Compaction",
-    "compaction.complete": "Compaction",
+    "session.compaction_complete": "Compaction",   // reale Event-Namen (nicht usage_info!)
     "subagent.started": "SubagentStarted",
     "subagent.completed": "SubagentCompleted",
     "subagent.failed": "SubagentFailed",
