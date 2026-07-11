@@ -1,0 +1,49 @@
+{
+  "$comment": "Kopieren nach companies.json und anpassen. Secrets stehen NIE hier, sondern nur als Name der Env-Variable (patEnv / apiTokenEnv). Multi-Company: beliebig viele Firmen, Multi-Tenant: beliebig viele Tenants je Firma.",
+  "companies": {
+    "acme": {
+      "devops": {
+        "tenants": {
+          "acme-main": {
+            "organizationUrl": "https://dev.azure.com/acme",
+            "patEnv": "ADO_PAT_ACME_MAIN",
+            "userEmail": "michel.krueer@acme.example",
+            "whitelistedProjects": ["Alpha", "Beta"]
+          },
+          "acme-legacy": {
+            "organizationUrl": "https://dev.azure.com/acme-legacy",
+            "patEnv": "ADO_PAT_ACME_LEGACY",
+            "userEmail": "michel.krueer@acme.example",
+            "whitelistedProjects": ["Migration"]
+          }
+        }
+      },
+      "confluence": {
+        "tenants": {
+          "acme-cloud": {
+            "baseUrl": "https://acme.atlassian.net/wiki",
+            "email": "michel.krueer@acme.example",
+            "apiTokenEnv": "CONFLUENCE_TOKEN_ACME",
+            "whitelistedSpaces": ["ENG", "DOCS"]
+          }
+        }
+      }
+    },
+    "kunde-gmbh": {
+      "devops": {
+        "tenants": {
+          "kunde-prod": {
+            "organizationUrl": "https://dev.azure.com/kunde-gmbh",
+            "patEnv": "ADO_PAT_KUNDE",
+            "userEmail": "m.krueer@kunde.example",
+            "whitelistedProjects": ["Webshop"]
+          }
+        }
+      }
+    }
+  },
+  "pii": {
+    "enabled": false,
+    "extraUserFields": []
+  }
+}

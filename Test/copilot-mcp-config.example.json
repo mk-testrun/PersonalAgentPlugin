@@ -1,0 +1,25 @@
+{
+  "$comment": "Beispiel für ~/.copilot/mcp-config.json — bindet beide Extensions als lokale MCP-Server in die GitHub Copilot CLI ein. Pfade und Env-Variablen anpassen.",
+  "mcpServers": {
+    "devops-safe": {
+      "type": "local",
+      "command": "node",
+      "args": ["/absoluter/pfad/zu/Test/devops-extension/src/server.mjs"],
+      "env": {
+        "AGENT_CONFIG": "/absoluter/pfad/zu/Test/config/companies.json",
+        "PII_REDACTION": "off"
+      },
+      "tools": ["*"]
+    },
+    "confluence-drafts": {
+      "type": "local",
+      "command": "node",
+      "args": ["/absoluter/pfad/zu/Test/confluence-extension/src/server.mjs"],
+      "env": {
+        "AGENT_CONFIG": "/absoluter/pfad/zu/Test/config/companies.json",
+        "PII_REDACTION": "off"
+      },
+      "tools": ["*"]
+    }
+  }
+}

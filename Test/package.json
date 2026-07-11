@@ -1,0 +1,19 @@
+{
+  "name": "@mkrueer/test-extensions",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Copilot-CLI-Extensions: devops-safe (Azure DevOps, guarded) und confluence-drafts (Draft-only) mit optionaler PII-Redaction.",
+  "type": "module",
+  "workspaces": [
+    "devops-extension",
+    "confluence-extension"
+  ],
+  "scripts": {
+    "test": "node --test shared/test/*.test.mjs devops-extension/test/*.test.mjs confluence-extension/test/*.test.mjs",
+    "start:devops": "node devops-extension/src/server.mjs",
+    "start:confluence": "node confluence-extension/src/server.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

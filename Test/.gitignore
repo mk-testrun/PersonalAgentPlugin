@@ -1,0 +1,3 @@
+# Echte Konfiguration (enthält Firmen-/Benutzerdaten) nie committen — nur das Example.
+config/companies.json
+node_modules/

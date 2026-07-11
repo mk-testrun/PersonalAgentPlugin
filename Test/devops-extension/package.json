@@ -1,0 +1,18 @@
+{
+  "name": "@mkrueer/devops-safe-mcp",
+  "version": "1.0.0",
+  "description": "Copilot-CLI-Extension (MCP) für sicheres Azure DevOps: Projekt-Whitelist, Assigned-to-me-Edits, kein Löschen, AI-Tagging, Multi-Company/-Tenant, WIQL-Abfrage-Tool, optionale PII-Redaction.",
+  "type": "module",
+  "license": "MIT",
+  "main": "./src/server.mjs",
+  "bin": {
+    "devops-safe-mcp": "./src/server.mjs"
+  },
+  "scripts": {
+    "start": "node src/server.mjs",
+    "test": "node --test test/*.test.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "name": "@mkrueer/confluence-drafts-mcp",
+  "version": "1.0.0",
+  "description": "Copilot-CLI-Extension (MCP) für sicheres Confluence: Space-Whitelist, Draft-only (kein Publish, kein Delete), Multi-Company/-Tenant, optionale PII-Redaction.",
+  "type": "module",
+  "license": "MIT",
+  "main": "./src/server.mjs",
+  "bin": {
+    "confluence-drafts-mcp": "./src/server.mjs"
+  },
+  "scripts": {
+    "start": "node src/server.mjs",
+    "test": "node --test test/*.test.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
